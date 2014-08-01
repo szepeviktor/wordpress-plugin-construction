@@ -4,6 +4,7 @@ Plugin Name: Disable Updates and Update HTTP Requests
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Disable core, theme and plugin updates plus the browser nag
 Version: 0.2
+License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/
 */
@@ -25,7 +26,7 @@ class Disable_Version_Check_MU {
         // block updates during WP-Cron
         // don't block updates when "Check again" is pressed
         if ( ! ( ( is_admin() && empty( $_GET['force-check'] ) ) || ( defined('DOING_CRON') && DOING_CRON ) ) )
-            return false;
+            return;
 
         $this->disable_core_updates();
         $this->disable_theme_updates();
