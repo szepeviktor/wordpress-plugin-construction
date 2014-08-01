@@ -1,10 +1,11 @@
 <?php
 /*
-  Plugin Name: Disable Updates and update HTTP requests
-  Plugin URI: http://www.online1.hu/
-  Description: Disable core, theme and plugin updates plus the browser nag
-  Version: 0.2
-  Author: Viktor Szépe
+Plugin Name: Disable Updates and Update HTTP Requests
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+Description: Disable core, theme and plugin updates plus the browser nag
+Version: 0.2
+Author: Viktor Szépe
+Author URI: http://www.online1.hu/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
@@ -19,6 +20,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 class Disable_Version_Check_MU {
 
     public function __construct() {
+
         // don't block updates on the frontend
         // block updates during WP-Cron
         // don't block updates when "Check again" is pressed
@@ -83,6 +85,7 @@ class Disable_Version_Check_MU {
     }
 
     private function disable_browser_nag() {
+
         if (! isset( $_SERVER['HTTP_USER_AGENT'] ) ) return false;
 
         add_action( 'admin_init', array( $this, 'updated_browser' ) );
