@@ -36,7 +36,7 @@ class ErrorLog404_MU {
         // bailouts for security reasons
         add_filter( 'wp_die_ajax_handler', array( $this, 'wp_die' ) );
         add_filter( 'wp_die_xmlrpc_handler', array( $this, 'wp_die' ) );
-        add_filter( 'wp_die_handler', array( $this, 'wp-die' ) );
+        add_filter( 'wp_die_handler', array( $this, 'wp_die' ) );
     }
 
     public function wp_404() {
