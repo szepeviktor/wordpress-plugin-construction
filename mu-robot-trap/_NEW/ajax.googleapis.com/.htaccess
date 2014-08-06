@@ -1,0 +1,5 @@
+# put this in directory called /ajax.googleapis.com/
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^ index.php [L]
+</IfModule>

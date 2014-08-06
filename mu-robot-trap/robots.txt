@@ -1,0 +1,11 @@
+### this "system" tests the followings:
+# Disallow: /disallow/ in robots.txt
+# <meta name="robots" content="nofollow">
+# <a rel="nofollow" href="nofollow.html">ban me</a>
+# <a href="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js">this is not a relative URL</a>
+###
+
+User-agent: *
+Crawl-delay: 5
+Disallow: /disallow/
+Allow: /allow/
