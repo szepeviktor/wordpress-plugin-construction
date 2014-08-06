@@ -194,12 +194,13 @@ class WeDevs_Settings_API2 {
         $id = esc_attr( $args['section'] ) . '[' . esc_attr( $args['id'] ) . ']';
         $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
 
-        printf( '<input type="hidden" name="%2$s" value="0" />
+        printf( '<input type="hidden" name="%s" value="0" />
                 <legend class="screen-reader-text"><span>%s</span></legend>
-                <label for="wpsa-%s"><input type="checkbox" class="checkbox" name="%2$s" id="wpsa-%2$s" value="1"%s />%s</label>
+                <label for="wpsa-%1$s"><input type="checkbox" class="checkbox" name="%1$s" id="wpsa-%1$s" value="1"%s />%s</label>
                 <p class="description">%s</p>',
+            $id,
             esc_html( $args['name'] ),
-            $id, checked( $value, '1', false ), $args['label'],
+            checked( $value, '1', false ), $args['label'],
             $args['desc']
         );
     }
