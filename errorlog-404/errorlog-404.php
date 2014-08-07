@@ -24,7 +24,7 @@ class O1_ErrorLog404 {
 
         // admin
         if ( is_admin() ) {
-            require_once dirname( __FILE__ ) . '/errorlog-404-admin.php';
+            require_once dirname( __FILE__ ) . '/inc/errorlog-404-admin.php';
             $errorlog_404_obj = new O1_Errorlog_404();
         }
 
@@ -41,33 +41,33 @@ class O1_ErrorLog404 {
         $this->prefix = $general_options['prefix'] . ' ';
 
         // non-existent / malicious URLs
-        if ( '1' === $request_options['fourohfour'] ) {
+        if ( 1 == $request_options['fourohfour'] ) {
             add_action( 'template_redirect', array( $this, 'wp_404' ) );
         }
-        if ( '1' === $request_options['urlhack'] ) {
+        if ( 1 == $request_options['urlhack'] ) {
             add_action( 'init', array( $this, 'url_hack' ) );
         }
-        if ( '1' === $request_options['redirect'] ) {
+        if ( 1 == $request_options['redirect'] ) {
             add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
         }
 
         // don't show 404 for robots
-        if ( '1' === $request_options['robot404'] ) {
+        if ( 1 == $request_options['robot404'] ) {
             add_action( 'plugins_loaded', array( $this, 'robot_404' ), 0 );
         }
 
         // don't redirect to admin
-        if ( '1' === $login_options['adminredirect'] ) {
+        if ( 1 == $login_options['adminredirect'] ) {
             remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
         }
 
         // login failures
-        if ( '1' === $login_options['loginfail'] ) {
+        if ( 1 == $login_options['loginfail'] ) {
             add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
         }
 
         // report bailouts for security reasons
-        if ( '1' === $login_options['wpdie'] ) {
+        if ( 1 == $login_options['wpdie'] ) {
             add_filter( 'wp_die_ajax_handler', array( $this, 'wp_die' ) );
             add_filter( 'wp_die_xmlrpc_handler', array( $this, 'wp_die' ) );
             add_filter( 'wp_die_handler', array( $this, 'wp_die' ) );

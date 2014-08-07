@@ -118,7 +118,7 @@ class WeDevs_Settings_API2 {
             if ( false == get_option( $section['id'] ) ) {
                 $defaults = array();
                 foreach ( $this->settings_fields[$section['id']] as $field ) {
-                    $defaults[$field['name']] = isset( $field['default'] ) ? $field['default'] : '';
+                    $defaults[$field['id']] = isset( $field['default'] ) ? $field['default'] : '';
                 }
                 add_option( $section['id'], $defaults );
             }
