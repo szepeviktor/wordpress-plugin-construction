@@ -10,23 +10,46 @@ Author URI: http://www.online1.hu/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
+    error_log( 'File does not exist: errorlog_direct_access ' . $_SERVER['REQUEST_URI'] );
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.1 403 Forbidden' );
     exit();
 }
 
-// mostly from https://github.com/Websiteguy/disable-updates-manager/
-// and http://wordpress.org/plugins/no-browser-nag/
+/**
+ * To enable force-check updates:
+ *     define( 'ENABLE_FORCE_CHECK_UPDATE', true );
+ *
+ * idea: https://github.com/Websiteguy/disable-updates-manager/
+ * idea: http://wordpress.org/plugins/no-browser-nag/
+ */
 
 class Disable_Version_Check_MU {
+
+    private $not_update_core_action = true;
+    private $not_update_action = true;
 
     public function __construct() {
 
         // don't block updates on the frontend
         // block updates during WP-Cron
-        // don't block updates when "Check again" is pressed
-        if ( ! ( ( is_admin() && empty( $_GET['force-check'] ) ) || ( defined('DOING_CRON') && DOING_CRON ) ) )
+        $doing_cron = ( defined( 'DOING_CRON' ) && DOING_CRON );
+        if ( ! ( is_admin() || $doing_cron ) )
             return;
+
+        // don't block updates when "Check again" is pressed
+        if ( defined( 'ENABLE_FORCE_CHECK_UPDATE' ) && ENABLE_FORCE_CHECK_UPDATE ) {
+
+            $called_script = isset( $_SERVER['SCRIPT_FILENAME'] ) ? basename( $_SERVER['SCRIPT_FILENAME'] ) : '';
+            $is_update_core = ( 'update-core.php' === $called_script );
+            $is_update = ( 'update.php' === $called_script );
+
+            if ( $is_update_core && ! empty( $_GET['force-check'] ) )
+                return;
+
+            $this->not_update_core_action = ( ! $is_update_core || empty( $_GET['action'] ) );
+            $this->not_update_action = ( ! $is_update || empty( $_GET['action'] ) );
+        }
 
         $this->disable_core_updates();
         $this->disable_theme_updates();
@@ -55,7 +78,8 @@ class Disable_Version_Check_MU {
     private function disable_core_updates() {
 
         // wp-includes/update.php:156
-        add_filter( 'pre_site_transient_update_core', array( $this, 'last_checked' ) );
+        if ( $this->not_update_core_action )
+            add_filter( 'pre_site_transient_update_core', array( $this, 'last_checked' ) );
         // wp-includes/update.php:632-633
         remove_action( 'admin_init', '_maybe_update_core' );
         remove_action( 'wp_version_check', 'wp_version_check' );
@@ -64,7 +88,8 @@ class Disable_Version_Check_MU {
     private function disable_plugin_updates() {
 
         // wp-includes/update.php:308
-        add_filter( 'pre_site_transient_update_plugins', array( $this, 'last_checked' ) );
+        if ( $this->not_update_core_action && $this->not_update_action )
+            add_filter( 'pre_site_transient_update_plugins', array( $this, 'last_checked' ) );
         // wp-includes/update.php:636-640
         remove_action( 'load-plugins.php', 'wp_update_plugins' );
         remove_action( 'load-update.php', 'wp_update_plugins' );
@@ -76,7 +101,8 @@ class Disable_Version_Check_MU {
     private function disable_theme_updates() {
 
         // wp-includes/update.php:453
-        add_filter( 'pre_site_transient_update_themes', array( $this, 'last_checked' ) );
+        if ( $this->not_update_core_action && $this->not_update_action )
+            add_filter( 'pre_site_transient_update_themes', array( $this, 'last_checked' ) );
         // wp-includes/update.php:643-647
         remove_action( 'load-themes.php', 'wp_update_themes' );
         remove_action( 'load-update.php', 'wp_update_themes' );
@@ -87,7 +113,7 @@ class Disable_Version_Check_MU {
 
     private function disable_browser_nag() {
 
-        if (! isset( $_SERVER['HTTP_USER_AGENT'] ) ) return false;
+        if ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) return false;
 
         add_action( 'admin_init', array( $this, 'updated_browser' ) );
     }
