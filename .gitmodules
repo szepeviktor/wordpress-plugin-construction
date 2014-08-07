@@ -1,0 +1,3 @@
+[submodule "wp-cli-shared-hosting/update-control"]
+	path = wp-cli-shared-hosting/update-control
+	url = https://github.com/chipbennett/update-control
