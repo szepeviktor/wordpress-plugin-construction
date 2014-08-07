@@ -80,7 +80,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'Turn on logging for fail2ban', 'o1' ),
                     'desc' => __( 'DO NOT turn this off on public internet', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 1
+                    'default' => '1'
                 ),
                 array(
                     'id' => 'prefix',
@@ -108,7 +108,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'Let not found pages trigger fail2ban', 'o1' ),
                     'desc' => __( 'Record an error on 404 requests', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 1
+                    'default' => '1'
                 ),
                 array(
                     'id' => 'robot404',
@@ -116,7 +116,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'Don\'t generate a 404 page for robots', 'o1' ),
                     'desc' => __( 'It saves processor time in case of a DoS/flood attack.', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 1
+                    'default' => '1'
                 ),
                 array(
                     'id' => 'urlhack',
@@ -124,7 +124,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'Record most common URL hacks', 'o1' ),
                     'desc' => __( 'Record an error on request URLs beginning with <code>//</code> or containing directory traversal <code>/..</code> or <code>../</code>', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 1
+                    'default' => '1'
                 ),
                 array(
                     'id' => 'redirect',
@@ -132,7 +132,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'Record canonical redirects in WordPress', 'o1' ),
                     'desc' => __( 'GET parameters <code>' . site_url() . '/?cat=1</code> and double slashes and mistyped URLs', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 1
+                    'default' => '1'
                 )
             ),
             'o1_errorlog_login' => array(
@@ -142,7 +142,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'Do not redirect to WordPress dashboard', 'o1' ),
                     'desc' => __( 'URLs containing: wp-admin, dashboard, admin,  wp-login.php or login', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 1
+                    'default' => '1'
                 ),
                 array(
                     'id' => 'loginfail',
@@ -150,7 +150,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'Any failed authentication', 'o1' ),
                     'desc' => __( 'Failed authentication includes login, XMLRPC, password protected pages', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 1
+                    'default' => '1'
                 ),
                 array(
                     'id' => 'wpdie',
@@ -158,7 +158,7 @@ class O1_Errorlog_404 {
                     'label' => __( 'When plugins or WordPress core finds sufficient permissions', 'o1' ),
                     'desc' => __( 'This could generate false positives on poorly written plugins', 'o1' ),
                     'type' => 'checkbox',
-                    'default' => 0
+                    'default' => '0'
                 )
             )
         );
