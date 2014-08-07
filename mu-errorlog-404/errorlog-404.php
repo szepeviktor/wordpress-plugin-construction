@@ -30,7 +30,7 @@ class ErrorLog404_MU {
 
         // non-existent URLs
         add_action( 'init', array( $this, 'url_hack' ) );
-        add_filter( 'redirect_canonical', array( $this, 'redirect', 1, 2 ) );
+        add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
         add_action( 'template_redirect', array( $this, 'wp_404' ) );
 
         // bailouts for security reasons
