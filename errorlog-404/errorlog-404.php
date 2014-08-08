@@ -34,6 +34,7 @@ class O1_ErrorLog404 {
         $general_options = get_option( 'o1_errorlog_general' );
         $request_options = get_option( 'o1_errorlog_request' );
         $login_options = get_option( 'o1_errorlog_login' );
+        $spam_options = get_option( 'o1_errorlog_spam' );
 
         if ( '0' === $general_options['enabled'] )
             return;
@@ -73,6 +74,14 @@ class O1_ErrorLog404 {
             add_filter( 'wp_die_handler', array( $this, 'wp_die' ) );
         }
 
+        // filled in the hidden field (Contact Form 7 Robot Trap)
+        if ( 1 == $spam_options['hiddenfield'] ) {
+            add_action( 'robottrap_hiddenfield', array( $this, 'wpcf7_spam' ) );
+        }
+        // provided domain name without MX (Contact Form 7 Robot Trap)
+        if ( 1 == $spam_options['nomx'] ) {
+            add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
+        }
     }
 
     public function wp_404() {
@@ -136,6 +145,16 @@ class O1_ErrorLog404 {
             header( 'HTTP/1.1 404 Not Found' );
             exit();
         }
+    }
+
+    public function wpcf7_spam( $text ) {
+
+        error_log( $this->prefix . 'errorlog_wpcf7_spam' . ' (' . $text . ')' );
+    }
+
+    public function wpcf7_spam_mx( $domain ) {
+
+            error_log( $this->prefix . 'errorlog_wpcf7_spam_mx' . ' (' . $domain . ')' );
     }
 
     public function deactivate() {

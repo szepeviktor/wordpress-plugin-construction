@@ -60,6 +60,11 @@ class O1_Errorlog_404 {
                 'id' => 'o1_errorlog_login',
                 'title' => __( 'Logins', 'o1' ),
                 'desc' => __( 'Authentication related actions could be also reported to fail2ban.' )
+            ),
+            array(
+                'id' => 'o1_errorlog_spam',
+                'title' => __( 'Spam', 'o1' ),
+                'desc' => __( 'Report spammers to fail2ban. Needs the Contact Form 7 Robot Trap plugin.' )
             )
         );
         return $sections;
@@ -157,6 +162,24 @@ class O1_Errorlog_404 {
                     'name' => __( '<code>wp_die</code> execution', 'o1' ),
                     'label' => __( 'When plugins or WordPress core finds sufficient permissions', 'o1' ),
                     'desc' => __( 'This could generate false positives on poorly written plugins', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '0'
+                )
+            ),
+            'o1_errorlog_spam' => array(
+                array(
+                    'id' => 'hiddenfield',
+                    'name' => __( 'Hidden field', 'o1' ),
+                    'label' => __( 'Filled in the hidden in Contact Form 7 Robot Trap.', 'o1' ),
+                    'desc' => __( 'Contact Form 7 Robot Trap plugin inserts a hidden field in the contact forms.', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '1'
+                ),
+                array(
+                    'id' => 'nomx',
+                    'name' => __( 'Invalid domain name', 'o1' ),
+                    'label' => __( 'Provided a domain name without valid mail exchanger (mail server).', 'o1' ),
+                    'desc' => __( 'This could lead to false positives if your nameserver fails.', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '0'
                 )

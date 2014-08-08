@@ -16,7 +16,7 @@ Author URI: http://www.online1.hu/webdesign/
  * Test #1 Is the hidden text filed filled in?
  * Test #2 Does the submitted email address' domain name accept email?
  *
- * use the `wpcf7_spam` filter to do something with the spammer
+ * use the `robottrap_hiddenfield` and `robottrap_mx` hooks to do something with the spammer
  *
  */
 
@@ -86,12 +86,14 @@ function wpcf7_robottrap_shortcode_handler( $tag ) {
     return $html;
 }
 
-function wpcf7_robottrap_validation_filter($result, $tag) {
+function wpcf7_robottrap_validation_filter( $result, $tag ) {
     $tag = new WPCF7_Shortcode( $tag );
 
     $name = $tag->name;
 
     if ( ! empty( $_POST[$name] ) ) {
+        do_action( 'robottrap_hiddenfield', sanitize_text_field( $_POST[$name] ) );
+
         $result['valid'] = false;
         $result['spam']  = true;
         $result['reason'][$name] = wpcf7_get_message('spam');
@@ -100,18 +102,20 @@ function wpcf7_robottrap_validation_filter($result, $tag) {
     return $result;
 }
 
-function wpcf7_robottrap_domain_validation_filter($result, $tag) {
+function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
     $tag = new WPCF7_Shortcode( $tag );
 
     $name = $tag->name;
 
     $value = isset( $_POST[$name] )
-        ? trim( wp_unslash( strtr( (string) $_POST[$name], "\n", " " ) ) )
+        ? trim( wp_unslash( sanitize_text_field( (string) $_POST[$name] ) ) )
         : '';
     $domain = substr( strrchr( $value, '@' ), 1 );
 
     //WARNING if the nameserver is down it will generate false positives !!!
     if ( ! empty( $domain ) && ! checkdnsrr( $domain, 'MX' ) ) {
+        do_action( 'robottrap_mx', $domain );
+
         $result['valid'] = false;
         $result['spam']  = true;
         $result['reason'][$name] = wpcf7_get_message('spam');

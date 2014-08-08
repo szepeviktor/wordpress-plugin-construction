@@ -37,6 +37,11 @@ class ErrorLog404_MU {
         add_filter( 'wp_die_ajax_handler', array( $this, 'wp_die' ) );
         add_filter( 'wp_die_xmlrpc_handler', array( $this, 'wp_die' ) );
         add_filter( 'wp_die_handler', array( $this, 'wp_die' ) );
+
+        // ban spammers (Contact Form 7 Robot Trap)
+        add_action( 'robottrap_hiddenfield', array( $this, 'wpcf7_spam' ) );
+        add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
+
     }
 
     public function wp_404() {
@@ -67,12 +72,18 @@ class ErrorLog404_MU {
 
     public function wp_die( $arg ) {
 
-        // heartbeat also exits with wp_die()
-        if ( did_action( 'wp_ajax_heartbeat' ) )
-            return $arg;
-
         error_log( $this->prefix . 'errorlog_wpdie' );
         return $arg;
+    }
+
+    public function wpcf7_spam( $text ) {
+
+        error_log( $this->prefix . 'errorlog_wpcf7_spam' . ' (' . $text . ')' );
+    }
+
+    public function wpcf7_spam_mx( $domain ) {
+
+            error_log( $this->prefix . 'errorlog_wpcf7_spam_mx' . ' (' . $domain . ')' );
     }
 
 }
