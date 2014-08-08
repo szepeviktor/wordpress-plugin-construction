@@ -6,7 +6,7 @@ Description: Disable core, theme and plugin updates plus the browser nag
 Version: 0.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/
+Author URI: http://www.online1.hu/webdesign/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
