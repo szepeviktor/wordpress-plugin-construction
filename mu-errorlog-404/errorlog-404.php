@@ -67,6 +67,10 @@ class ErrorLog404_MU {
 
     public function wp_die( $arg ) {
 
+        // heartbeat also exits with wp_die()
+        if ( did_action( 'wp_ajax_heartbeat' ) )
+            return $arg;
+
         error_log( $this->prefix . 'errorlog_wpdie' );
         return $arg;
     }
