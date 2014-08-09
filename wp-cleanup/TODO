@@ -1,0 +1,25 @@
+tool
+
+db
+- DB check & optimization
+- delete transients with conditions
+- delete revisions, drafts
+- orphan post meta, comment meta, user meta
+
+comments
+- spam/trash comments
+
+media
+- orphan relationships (media attachings)
+
+files
+- core checksum verify
+
+links
+- find internal 404s in the post content
+
+dashboard
+- remove some parts of the dashboard
+
+What db tables WP has?
+
