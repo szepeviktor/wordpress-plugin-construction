@@ -109,17 +109,25 @@ class O1_Errorlog_404 {
             'o1_errorlog_request' => array(
                 array(
                     'id' => 'fourohfour',
-                    'name' => __( '404 requests', 'o1' ),
-                    'label' => __( 'Let not found pages trigger fail2ban', 'o1' ),
+                    'name' => __( 'All 404 requests', 'o1' ),
+                    'label' => __( 'Not Found pages will trigger fail2ban', 'o1' ),
                     'desc' => __( 'Record an error on 404 requests', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
                 ),
                 array(
-                    'id' => 'robot404',
-                    'name' => __( 'No 404 for robots', 'o1' ),
-                    'label' => __( 'Don\'t generate a 404 page for robots', 'o1' ),
+                    'id' => 'robot403',
+                    'name' => __( 'Exploit seeking', 'o1' ),
+                    'label' => __( 'Block robots seeking for exploits ', 'o1' ),
                     'desc' => __( 'It saves processor time in case of a DoS/flood attack.', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '1'
+                ),
+                array(
+                    'id' => 'robot404',
+                    'name' => __( 'No not found pages for robots', 'o1' ),
+                    'label' => __( "Don't generate a 404 page for robots", 'o1' ),
+                    'desc' => __( 'It also triggers fail2ban and saves CPU time.', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
                 ),
@@ -154,6 +162,14 @@ class O1_Errorlog_404 {
                     'name' => __( 'Failed logins', 'o1' ),
                     'label' => __( 'Any failed authentication', 'o1' ),
                     'desc' => __( 'Failed authentication includes login, XMLRPC, password protected pages', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '1'
+                ),
+                array(
+                    'id' => 'login',
+                    'name' => __( 'Successful logins', 'o1' ),
+                    'label' => __( 'Log every login into the error log.', 'o1' ),
+                    'desc' => __( 'It is not realted to fail2ban but maybe useful.', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
                 ),
