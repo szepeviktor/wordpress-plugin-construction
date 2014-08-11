@@ -174,7 +174,7 @@ class O1_ErrorLog404 {
     public function wp_die_ajax_handler( $message, $title, $args ) {
 
         // wp-admin/includes/ajax-actions.php returns -1 of security breach
-        if ( ! is_int( $message ) || (int) $message < 0 )
+        if ( ! is_scalar( $message ) || (int) $message < 0 )
             error_log( $this->prefix . 'errorlog_wpdie_ajax' );
 
         // call previous handler
