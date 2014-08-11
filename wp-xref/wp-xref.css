@@ -1,13 +1,15 @@
 /* Sample stylesheet for PHPXRef */
 
-BODY, P, DIV, TD {
-    font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+@import url('/font/caviar.css');
+
+BODY, P, DIV, TD, PRE {
+    font-family: Meslo, Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
     font-size: 14px;
 }
 
 BODY {
     background-color: #CFDAF7;
-    color: #000;
+    color: #839496;
 }
 
 H2, H3 { font-size: 18px; }
@@ -17,7 +19,7 @@ A:visited { text-decoration: none; color: #22f; }
 A:hover { text-decoration: underline; }
 
 /* Function information shown on the page detail page */
-.funcinfo { background-color: #fff; border: 1px solid #000;}
+.funcinfo { background-color: #fff; border: 1px solid #000;} 
 .funcinfo-title { font-size: 16px; }
 /* .funcinfo-body TD {border-bottom: 1px solid #000;} */
 
@@ -91,31 +93,40 @@ A:visited.searchbox-body { color: #fff; text-decoration: underline; }
 .listing { 
     /*font-family: Monospace;
     font-size: 12px; */
-    background-color: #fff;
+    background-color: #002b36;
     border-left: 1px solid #000;
     border-top: 1px solid #000;
     padding: 4px;
     overflow: visible;
 }
 .listing P { margin: 0px; }
+.listing .viewlinks A { color: #eee8d5; }
 /* .listing H3 { background-color: #000; color: #fff; xfont-weight: bold; margin-top: 0px; font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;} */
 .listing-heading { background-color: #000; color: #fff; margin: 0px;}
 .listing-heading A { color: #fff; }
 .listing-heading A:visited { color: #fff; }
-A.var  { color: #822; } /* variable */
-A:visited.var  { color: #822; } /* variable */
-A:visited.class { color: #228; }
-A.function { color: #161;}
-A:visited.function { color: #161;}
-A.phpfunction { color: #11a; }
-A:visited.phpfunction { color: #11a; }
+
+A.var  { color: #268bd2; } /* variable */
+A:visited.var  { color: #268bd2; } /* variable */
+A.class { color: #dc322f; }
+A:visited.class { color: #dc322f; }
+
+A.function { color: #cb4b16;}
+A:visited.function { color: #cb4b16;}
+
+A.phpfunction { color: #b58900; }
+A:visited.phpfunction { color: #b58900; }
+
 .keyword { font-weight: bold;} /* function/new/class/ */
+
 A.filename { color: #882;} /* referenced by require/include/etc */
 A:visited.filename { color: #882;} /* referenced by require/include/etc */
+
 A.constant { color: #883; }
 A:visited.constant { color: #883; }
-.comment { color: #444444; font-style: italic; }
-.linenum { color: #555555; }
+
+.comment { color: #586e75; font-style: italic; }
+.linenum { color: #657b83; }
 
 /* Styles used in the nav frame */
 .dirtitle { text-align: center; }
@@ -148,7 +159,7 @@ UL.dirlist { padding-left: 10px; margin-left: 0px; }
     border: 1px solid #000;
     visibility: hidden; 
     width: 250px;
-    background-color: #ccc;
+    background-color: #fdf6e3;
     position: absolute;
     font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
     font-size: 11px;
