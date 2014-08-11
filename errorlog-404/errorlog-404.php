@@ -39,6 +39,10 @@ class O1_ErrorLog404 {
 
     public function __construct() {
 
+        // don't run on install / upgrade
+        if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING )
+            return;
+
         // admin
         if ( is_admin() ) {
             require_once dirname( __FILE__ ) . '/inc/errorlog-404-admin.php';

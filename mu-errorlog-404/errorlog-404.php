@@ -37,6 +37,10 @@ class O1_ErrorLog404_MU {
 
     public function __construct() {
 
+        // don't run on install / upgrade
+        if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING )
+            return;
+
         // don't redirect to admin
         remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
 
