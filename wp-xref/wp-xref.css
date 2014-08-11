@@ -1,0 +1,201 @@
+/* Sample stylesheet for PHPXRef */
+
+BODY, P, DIV, TD {
+    font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+BODY {
+    background-color: #CFDAF7;
+    color: #000;
+}
+
+H2, H3 { font-size: 18px; }
+
+A:link { text-decoration: none; color: #22f; }
+A:visited { text-decoration: none; color: #22f; }
+A:hover { text-decoration: underline; }
+
+/* Function information shown on the page detail page */
+.funcinfo { background-color: #fff; border: 1px solid #000;}
+.funcinfo-title { font-size: 16px; }
+/* .funcinfo-body TD {border-bottom: 1px solid #000;} */
+
+/* Class information shown on the page detail page (holds funcinfo blocks) */
+.details-classinfo {
+    background-color: #fff;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 4px;
+}
+.details-classtitle A { color: #fff; }
+.details-classtitle {
+    background-color: #000;
+    color: #fff;
+    font-size: 12px;
+    margin: 0px;
+}
+
+/* Non-class function block shown on the page detail page */
+.details-funclist {
+}
+
+/* Summary info at the top of the details page */
+.details-summary {
+    background-color: #fff;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 4px;
+}
+.details-summary P { margin: 0px; }
+.details-heading {
+    background-color: #000;
+    color: #fff;
+    margin: 0px;
+}
+.details-heading A { color: #fff; }
+.details-heading A:visited { color: #fff; }
+
+/* .pagetitle { background-color: #8298BA; } */
+/* .pagetitle { background-color: #D4ED9C; } */
+/* .pagetitle { background-color: #759096; } */
+.pagetitle { background-color: #858FA9; }
+.pagetitle H3 {
+    font-size: 16px;
+    font-style: italic;
+}
+
+.navlinks { font-size: 10px; } /* top navigation links */
+.filelist { 
+    background-color: #fff; 
+    border-left: 1px solid #000; 
+    border-bottom: 1px solid #000;
+} /* file list */
+.filelist-title { background-color: #000; color: #fff; margin-top: 0px; }
+.filelist-filename {font-family: monospace; }
+
+
+.searchbox-link {text-align: center; }
+.searchbox-link A {color: #fff; font-weight: bold; font-size: xx-small;}
+A:visited.searchbox-link { font-weight: bold; color: #fff; }
+.searchbox { padding: 0px; margin: 0px; color: #000; font-weight: normal; visibility: hidden;}
+.searchbox-title { background-color: #bbf; color: #000; font-weight: bold; font-size: xx-small; text-align: center;}
+.searchbox-title A { color: #126; }
+.searchbox-body A { color: #fff; text-decoration: underline; font-weight: normal;}
+A:visited.searchbox-body { color: #fff; text-decoration: underline; }
+.searchbox-body { background-color: #335; font-size: xx-small; text-align: right;} 
+.searchbox-body INPUT { border: 0px; border-bottom: 1px solid #000; background-color: #446; color: #fff;}
+.searchbox-button { font-size: xx-small; border: 0px; border-bottom: 1px solid #000; background-color: #446; color: #fff;}
+
+/* source listing */
+.listing { 
+    /*font-family: Monospace;
+    font-size: 12px; */
+    background-color: #fff;
+    border-left: 1px solid #000;
+    border-top: 1px solid #000;
+    padding: 4px;
+    overflow: visible;
+}
+.listing P { margin: 0px; }
+/* .listing H3 { background-color: #000; color: #fff; xfont-weight: bold; margin-top: 0px; font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;} */
+.listing-heading { background-color: #000; color: #fff; margin: 0px;}
+.listing-heading A { color: #fff; }
+.listing-heading A:visited { color: #fff; }
+A.var  { color: #822; } /* variable */
+A:visited.var  { color: #822; } /* variable */
+A:visited.class { color: #228; }
+A.function { color: #161;}
+A:visited.function { color: #161;}
+A.phpfunction { color: #11a; }
+A:visited.phpfunction { color: #11a; }
+.keyword { font-weight: bold;} /* function/new/class/ */
+A.filename { color: #882;} /* referenced by require/include/etc */
+A:visited.filename { color: #882;} /* referenced by require/include/etc */
+A.constant { color: #883; }
+A:visited.constant { color: #883; }
+.comment { color: #444444; font-style: italic; }
+.linenum { color: #555555; }
+
+/* Styles used in the nav frame */
+.dirtitle { text-align: center; }
+.dirsubtitle { text-align: center; margin: 0px;}
+UL.dirlist { padding-left: 10px; margin-left: 0px; }
+.dirlist LI { padding-left: 0px; margin-left: 0px; list-style-type: disc; }
+
+#slist { 
+    background-color: #fff;
+    margin: 1px;
+    padding: 3px; 
+    border: 1px black solid;
+    width: 100%;
+}
+
+/* Style for tree item text */
+.t0i {  
+    font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+/* Style for tree item image */
+.t0im { 
+    border: 0px;
+    width: 19px;
+    height: 16px;
+}
+
+/* function popups */
+.funcpopup {
+    border: 1px solid #000;
+    visibility: hidden; 
+    width: 250px;
+    background-color: #ccc;
+    position: absolute;
+    font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+.popup-title {
+    background-color: #444;
+    color: #fff;
+    font-weight: bold;
+    margin: 0px;
+    padding: 2px;
+}
+.popup-desc { font-weight: bold; } 
+.funcpopup P { margin: 0; }
+
+.searchpopup {
+    border: 1px solid #000;
+    visibility: hidden; 
+    width: 180px;
+    background-color: #ccc;
+    position: absolute;
+    right: 10px;
+    top: 100px;
+    font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+.searchpopup-title {
+    background-color: #444;
+    color: #fff;
+    font-weight: bold;
+    margin: 0px;
+    padding: 2px;
+    text-align: center;
+}
+.searchpopup-body {
+    font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    padding-left: 4px;
+}
+.searchpopup-close {
+    font-size: xx-small;
+    text-align: right;
+    margin: 0px;
+}
+.searchpopup-close A {
+    color: #000;
+}
+
+.inset {
+	margin-left: 40px;
+}
