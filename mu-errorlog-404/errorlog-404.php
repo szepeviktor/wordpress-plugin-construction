@@ -47,6 +47,7 @@ class O1_ErrorLog404_MU {
         // logins
         add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
         add_action( 'wp_login', array( $this, 'login' ) );
+        add_action( 'wp_logout', array( $this, 'logout' ) );
 
         // non-existent URLs
         add_action( 'init', array( $this, 'url_hack' ) );
@@ -112,6 +113,13 @@ class O1_ErrorLog404_MU {
     public function login( $username ) {
 
         error_log( 'WordPress logged in: ' . $username );
+    }
+
+    public function logout() {
+
+        $current_user = wp_get_current_user();
+
+        error_log( 'WordPress logout: ' . $current_user->user_login );
     }
 
     public function wp_die_ajax( $arg ) {

@@ -60,11 +60,6 @@ class O1_Errorlog_404 {
                 'id' => 'o1_errorlog_login',
                 'title' => __( 'Logins', 'o1' ),
                 'desc' => __( 'Authentication related actions could be also reported to fail2ban.' )
-            ),
-            array(
-                'id' => 'o1_errorlog_spam',
-                'title' => __( 'Spam', 'o1' ),
-                'desc' => __( 'Report spammers to fail2ban. Needs the Contact Form 7 Robot Trap plugin.' )
             )
         );
         return $sections;
@@ -109,25 +104,17 @@ class O1_Errorlog_404 {
             'o1_errorlog_request' => array(
                 array(
                     'id' => 'fourohfour',
-                    'name' => __( 'All 404 requests', 'o1' ),
-                    'label' => __( 'Not Found pages will trigger fail2ban', 'o1' ),
+                    'name' => __( '404 requests', 'o1' ),
+                    'label' => __( 'Let not found pages trigger fail2ban', 'o1' ),
                     'desc' => __( 'Record an error on 404 requests', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
                 ),
                 array(
-                    'id' => 'robot403',
-                    'name' => __( 'Exploit seeking', 'o1' ),
-                    'label' => __( 'Block robots seeking for exploits ', 'o1' ),
-                    'desc' => __( 'It saves processor time in case of a DoS/flood attack.', 'o1' ),
-                    'type' => 'checkbox',
-                    'default' => '1'
-                ),
-                array(
                     'id' => 'robot404',
-                    'name' => __( 'No not found pages for robots', 'o1' ),
-                    'label' => __( "Don't generate a 404 page for robots", 'o1' ),
-                    'desc' => __( 'It also triggers fail2ban and saves CPU time.', 'o1' ),
+                    'name' => __( 'No 404 for robots', 'o1' ),
+                    'label' => __( 'Don\'t generate a 404 page for robots', 'o1' ),
+                    'desc' => __( 'It saves processor time in case of a DoS/flood attack.', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
                 ),
@@ -168,8 +155,16 @@ class O1_Errorlog_404 {
                 array(
                     'id' => 'login',
                     'name' => __( 'Successful logins', 'o1' ),
-                    'label' => __( 'Log every login into the error log.', 'o1' ),
-                    'desc' => __( 'It is not realted to fail2ban but maybe useful.', 'o1' ),
+                    'label' => __( 'Log username on login', 'o1' ),
+                    'desc' => __( 'Report usernames in the error.log upon successful logins', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '1'
+                ),
+                array(
+                    'id' => 'logout',
+                    'name' => __( 'Logouts', 'o1' ),
+                    'label' => __( 'Log username on logout', 'o1' ),
+                    'desc' => __( 'Report usernames in the error.log upon logout', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
                 ),
@@ -178,24 +173,6 @@ class O1_Errorlog_404 {
                     'name' => __( '<code>wp_die</code> execution', 'o1' ),
                     'label' => __( 'When plugins or WordPress core finds sufficient permissions', 'o1' ),
                     'desc' => __( 'This could generate false positives on poorly written plugins', 'o1' ),
-                    'type' => 'checkbox',
-                    'default' => '0'
-                )
-            ),
-            'o1_errorlog_spam' => array(
-                array(
-                    'id' => 'hiddenfield',
-                    'name' => __( 'Hidden field', 'o1' ),
-                    'label' => __( 'Filled in the hidden in Contact Form 7 Robot Trap.', 'o1' ),
-                    'desc' => __( 'Contact Form 7 Robot Trap plugin inserts a hidden field in the contact forms.', 'o1' ),
-                    'type' => 'checkbox',
-                    'default' => '1'
-                ),
-                array(
-                    'id' => 'nomx',
-                    'name' => __( 'Invalid domain name', 'o1' ),
-                    'label' => __( 'Provided a domain name without valid mail exchanger (mail server).', 'o1' ),
-                    'desc' => __( 'This could lead to false positives if your nameserver fails.', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '0'
                 )
