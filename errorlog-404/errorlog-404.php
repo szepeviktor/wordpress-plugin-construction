@@ -25,7 +25,7 @@ class O1_ErrorLog404 {
         // admin
         if ( is_admin() ) {
             require_once dirname( __FILE__ ) . '/inc/errorlog-404-admin.php';
-            $errorlog_404_obj = new O1_Errorlog_404();
+            $errorlog_404_admin = new O1_Errorlog_404_admin();
         }
 
         // admin_init() does it register_activation_hook( __FILE__, array( $this, 'activate' ) );
@@ -144,11 +144,10 @@ class O1_ErrorLog404 {
         $content_dir = basename( WP_CONTENT_DIR );
 
         if ( ! is_user_logged_in()
-            // a robot (or < IE9)
-            && 'Mozilla/5.0' !== substr( $ua, 0, 11 )
-            // let < IE9 access the dashboard
-            && $admin_path !== $request_path
-            // PHP files (because we are running) or missing files in wp-admin, wp-includes, wp-content
+            // a robot or < IE8
+            && ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
+            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
+            // only in WP: wp-admin, wp-includes, wp-content
             && 1 === preg_match( '/\/(wp-admin|wp-includes|' . $content_dir . ')\//', $request_path )
             // make sure the file does not exist
             /*&& ! file_exists( $_SERVER['SCRIPT_FILENAME'] )*/ ) {

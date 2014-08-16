@@ -48,10 +48,12 @@ class O1_ErrorLog404_MU {
         add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
         add_action( 'wp_login', array( $this, 'login' ) );
         add_action( 'wp_logout', array( $this, 'logout' ) );
+        add_action( 'retrieve_password', array( $this, 'lostpass' ) );
 
         // non-existent URLs
         add_action( 'init', array( $this, 'url_hack' ) );
         add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
+        // on robot and human 404
         add_action( 'template_redirect', array( $this, 'wp_404' ) );
         add_action( 'plugins_loaded', array( $this, 'robot_403' ), 0 );
 
@@ -71,12 +73,14 @@ class O1_ErrorLog404_MU {
         if ( ! is_404() )
             return;
 
+        $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $request_uri = $_SERVER['REQUEST_URI'];
 
-        // no 404 for robots
+        // don't show the 404 page for robots
         if ( ! is_user_logged_in()
             && ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
-            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) ) ) {
+            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
+            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) ) ) {
 
             ob_end_clean();
             error_log( $this->prefix . 'errorlog_robot404' . $this->esc_log ( $request_uri ) );
@@ -120,6 +124,15 @@ class O1_ErrorLog404_MU {
         $current_user = wp_get_current_user();
 
         error_log( 'WordPress logout: ' . $current_user->user_login );
+    }
+
+    public function lostpass( $username ) {
+
+        if ( empty( $username ) ) {
+            // higher score !!!
+        }
+
+        error_log( 'WordPress lost password:' . $this->esc_log( $username ) );
     }
 
     public function wp_die_ajax( $arg ) {
@@ -179,22 +192,27 @@ class O1_ErrorLog404_MU {
         $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $request_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
         $admin_path = parse_url( admin_url(), PHP_URL_PATH );
-        $wp_dirs = 'wp-admin|wp-includes|' . basename( WP_CONTENT_DIR );
+        $wp_dirs = 'wp-admin|wp-includes|wp-content|' . basename( WP_CONTENT_DIR );
+        $uploads = wp_upload_dir();
 
         if ( ! is_user_logged_in()
             // a robot or < IE8
             && ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
             && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
+            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
 
-            // robots may only enter on the frontend: /index.php
+            // robots may only enter on the frontend (index.php)
+            // trigger only in WP dirs: wp-admin, wp-includes, wp-content
             && 1 === preg_match( '/\/(' . $wp_dirs . ')\//i', $request_path )
 
-            // XML RPC
+            // not a missing media file or containing '.php'
+            && ( false === strstr( $request_path, basename( $uploads['baseurl'] ) ) || false !== substr( $request_path, '.php' ) )
+
+            // exclude XML RPC (xmlrpc.php)
             && ! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
 
-            // trackback
-            //FIXME any robot can add ?tb=1 to the request URI -> req_path conaints 'wp-trackback.php'
-            && ! '1' === $GLOBALS['wp_query']->query_var['tb'] ) {
+            // exclude trackback (wp-trackback.php)
+            && 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path ) ) {
 
             //FIXME wp-includes/ms-files.php:12 ???
             ob_end_clean();
@@ -219,3 +237,15 @@ class O1_ErrorLog404_MU {
 
 new O1_ErrorLog404_MU();
 
+/*
+- invalid user during registration
+- invalid user during lost password
+- invalid "lost password" token
+- (as wp-config.inc) robots&errors in /wp-comments-post.php
+
+// dirty way
+add_filter( 'login_errors', function ($em) {
+    error_log( 'em:' . $em );
+    return $em;
+}, 0 );
+*/

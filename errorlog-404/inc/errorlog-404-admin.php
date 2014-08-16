@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists('O1_Errorlog_404' ) ):
 
-class O1_Errorlog_404 {
+class O1_Errorlog_404_admin {
 
     private $settings_api;
 
