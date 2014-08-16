@@ -97,6 +97,19 @@ class O1_ErrorLog404 {
         if ( true === $this->hide_robot_404
         */
 
+        // forbid robots to peek into WP
+        if ( 1 == $request_options['robot403'] ) {
+            add_action( 'plugins_loaded', array( $this, 'robot_403' ), 0 );
+        }
+
+        // ban spammers (Contact Form 7 Robot Trap)
+        if ( 1 == $request_options['spam'] ) {
+            add_action( 'robottrap_hiddenfield', array( $this, 'wpcf7_spam' ) );
+        }
+        if ( 1 == $request_options['spammx'] ) {
+            add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
+        }
+
         // don't redirect to admin
         if ( 1 == $login_options['adminredirect'] ) {
             remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
@@ -128,7 +141,6 @@ class O1_ErrorLog404 {
             add_filter( 'wp_die_xmlrpc_handler', array( $this, 'wp_die_xmlrpc' ), 1 );
             add_filter( 'wp_die_handler', array( $this, 'wp_die' ), 1 );
         }
-
     }
 
     public function deactivate() {

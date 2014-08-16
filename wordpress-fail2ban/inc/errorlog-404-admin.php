@@ -105,7 +105,7 @@ class O1_Errorlog_404_admin {
                 array(
                     'id' => 'fourohfour',
                     'name' => __( '404 requests', 'o1' ),
-                    'label' => __( 'Let not found pages trigger fail2ban', 'o1' ),
+                    'label' => __( 'Turn on 404 page detection', 'o1' ),
                     'desc' => __( 'Record an error on 404 requests', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
@@ -114,9 +114,17 @@ class O1_Errorlog_404_admin {
                     'id' => 'robot404',
                     'name' => __( 'No 404 for robots', 'o1' ),
                     'label' => __( 'Don\'t generate a 404 page for robots', 'o1' ),
-                    'desc' => __( 'It saves processor time in case of a DoS/flood attack.', 'o1' ),
+                    'desc' => __( 'It saves processor time in case of a DoS/flood attack, depends on the above "404 requests".', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
+                ),
+                array(
+                    'id' => 'robot403',
+                    'name' => __( 'Forbid robot requests', 'o1' ),
+                    'label' => __( 'Generate HTTP/403 when a robots tries to look inside your WordPress installation', 'o1' ),
+                    'desc' => __( 'Robots are only allowed to visit public pages.', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '0'
                 ),
                 array(
                     'id' => 'urlhack',
@@ -133,6 +141,22 @@ class O1_Errorlog_404_admin {
                     'desc' => __( 'GET parameters <code>' . site_url() . '/?cat=1</code> and double slashes and mistyped URLs', 'o1' ),
                     'type' => 'checkbox',
                     'default' => '1'
+                ),
+                array(
+                    'id' => 'spam',
+                    'name' => __( 'Spam robots', 'o1' ),
+                    'label' => __( 'Trigger fail2ban when Contact Form 7 Robot Trap plugin catches a spammer', 'o1' ),
+                    'desc' => __( 'This options needs the Contact Form 7 Robot Trap plugin', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '1'
+                ),
+                array(
+                    'id' => 'spammx',
+                    'name' => __( 'Non-existent email domains', 'o1' ),
+                    'label' => __( 'Trigger fail2ban when Contact Form 7 Robot Trap plugin detects a non-existent email domain', 'o1' ),
+                    'desc' => __( 'Turning this on may cause false positives when your namerver is out of operation', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '0'
                 )
             ),
             'o1_errorlog_login' => array(
