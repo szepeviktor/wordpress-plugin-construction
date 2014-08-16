@@ -8,24 +8,12 @@ Author URI: http://www.online1.hu/
 Version: 1.4
 */
 
-$bad_request_count = 6;
+class O1_Bad_Request {
 
-function bad_request_parse_query( $query ) {
-    $query_parts = explode( '&', $query );
-    $params = array();
+    const COUNT = 6;
 
-    foreach ( $query_parts as $param ) {
-        $item = explode( '=', $param );
-        if ( ! empty( $item[0] ) ) {
-            $params[$item[0]] = isset( $item[1] ) ? $item[1] : '';
-        }
-    }
-    return $params;
-}
-
-function bad_request() {
-    $m = array();
-    $names2ban = array(
+    private $prefix = 'File does not exist: ';
+    private $names2ban = array(
         'access',
         'admin',
         'administrator',
@@ -56,107 +44,167 @@ function bad_request() {
         'webmaster'
     );
 
-    // local access
-    if ( php_sapi_name() === 'cli'
-        || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] ) {
+    private function parse_query( $query_string ) {
+        $field_strings = explode( '&', $query_string );
+        $fields = array();
+
+        foreach ( $field_strings as $field_string ) {
+            $name_value = explode( '=', $field_string );
+
+            // check field name
+            if ( empty( $name_value[0] ) )
+                continue;
+
+            // set field value
+            $fields[$name_value[0]] = isset( $name_value[1] ) ? $name_value[1] : '';
+        }
+
+        return $fields;
+    }
+
+    private function check() {
+        // exit on local access
+        if ( php_sapi_name() === 'cli'
+            || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] )
+            return false;
+
+        $request_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+        $server_name = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
+
+        // author sniffing
+        // don't ban on post listing by author
+        if ( false === strpos( $request_path, '/wp-admin/' )
+            && isset( $_GET['author'] )
+            && is_int( $_GET['author'] ) )
+            return 'bad_request_author_sniffing';
+
+        // check only POST requests to wp-login
+        if ( false === stripos( $_SERVER['REQUEST_METHOD'], 'POST' )
+            || false === stripos( $request_path, '/wp-login.php' ) )
+            return false;
+
+        // --------------------------- >8 ---------------------------
+
+        if ( ! empty($_POST['log'] ) ) {
+            $username = $_POST['log'];
+
+            // banned usernames
+            if ( in_array( strtolower( $username ), $this->names2ban ) )
+                return 'bad_request_banned_username';
+
+            // attackers use usernames with "TwoCapitals"
+            if ( 1 === preg_match( '/^[A-Z][a-z]+[A-Z][a-z]+$/', $username ) )
+                return 'bad_request_username_pattern';
+        }
+
+        // accept header - IE9 sends only "*/*"
+        //|| false === strpos( $_SERVER['HTTP_ACCEPT'], 'text/html' )
+        if ( ! isset( $_SERVER['HTTP_ACCEPT'] )
+            || false === strpos( $_SERVER['HTTP_ACCEPT'], '/' ) )
+            return 'bad_request_http_post_accept';
+
+        // accept-language header
+        if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] )
+            || strlen( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) < 2 )
+            return 'bad_request_http_post_accept_language';
+
+        // content-type header
+        if ( ! isset( $_SERVER['CONTENT_TYPE'] )
+            || false === strpos( $_SERVER['CONTENT_TYPE'], 'application/x-www-form-urlencoded' ) )
+            return 'bad_request_http_post_content_type';
+
+        // content-length header
+        if ( ! isset( $_SERVER['CONTENT_LENGTH'] )
+            || ! is_numeric( $_SERVER['CONTENT_LENGTH'] ) )
+            return 'bad_request_http_post_content_length';
+
+        // referer header
+        // COMMENT OUT on 'Allow anyone to register'
+        if ( ! isset ( $_SERVER['HTTP_REFERER'] )
+            || $server_name !== parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST )
+            || false === strpos( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-login.php' ) )
+            return 'bad_request_http_post_referer';
+
+        // don't ban password protected posts by the rules AFTER this one
+        if ( isset( $_SERVER['QUERY_STRING'] ) ) {
+            $queries = $this->parse_query( $_SERVER['QUERY_STRING'] );
+
+            if ( isset( $queries['action'] )
+                && 'postpass' === $queries['action'] )
+                return false;
+        }
+
+        // --------------------------- >8 ---------------------------
+
+        // protocol version
+        // COMMENT OUT to allow old proxy servers (HTTP/1.0)
+        if ( ! isset( $_SERVER['SERVER_PROTOCOL'] )
+            || false === strpos( $_SERVER['SERVER_PROTOCOL'], 'HTTP/1.1' ) )
+            return 'bad_request_http_post_1_1';
+
+        // connection header
+        if ( ! isset( $_SERVER['HTTP_CONNECTION'] )
+            || false === stripos( $_SERVER['HTTP_CONNECTION'], 'keep-alive' ) )
+            return 'bad_request_http_post_keep_alive';
+
+        // accept-encoding header
+        if ( ! isset ( $_SERVER['HTTP_ACCEPT_ENCODING'] )
+            || false === strpos( $_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip' ) )
+            return 'bad_request_http_post_accept_encoding';
+
+        // cookie
+        // COMMENT OUT on 'Allow anyone to register'
+        if ( ! isset( $_SERVER['HTTP_COOKIE'] )
+            || false === strpos( $_SERVER['HTTP_COOKIE'], 'wordpress_test_cookie' ) )
+            return 'bad_request_http_post_test_cookie';
+
+        // empty user agent
+        if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+            $user_agent = $_SERVER['HTTP_USER_AGENT'];
+        } else {
+            return 'bad_request_http_post_user_agent';
+        }
+
+        // COMMENTS out on 'Allow anyone to register'
+        /*
+        // allow IE8 logins
+        if ( 1 === preg_match( '/^Mozilla\/4\.0\ \(compatible; MSIE 8\.0;/', $user_agent ) )
+            return false;
+        */
+
+        // botnets
+        if ( 1 === preg_match('/Firefox\/1|bot|spider|crawl|user-agent/i', $user_agent ) )
+            return 'bad_request_http_post_user_agent_botnet';
+
+        // modern browsers
+        if ( 1 !== preg_match( '/^Mozilla\/5\.0/', $user_agent ) )
+            return 'bad_request_http_post_user_agent_mozilla_5_0';
+
+        // OK
         return false;
     }
 
-    // don't ban on post listing by author
-    if ( strpos( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/wp-admin/' ) === false
-        && intval( @$_GET['author'] ) ) {
-        return 'author-sniffing';
+    function __construct() {
+
+        $result = $this->check();
+
+        // check result
+        if ( false === $result )
+            return;
+
+        //DEBUG echo '<pre>blocked by O1_Bad_Request, reason: <strong>' . $result; return;
+
+        // trigger fail2ban
+        for ( $i = 0; $i < self::COUNT; $i++ )
+            error_log( $this->prefix  . $result );
+
+        ob_end_clean();
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.0 403 Forbidden' );
+        exit();
     }
 
-    if ( stripos( $_SERVER['REQUEST_METHOD'], 'POST' ) !== false
-        //FIXME path only
-        && stripos( $_SERVER['REQUEST_URI'], '/wp-login.php' ) !== false ) {
-        // POST data
-        if (!empty($_POST['log'])) {
-            $username = $_POST['log'];
-            if ( in_array( strtolower( $username ), $names2ban, true ) ) {
-                return 'login_banned-username';
-            }
-            if ( preg_match( '/^[A-Z][a-z]+[A-Z][a-z]+$/', $username, $m ) === 1 ) {
-                return 'login_UserName-pattern';
-            }
-        }
-        // accept header - IE9 send only "*/*"
-        //if ( strpos( @$_SERVER['HTTP_ACCEPT'], 'text/html' ) === false ) {
-        if ( strpos( @$_SERVER['HTTP_ACCEPT'], '/' ) === false ) {
-            return 'login_!http/accept';
-        }
-        // accept language header - a minimum is like "en"
-        if (strlen(@$_SERVER['HTTP_ACCEPT_LANGUAGE']) < 2) {
-            return 'login_!http/accept-language';
-        }
-        // http content type
-        if (strpos(@$_SERVER['CONTENT_TYPE'], 'application/x-www-form-urlencoded') === false) {
-            return 'login_!content-type';
-        }
-        // http content length
-        if (!is_numeric(@$_SERVER['CONTENT_LENGTH'])) {
-            return 'login_!content-length';
-        }
-
-
-        // allow password protected posts without rules below
-        // TODO allow 'logout', 'lostpassword', 'retrievepassword', 'resetpass', 'rp', 'register', NOT 'login'
-        $queries = bad_request_parse_query(@$_SERVER['QUERY_STRING']);
-        if (isset($queries['action']) &&
-            $queries['action'] === 'postpass' &&
-            parse_url(@$_SERVER['HTTP_REFERER'], PHP_URL_HOST) === $_SERVER['HTTP_HOST']) {
-            return false;
-        }
-        // protocol version -   old proxy servers use 1.0 !!!
-        if (strpos(@$_SERVER['SERVER_PROTOCOL'], 'HTTP/1.1') === false) {
-            return 'login_!http/1.1';
-        }
-        // http connection
-        if (stripos(@$_SERVER['HTTP_CONNECTION'], 'keep-alive') === false) {
-            return 'login_!keep-alive';
-        }
-        // accept encoding header
-        if (strpos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') === false) {
-            return 'login_!http/accept-encoding';
-        }
-        // the referer
-        if (parse_url(@$_SERVER['HTTP_REFERER'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST'] ||
-            strpos(parse_url(@$_SERVER['HTTP_REFERER'], PHP_URL_PATH), '/wp-login.php') === false
-           ) {
-            return 'login_referer!=wp-login';
-        }
-        // cookies
-        if (strpos(@$_SERVER['HTTP_COOKIE'], 'wordpress_test_cookie')  === false) {
-            return 'login_!wp-test-cookie';
-        }
-
-        /* ---------------- USER AGENT testing ---------- */
-        // allow IE8 logins
-        //if (preg_match('/^Mozilla\/4\.0\ \(compatible; MSIE 8\.0;/', $_SERVER['HTTP_USER_AGENT'], $m) === 1) {
-        //    return false;
-        //}
-        // botnet UA
-        // FIXME join these two regex-s
-        if (preg_match('/Firefox\/1|bot|spider|crawl|user-agent/i', @$_SERVER['HTTP_USER_AGENT'], $m) === 1) {
-            return 'login_fake/old-firefox';
-        }
-        // only modern browsers - Mozilla/5.0
-        if (preg_match('/^Mozilla\/5\.0/', @$_SERVER['HTTP_USER_AGENT'], $m) !== 1) {
-            return 'login_!mozilla5.0';
-        }
-    }
-
-    // OK
-    return false;
 }
 
-$bad_request_result = bad_request();
-if ( false !== $bad_request_result ) {
-    for ( $i = 1; $i <= $bad_request_count; $i++ ) {
-        error_log( 'File does not exist: ' . $bad_request_result );
-    }
-    die;
-}
-
+new O1_Bad_Request();
 

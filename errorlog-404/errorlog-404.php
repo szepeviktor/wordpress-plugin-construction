@@ -30,6 +30,7 @@ class O1_ErrorLog404 {
 
         // admin_init() does it register_activation_hook( __FILE__, array( $this, 'activate' ) );
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+        //TODO uninstall hook/file
 
         $general_options = get_option( 'o1_errorlog_general' );
         $request_options = get_option( 'o1_errorlog_request' );
