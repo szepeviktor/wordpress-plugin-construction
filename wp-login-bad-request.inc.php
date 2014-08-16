@@ -5,7 +5,7 @@ Description: Copy it in the top of your wp-config.php
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/
-Version: 1.4
+Version: 1.5
 */
 
 class O1_Bad_Request {
@@ -75,7 +75,7 @@ class O1_Bad_Request {
         // don't ban on post listing by author
         if ( false === strpos( $request_path, '/wp-admin/' )
             && isset( $_GET['author'] )
-            && is_int( $_GET['author'] ) )
+            && is_numeric( $_GET['author'] ) )
             return 'bad_request_author_sniffing';
 
         // check only POST requests to wp-login
