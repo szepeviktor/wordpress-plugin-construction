@@ -118,12 +118,11 @@ class O1_Bad_Request {
             || ! is_numeric( $_SERVER['CONTENT_LENGTH'] ) )
             return 'bad_request_http_post_content_length';
 
-        // referer header
+        // referer header (host only)
         // COMMENT OUT on 'Allow anyone to register'
         if ( ! isset ( $_SERVER['HTTP_REFERER'] )
-            || $server_name !== parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST )
-            || false === strpos( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-login.php' ) )
-            return 'bad_request_http_post_referer';
+            || $server_name !== parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ) )
+            return 'bad_request_http_post_referer_host';
 
         // don't ban password protected posts by the rules AFTER this one
         if ( isset( $_SERVER['QUERY_STRING'] ) ) {
@@ -135,6 +134,11 @@ class O1_Bad_Request {
         }
 
         // --------------------------- >8 ---------------------------
+
+        // referer header (path)
+        // COMMENT OUT on 'Allow anyone to register'
+        if ( false === strpos( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-login.php' ) )
+            return 'bad_request_http_post_referer_path';
 
         // protocol version
         // COMMENT OUT to allow old proxy servers (HTTP/1.0)
