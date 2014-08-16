@@ -1,16 +1,16 @@
 <?php
 /*
-Snippet Name: WordPress Bad Request
-Description: Copy it in the top of your wp-config.php
+Plugin Name: WordPress Block Bad Requests (wp-config snippet or MU plugin)
+Description: Copy it in the top of your wp-config.php or make it an mu-plugin
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/
-Version: 1.5
+Author URI: http://www.online1.hu/webdesign/
+Version: 1.6
+Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_TWO_CAPS
 */
 
 class O1_Bad_Request {
-
-    const COUNT = 6;
 
     private $prefix = 'File does not exist: ';
     private $names2ban = array(
@@ -43,6 +43,11 @@ class O1_Bad_Request {
         'username',
         'webmaster'
     );
+    private $trigger_count = 6;
+    private $allow_registration = false;
+    private $allow_ie8_login = false;
+    private $allow_old_proxies = false;
+    private $allow_two_capitals = false;
 
     private function parse_query( $query_string ) {
         $field_strings = explode( '&', $query_string );
@@ -92,9 +97,12 @@ class O1_Bad_Request {
             if ( in_array( strtolower( $username ), $this->names2ban ) )
                 return 'bad_request_banned_username';
 
-            // attackers use usernames with "TwoCapitals"
-            if ( 1 === preg_match( '/^[A-Z][a-z]+[A-Z][a-z]+$/', $username ) )
-                return 'bad_request_username_pattern';
+            // attackers try usernames with "TwoCapitals"
+            if ( ! $this->allow_two_capitals ) {
+
+                if ( 1 === preg_match( '/^[A-Z][a-z]+[A-Z][a-z]+$/', $username ) )
+                    return 'bad_request_username_pattern';
+            }
         }
 
         // accept header - IE9 sends only "*/*"
@@ -119,10 +127,13 @@ class O1_Bad_Request {
             return 'bad_request_http_post_content_length';
 
         // referer header (host only)
-        // COMMENT OUT on 'Allow anyone to register'
-        if ( ! isset ( $_SERVER['HTTP_REFERER'] )
-            || $server_name !== parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ) )
-            return 'bad_request_http_post_referer_host';
+        if ( ! $this->allow_registration ) {
+
+            if ( ! isset ( $_SERVER['HTTP_REFERER'] )
+                || $server_name !== parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST )
+            )
+                return 'bad_request_http_post_referer_host';
+        }
 
         // don't ban password protected posts by the rules AFTER this one
         if ( isset( $_SERVER['QUERY_STRING'] ) ) {
@@ -136,15 +147,21 @@ class O1_Bad_Request {
         // --------------------------- >8 ---------------------------
 
         // referer header (path)
-        // COMMENT OUT on 'Allow anyone to register'
-        if ( false === strpos( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-login.php' ) )
-            return 'bad_request_http_post_referer_path';
+        if ( ! $this->allow_registration ) {
+
+            $referer = $_SERVER['HTTP_REFERER'];
+            if ( false === strpos( parse_url( $referer, PHP_URL_PATH ), '/wp-login.php' ) )
+                return 'bad_request_http_post_referer_path';
+        }
 
         // protocol version
-        // COMMENT OUT to allow old proxy servers (HTTP/1.0)
-        if ( ! isset( $_SERVER['SERVER_PROTOCOL'] )
-            || false === strpos( $_SERVER['SERVER_PROTOCOL'], 'HTTP/1.1' ) )
-            return 'bad_request_http_post_1_1';
+        if ( ! $this->allow_old_proxies ) {
+
+            if ( ! isset( $_SERVER['SERVER_PROTOCOL'] )
+                || false === strpos( $_SERVER['SERVER_PROTOCOL'], 'HTTP/1.1' )
+            )
+                return 'bad_request_http_post_1_1';
+        }
 
         // connection header
         if ( ! isset( $_SERVER['HTTP_CONNECTION'] )
@@ -157,10 +174,13 @@ class O1_Bad_Request {
             return 'bad_request_http_post_accept_encoding';
 
         // cookie
-        // COMMENT OUT on 'Allow anyone to register'
-        if ( ! isset( $_SERVER['HTTP_COOKIE'] )
-            || false === strpos( $_SERVER['HTTP_COOKIE'], 'wordpress_test_cookie' ) )
-            return 'bad_request_http_post_test_cookie';
+        if ( ! $this->allow_registration ) {
+
+            if ( ! isset( $_SERVER['HTTP_COOKIE'] )
+                || false === strpos( $_SERVER['HTTP_COOKIE'], 'wordpress_test_cookie' )
+            )
+                return 'bad_request_http_post_test_cookie';
+        }
 
         // empty user agent
         if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
@@ -169,12 +189,12 @@ class O1_Bad_Request {
             return 'bad_request_http_post_user_agent';
         }
 
-        // COMMENTS out on 'Allow anyone to register'
-        /*
-        // allow IE8 logins
-        if ( 1 === preg_match( '/^Mozilla\/4\.0\ \(compatible; MSIE 8\.0;/', $user_agent ) )
-            return false;
-        */
+        // IE8 logins
+        if ( $this->allow_ie8_login ) {
+
+            if ( 1 === preg_match( '/^Mozilla\/4\.0\ \(compatible; MSIE 8\.0;/', $user_agent ) )
+                return false;
+        }
 
         // botnets
         if ( 1 === preg_match('/Firefox\/1|bot|spider|crawl|user-agent/i', $user_agent ) )
@@ -189,17 +209,32 @@ class O1_Bad_Request {
     }
 
     function __construct() {
+        // options
+        if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
+            $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
+
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_REG' ) && O1_BAD_REQUEST_ALLOW_REG )
+            $this->allow_registration = true;
+
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_IE8' ) && O1_BAD_REQUEST_ALLOW_IE8 )
+            $this->allow_ie8_login = true;
+
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_OLD_PROXIES' ) && O1_BAD_REQUEST_ALLOW_OLD_PROXIES )
+            $this->allow_old_proxies = true;
+
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_TWO_CAPS' ) && O1_BAD_REQUEST_ALLOW_TWO_CAPS )
+            $this->allow_two_capitals = true;
 
         $result = $this->check();
 
-        // check result
+        // false means no bad requests
         if ( false === $result )
             return;
 
-        //DEBUG echo '<pre>blocked by O1_Bad_Request, reason: <strong>' . $result; return;
+        //DEBUG echo '<pre>blocked by O1_Bad_Request, reason: <strong>'.$result;error_log('Bad_Request:'.$result);return;
 
         // trigger fail2ban
-        for ( $i = 0; $i < self::COUNT; $i++ )
+        for ( $i = 0; $i < $this->trigger_count; $i++ )
             error_log( $this->prefix  . $result );
 
         ob_end_clean();

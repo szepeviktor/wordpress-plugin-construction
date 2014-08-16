@@ -276,9 +276,9 @@ Referer: $REFERER
 Cookie: $COOKIE
 Connection: $CONNECTION
 Content-Type: $CONTENT_TYPE
-Content-Length: $CONTENT_LENGTH
+Content-Length: 39
 
-$CONTENT
+post_password=1&Submit=K%C3%BCld%C3%A9s
 LOGIN
 
 
