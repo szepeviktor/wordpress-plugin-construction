@@ -69,6 +69,14 @@ class O1_ErrorLog404 {
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
         //TODO uninstall hook/file
 
+        // exit on local access
+        // don't run on install / upgrade
+        if ( php_sapi_name() === 'cli'
+            || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR']
+            || defined( 'WP_INSTALLING' ) && WP_INSTALLING
+        )
+            return;
+
         $general_options = get_option( 'o1_errorlog_general' );
         $request_options = get_option( 'o1_errorlog_request' );
         $login_options = get_option( 'o1_errorlog_login' );

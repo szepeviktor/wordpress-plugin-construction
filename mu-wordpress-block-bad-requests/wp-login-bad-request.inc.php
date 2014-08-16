@@ -69,8 +69,11 @@ class O1_Bad_Request {
 
     private function check() {
         // exit on local access
+        // don't run on install / upgrade
         if ( php_sapi_name() === 'cli'
-            || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] )
+            || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR']
+            || defined( 'WP_INSTALLING' ) && WP_INSTALLING
+        )
             return false;
 
         $request_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );

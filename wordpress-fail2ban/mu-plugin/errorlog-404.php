@@ -55,8 +55,12 @@ class O1_ErrorLog404_MU {
 
     public function __construct() {
 
+        // exit on local access
         // don't run on install / upgrade
-        if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING )
+        if ( php_sapi_name() === 'cli'
+            || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR']
+            || defined( 'WP_INSTALLING' ) && WP_INSTALLING
+        )
             return;
 
         // don't redirect to admin
