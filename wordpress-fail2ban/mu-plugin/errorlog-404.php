@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Attack logging for fail2ban
+Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Description: Reports 404s and various attacks in error.log for fail2ban
+Description: Reports 404s and various attacks in error.log for fail2ban (mu-plugin)
 Version: 2.5
 License: The MIT License (MIT)
 Author: Viktor Szépe
@@ -10,7 +10,8 @@ Author URI: http://www.online1.hu/webdesign/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'File does not exist: errorlog_direct_access ' . esc_url( $_SERVER['REQUEST_URI'] ) );
+    error_log( 'File does not exist: errorlog_direct_access '
+               . esc_url( $_SERVER['REQUEST_URI'] ) );
     ob_end_clean();
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.0 403 Forbidden' );
@@ -23,6 +24,7 @@ class O1_ErrorLog404_MU {
     private $wp_die_ajax_handler;
     private $wp_die_xmlrpc_handler;
     private $wp_die_handler;
+    private $is_redirect = false;
 
     private function esc_log( $string ) {
 
@@ -33,6 +35,22 @@ class O1_ErrorLog404_MU {
         $string = preg_replace( '/[^\P{C}]+/u', "\xC2\xBF", $string );
 
         return ' (' . $string . ')';
+    }
+
+    private function is_robot( $ua ) {
+
+        // test user agent string (robot = not modern browser)
+        // based on: http://www.useragentstring.com/pages/Browserlist/
+        return ( ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
+            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
+            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
+        );
+    }
+
+    private function trigger( $slug, $message = '' ) {
+        error_log( $this->prefix
+                   . $slug
+                   . ( empty( $message ) ? '' : $this->esc_log( $message ) ) );
     }
 
     public function __construct() {
@@ -53,6 +71,7 @@ class O1_ErrorLog404_MU {
         // non-existent URLs
         add_action( 'init', array( $this, 'url_hack' ) );
         add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
+
         // on robot and human 404
         add_action( 'template_redirect', array( $this, 'wp_404' ) );
         add_action( 'plugins_loaded', array( $this, 'robot_403' ), 0 );
@@ -77,20 +96,17 @@ class O1_ErrorLog404_MU {
         $request_uri = $_SERVER['REQUEST_URI'];
 
         // don't show the 404 page for robots
-        if ( ! is_user_logged_in()
-            && ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
-            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
-            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) ) ) {
+        if ( ! is_user_logged_in() && $this->is_robot( $ua ) ) {
 
             ob_end_clean();
-            error_log( $this->prefix . 'errorlog_robot404' . $this->esc_log ( $request_uri ) );
+            $this->trigger( 'errorlog_robot404', $request_uri );
             header( 'Status: 404 Not Found' );
             header( 'HTTP/1.0 404 Not Found' );
             exit();
         }
 
         // humans
-        error_log( $this->prefix . 'errorlog_404' . $this->esc_log ( $request_uri ) );
+        $this->trigger( 'errorlog_404', $request_uri );
     }
 
     public function url_hack() {
@@ -99,19 +115,26 @@ class O1_ErrorLog404_MU {
 
         if ( substr( $request_uri, 0, 2 ) === '//'
             || strstr( $request_uri, '../' ) !== false
-            || strstr( $request_uri, '/..' ) !== false )
-            error_log( $this->prefix . 'errorlog_url_hack' . $this->esc_log( $request_uri ) );
+            || strstr( $request_uri, '/..' ) !== false
+        ) {
+
+            // remember this to prevent double-logging in redirect()
+            $this->is_redirect = true;
+            $this->trigger( 'errorlog_url_hack', $request_uri );
+        }
     }
 
     public function redirect( $redirect_url, $requested_url ) {
 
-        error_log( $this->prefix . 'errorlog_redirect' . $this->esc_log( $requested_url ) );
+        if ( false === $this->is_redirect )
+            $this->trigger( 'errorlog_redirect', $requested_url );
+
         return $redirect_url;
     }
 
     public function login_failed( $username ) {
 
-        error_log( $this->prefix . 'errorlog_login_failed' . $this->esc_log( $username ) );
+        $this->trigger( 'errorlog_login_failed', $username );
     }
 
     public function login( $username ) {
@@ -129,7 +152,7 @@ class O1_ErrorLog404_MU {
     public function lostpass( $username ) {
 
         if ( empty( $username ) ) {
-            // higher score !!!
+            //FIXME higher score !!!
         }
 
         error_log( 'WordPress lost password:' . $this->esc_log( $username ) );
@@ -147,7 +170,7 @@ class O1_ErrorLog404_MU {
 
         // wp-admin/includes/ajax-actions.php returns -1 of security breach
         if ( ! is_scalar( $message ) || (int) $message < 0 )
-            error_log( $this->prefix . 'errorlog_wpdie_ajax' );
+            $this->trigger( 'errorlog_wpdie_ajax' );
 
         // call previous handler
         call_user_func( $this->wp_die_ajax_handler, $message, $title, $args );
@@ -164,7 +187,7 @@ class O1_ErrorLog404_MU {
     public function wp_die_xmlrpc_handler( $message, $title, $args ) {
 
         if ( ! empty( $message ) )
-            error_log( $this->prefix . 'errorlog_wpdie_xmlrpc' . $this->esc_log( $message ) );
+            $this->trigger( 'errorlog_wpdie_xmlrpc', $message );
 
         // call previous handler
         call_user_func( $this->wp_die_xmlrpc_handler, $message, $title, $args );
@@ -181,7 +204,7 @@ class O1_ErrorLog404_MU {
     public function wp_die_handler( $message, $title, $args ) {
 
         if ( ! empty( $message ) )
-            error_log( $this->prefix . 'errorlog_wpdie' . $this->esc_log( $message ) );
+            $this->trigger( 'errorlog_wpdie', $message );
 
         // call previous handler
         call_user_func( $this->wp_die_handler, $message, $title, $args );
@@ -197,26 +220,27 @@ class O1_ErrorLog404_MU {
 
         if ( ! is_user_logged_in()
             // a robot or < IE8
-            && ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
-            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
-            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
+            && $this->is_robot( $ua )
 
             // robots may only enter on the frontend (index.php)
-            // trigger only in WP dirs: wp-admin, wp-includes, wp-content
+            // $this->trigger only in WP dirs: wp-admin, wp-includes, wp-content
             && 1 === preg_match( '/\/(' . $wp_dirs . ')\//i', $request_path )
 
-            // not a missing media file or containing '.php'
-            && ( false === strstr( $request_path, basename( $uploads['baseurl'] ) ) || false !== substr( $request_path, '.php' ) )
+            // exclude missing media files but not '.php'
+            && ( false === strstr( $request_path, basename( $uploads['baseurl'] ) )
+                || false !== substr( $request_path, '.php' )
+            )
 
             // exclude XML RPC (xmlrpc.php)
             && ! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
 
             // exclude trackback (wp-trackback.php)
-            && 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path ) ) {
+            && 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path )
+        ) {
 
             //FIXME wp-includes/ms-files.php:12 ???
             ob_end_clean();
-            error_log( $this->prefix . 'errorlog_robot403' . $this->esc_log ( $request_path ) );
+            $this->trigger( 'errorlog_robot403', $request_path );
             header( 'Status: 403 Forbidden' );
             header( 'HTTP/1.0 403 Forbidden' );
             exit();
@@ -225,12 +249,12 @@ class O1_ErrorLog404_MU {
 
     public function wpcf7_spam( $text ) {
 
-        error_log( $this->prefix . 'errorlog_wpcf7_spam' . $this->esc_log( $text ) );
+        $this->trigger( 'errorlog_wpcf7_spam', $text );
     }
 
     public function wpcf7_spam_mx( $domain ) {
 
-        error_log( $this->prefix . 'errorlog_wpcf7_spam_mx' . $this->esc_log( $domain ) );
+        $this->trigger( 'errorlog_wpcf7_spam_mx', $domain );
     }
 
 }
@@ -238,12 +262,15 @@ class O1_ErrorLog404_MU {
 new O1_ErrorLog404_MU();
 
 /*
-- invalid user during registration
-- invalid user during lost password
-- invalid "lost password" token
+- write test.sh
+- new: invalid user/email during registration
+- new: invalid user during lost password
+- new: invalid "lost password" token
 - (as wp-config.inc) robots&errors in /wp-comments-post.php
+- log xmlrpc? add_action( 'xmlrpc_call', function( $call ) { if ( 'pingback.ping' == $call ) {} } );
+- log proxy IP: HTTP_X_FORWARDED_FOR, HTTP_INCAP_CLIENT_IP, HTTP_CF_CONNECTING_IP (could be faked)
 
-// dirty way
+// registration errors: dirty way
 add_filter( 'login_errors', function ($em) {
     error_log( 'em:' . $em );
     return $em;

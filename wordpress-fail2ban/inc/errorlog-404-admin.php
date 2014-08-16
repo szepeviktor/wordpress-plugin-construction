@@ -169,6 +169,14 @@ class O1_Errorlog_404_admin {
                     'default' => '1'
                 ),
                 array(
+                    'id' => 'lostpass',
+                    'name' => __( 'Lost password', 'o1' ),
+                    'label' => __( 'Log username on password retrieval requests', 'o1' ),
+                    'desc' => __( 'Report usernames in the error.log upon password retrieval requests', 'o1' ),
+                    'type' => 'checkbox',
+                    'default' => '1'
+                ),
+                array(
                     'id' => 'wpdie',
                     'name' => __( '<code>wp_die</code> execution', 'o1' ),
                     'label' => __( 'When plugins or WordPress core finds sufficient permissions', 'o1' ),
