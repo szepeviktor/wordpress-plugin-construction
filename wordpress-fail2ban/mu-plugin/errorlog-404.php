@@ -273,6 +273,7 @@ new O1_ErrorLog404_MU();
 - (as wp-config.inc) robots&errors in /wp-comments-post.php
 - log xmlrpc? add_action( 'xmlrpc_call', function( $call ) { if ( 'pingback.ping' == $call ) {} } );
 - log proxy IP: HTTP_X_FORWARDED_FOR, HTTP_INCAP_CLIENT_IP, HTTP_CF_CONNECTING_IP (could be faked)
+- scores system: double score for robots, humans ???, 403 immediate ban, rob/hum score templates in <select>
 
 // registration errors: dirty way
 add_filter( 'login_errors', function ($em) {

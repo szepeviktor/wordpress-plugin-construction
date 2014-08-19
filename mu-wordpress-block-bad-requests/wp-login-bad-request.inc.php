@@ -49,6 +49,7 @@ class O1_Bad_Request {
     private $allow_old_proxies = false;
     private $allow_connection_close = false;
     private $allow_two_capitals = false;
+    private $result = false;
 
     private function parse_query( $query_string ) {
         $field_strings = explode( '&', $query_string );
@@ -66,6 +67,17 @@ class O1_Bad_Request {
         }
 
         return $fields;
+    }
+
+    private function trigger() {
+        // trigger fail2ban
+        for ( $i = 0; $i < $this->trigger_count; $i++ )
+            error_log( $this->prefix  . $this->result );
+
+        ob_end_clean();
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.0 403 Forbidden' );
+        exit();
     }
 
     private function check() {
@@ -242,30 +254,21 @@ class O1_Bad_Request {
         if ( defined( 'O1_BAD_REQUEST_ALLOW_TWO_CAPS' ) && O1_BAD_REQUEST_ALLOW_TWO_CAPS )
             $this->allow_two_capitals = true;
 
-        $result = $this->check();
+        $this->result = $this->check();
 
-        // false means no bad requests
-        if ( false === $result )
-            return;
+        //DEBUG echo '<pre>blocked by O1_Bad_Request, reason: <strong>'.$this->result;error_log('Bad_Request:'.$this->result);return;
 
-        //DEBUG echo '<pre>blocked by O1_Bad_Request, reason: <strong>'.$result;error_log('Bad_Request:'.$result);return;
-
-        // trigger fail2ban
-        for ( $i = 0; $i < $this->trigger_count; $i++ )
-            error_log( $this->prefix  . $result );
-
-        ob_end_clean();
-        header( 'Status: 403 Forbidden' );
-        header( 'HTTP/1.0 403 Forbidden' );
-        exit();
+        // false means NO bad requests
+        if ( false !== $this->result )
+            $this->trigger();
     }
 
 }
 
 new O1_Bad_Request();
 
-/*
-TODO:
-readme: snippet copy, require_once( dirname(__FILE__) . '/wp-login-bad-request.inc.php' );, mu-plugin, plugin
+/*TODO
+readme: snippet copy, require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );, mu-plugin, plugin
+php-doc
 
 */
