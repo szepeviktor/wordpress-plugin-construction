@@ -7,7 +7,7 @@ License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 Version: 1.6
-Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_TWO_CAPS
+Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
 */
 
 class O1_Bad_Request {
@@ -47,6 +47,7 @@ class O1_Bad_Request {
     private $allow_registration = false;
     private $allow_ie8_login = false;
     private $allow_old_proxies = false;
+    private $allow_connection_close = false;
     private $allow_two_capitals = false;
 
     private function parse_query( $query_string ) {
@@ -129,12 +130,16 @@ class O1_Bad_Request {
             || ! is_numeric( $_SERVER['CONTENT_LENGTH'] ) )
             return 'bad_request_http_post_content_length';
 
+        // referer header (empty)
+        if ( ! isset ( $_SERVER['HTTP_REFERER'] ) )
+            return 'bad_request_http_post_referer_empty';
+
+        $referer = $_SERVER['HTTP_REFERER'];
+
         // referer header (host only)
         if ( ! $this->allow_registration ) {
 
-            if ( ! isset ( $_SERVER['HTTP_REFERER'] )
-                || $server_name !== parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST )
-            )
+            if ( $server_name !== parse_url( $referer, PHP_URL_HOST ) )
                 return 'bad_request_http_post_referer_host';
         }
 
@@ -152,28 +157,34 @@ class O1_Bad_Request {
         // referer header (path)
         if ( ! $this->allow_registration ) {
 
-            $referer = $_SERVER['HTTP_REFERER'];
             if ( false === strpos( parse_url( $referer, PHP_URL_PATH ), '/wp-login.php' ) )
                 return 'bad_request_http_post_referer_path';
         }
 
         // protocol version
+        if ( ! isset( $_SERVER['SERVER_PROTOCOL'] ) )
+                return 'bad_request_http_post_protocol_empty';
+
         if ( ! $this->allow_old_proxies ) {
 
-            if ( ! isset( $_SERVER['SERVER_PROTOCOL'] )
-                || false === strpos( $_SERVER['SERVER_PROTOCOL'], 'HTTP/1.1' )
-            )
+            if ( false === strpos( $_SERVER['SERVER_PROTOCOL'], 'HTTP/1.1' ) )
                 return 'bad_request_http_post_1_1';
         }
 
-        // connection header
-        if ( ! isset( $_SERVER['HTTP_CONNECTION'] )
-            || false === stripos( $_SERVER['HTTP_CONNECTION'], 'keep-alive' ) )
-            return 'bad_request_http_post_keep_alive';
+        // connection header (keep alive)
+        if ( ! isset( $_SERVER['HTTP_CONNECTION'] ) )
+            return 'bad_request_http_post_connection_empty';
+
+        if ( ! $this->allow_connection_close ) {
+
+            if ( false === stripos( $_SERVER['HTTP_CONNECTION'], 'keep-alive' ) )
+                return 'bad_request_http_post_connection';
+        }
 
         // accept-encoding header
         if ( ! isset ( $_SERVER['HTTP_ACCEPT_ENCODING'] )
-            || false === strpos( $_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip' ) )
+            || false === strpos( $_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip' )
+        )
             return 'bad_request_http_post_accept_encoding';
 
         // cookie
@@ -225,6 +236,9 @@ class O1_Bad_Request {
         if ( defined( 'O1_BAD_REQUEST_ALLOW_OLD_PROXIES' ) && O1_BAD_REQUEST_ALLOW_OLD_PROXIES )
             $this->allow_old_proxies = true;
 
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE' ) && O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE )
+            $this->allow_connection_close = true;
+
         if ( defined( 'O1_BAD_REQUEST_ALLOW_TWO_CAPS' ) && O1_BAD_REQUEST_ALLOW_TWO_CAPS )
             $this->allow_two_capitals = true;
 
@@ -250,3 +264,8 @@ class O1_Bad_Request {
 
 new O1_Bad_Request();
 
+/*
+TODO:
+readme: snippet copy, require_once( dirname(__FILE__) . '/wp-login-bad-request.inc.php' );, mu-plugin, plugin
+
+*/
