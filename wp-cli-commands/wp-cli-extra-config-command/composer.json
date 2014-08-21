@@ -1,0 +1,22 @@
+{
+	"name": "szepeviktor/wp-cli-extra-config-command",
+	"type": "command",
+	"description": "Manage extra (non wp-cli) config options.",
+	"keywords": ["wp-cli","configuration","options"],
+	"homepage": "https://github.com/szepeviktor/wordpress-plugin-construction",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Viktor Szépe",
+			"email": "viktor@szepe.net",
+			"homepage": "http://www.online1.hu",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"files": [ "wp-cli-extra-config-command.php" ]
+	}
+}
