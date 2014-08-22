@@ -74,9 +74,16 @@ class O1_Bad_Request {
         for ( $i = 0; $i < $this->trigger_count; $i++ ) {
 
             error_log( $this->prefix  . $this->result );
-            // to learn attack internals
-            error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
         }
+
+        // help learning attack internals
+        $server = array();
+        foreach ( $_SERVER as $header => $value ) {
+            if ( 'HTTP_' === substr( $header, 0, 5 ) )
+                $server[$header] = $value;
+        }
+        error_log( 'HTTP headers: ' . serialize( $server ) );
+        error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
 
         ob_end_clean();
         header( 'Status: 403 Forbidden' );
