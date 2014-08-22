@@ -77,8 +77,8 @@ class O1_ErrorLog404_MU {
         add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
 
         // on robot and human 404
-        add_action( 'template_redirect', array( $this, 'wp_404' ) );
         add_action( 'plugins_loaded', array( $this, 'robot_403' ), 0 );
+        add_action( 'template_redirect', array( $this, 'wp_404' ) );
 
         // on non-empty wp_die messages
         add_filter( 'wp_die_ajax_handler', array( $this, 'wp_die_ajax' ), 1 );
@@ -214,6 +214,7 @@ class O1_ErrorLog404_MU {
         call_user_func( $this->wp_die_handler, $message, $title, $args );
     }
 
+    // non-frontend requests from robots
     public function robot_403() {
 
         $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
@@ -227,7 +228,7 @@ class O1_ErrorLog404_MU {
             && $this->is_robot( $ua )
 
             // robots may only enter on the frontend (index.php)
-            // $this->trigger only in WP dirs: wp-admin, wp-includes, wp-content
+            // trigger only in WP dirs: wp-admin, wp-includes, wp-content
             && 1 === preg_match( '/\/(' . $wp_dirs . ')\//i', $request_path )
 
             // exclude missing media files but not '.php'
@@ -242,7 +243,7 @@ class O1_ErrorLog404_MU {
             && 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path )
         ) {
 
-            //FIXME wp-includes/ms-files.php:12 ???
+            //FIXME wp-includes/ms-files.php:12
             ob_end_clean();
             $this->trigger( 'errorlog_robot403', $request_path );
             header( 'Status: 403 Forbidden' );
@@ -273,7 +274,13 @@ new O1_ErrorLog404_MU();
 - (as wp-config.inc) robots&errors in /wp-comments-post.php
 - log xmlrpc? add_action( 'xmlrpc_call', function( $call ) { if ( 'pingback.ping' == $call ) {} } );
 - log proxy IP: HTTP_X_FORWARDED_FOR, HTTP_INCAP_CLIENT_IP, HTTP_CF_CONNECTING_IP (could be faked)
-- scores system: double score for robots, humans ???, 403 immediate ban, rob/hum score templates in <select>
+- scores system:
+    double score for
+        obots, humans ???
+        human non-GET 404 (robots get 403)
+    403 immediate ban
+    rob/hum score-pair templates in <select>
+    fake Googlebot, Referer: http://www.google.com ???
 
 // registration errors: dirty way
 add_filter( 'login_errors', function ($em) {

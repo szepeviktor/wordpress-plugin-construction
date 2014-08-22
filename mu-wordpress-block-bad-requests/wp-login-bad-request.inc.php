@@ -71,8 +71,12 @@ class O1_Bad_Request {
 
     private function trigger() {
         // trigger fail2ban
-        for ( $i = 0; $i < $this->trigger_count; $i++ )
+        for ( $i = 0; $i < $this->trigger_count; $i++ ) {
+
             error_log( $this->prefix  . $this->result );
+            // to learn attack internals
+            error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
+        }
 
         ob_end_clean();
         header( 'Status: 403 Forbidden' );
@@ -124,22 +128,26 @@ class O1_Bad_Request {
         // accept header - IE9 sends only "*/*"
         //|| false === strpos( $_SERVER['HTTP_ACCEPT'], 'text/html' )
         if ( ! isset( $_SERVER['HTTP_ACCEPT'] )
-            || false === strpos( $_SERVER['HTTP_ACCEPT'], '/' ) )
+            || false === strpos( $_SERVER['HTTP_ACCEPT'], '/' )
+        )
             return 'bad_request_http_post_accept';
 
         // accept-language header
         if ( ! isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] )
-            || strlen( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) < 2 )
+            || strlen( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) < 2
+        )
             return 'bad_request_http_post_accept_language';
 
         // content-type header
         if ( ! isset( $_SERVER['CONTENT_TYPE'] )
-            || false === strpos( $_SERVER['CONTENT_TYPE'], 'application/x-www-form-urlencoded' ) )
+            || false === strpos( $_SERVER['CONTENT_TYPE'], 'application/x-www-form-urlencoded' )
+        )
             return 'bad_request_http_post_content_type';
 
         // content-length header
         if ( ! isset( $_SERVER['CONTENT_LENGTH'] )
-            || ! is_numeric( $_SERVER['CONTENT_LENGTH'] ) )
+            || ! is_numeric( $_SERVER['CONTENT_LENGTH'] )
+        )
             return 'bad_request_http_post_content_length';
 
         // referer header (empty)
@@ -160,7 +168,8 @@ class O1_Bad_Request {
             $queries = $this->parse_query( $_SERVER['QUERY_STRING'] );
 
             if ( isset( $queries['action'] )
-                && 'postpass' === $queries['action'] )
+                && 'postpass' === $queries['action']
+            )
                 return false;
         }
 
