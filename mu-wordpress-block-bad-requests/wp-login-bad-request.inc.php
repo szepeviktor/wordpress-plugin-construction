@@ -287,4 +287,7 @@ new O1_Bad_Request();
 readme: snippet copy, require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );, mu-plugin, plugin
 php-doc
 
+require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
+
+
 */
