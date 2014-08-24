@@ -18,6 +18,7 @@ class O1_Bad_Request {
         'admin',
         'administrator',
         'backup',
+        'blog',
         'business',
         'contact',
         'data',
