@@ -2,8 +2,8 @@
 /*
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Description: Reports 404s and various attacks in error.log for fail2ban (mu-plugin)
-Version: 2.5
+Description: Reports 404s and various attacks in error.log for fail2ban. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
+Version: 2.6
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -25,6 +25,48 @@ class O1_ErrorLog404_MU {
     private $wp_die_xmlrpc_handler;
     private $wp_die_handler;
     private $is_redirect = false;
+
+    public function __construct() {
+
+        // exit on local access
+        // don't run on install / upgrade
+        if ( php_sapi_name() === 'cli'
+            || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR']
+            || defined( 'WP_INSTALLING' ) && WP_INSTALLING
+        )
+            return;
+
+        // prevent usage as a normal plugin in wp-content/plugins
+        if ( did_action( 'muplugins_loaded' ) )
+            $this->exit_with_instructions();
+
+        // don't redirect to admin
+        remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
+
+        // logins
+        add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
+        add_action( 'wp_login', array( $this, 'login' ) );
+        add_action( 'wp_logout', array( $this, 'logout' ) );
+        add_action( 'retrieve_password', array( $this, 'lostpass' ) );
+
+        // non-existent URLs
+        add_action( 'init', array( $this, 'url_hack' ) );
+        add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
+
+        // on robot and human 404
+        add_action( 'plugins_loaded', array( $this, 'robot_403' ), 0 );
+        add_action( 'template_redirect', array( $this, 'wp_404' ) );
+
+        // on non-empty wp_die messages
+        add_filter( 'wp_die_ajax_handler', array( $this, 'wp_die_ajax' ), 1 );
+        add_filter( 'wp_die_xmlrpc_handler', array( $this, 'wp_die_xmlrpc' ), 1 );
+        add_filter( 'wp_die_handler', array( $this, 'wp_die' ), 1 );
+
+        // ban spammers (Contact Form 7 Robot Trap)
+        add_action( 'robottrap_hiddenfield', array( $this, 'wpcf7_spam' ) );
+        add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
+
+    }
 
     private function esc_log( $string ) {
 
@@ -53,42 +95,19 @@ class O1_ErrorLog404_MU {
                    . ( empty( $message ) ? '' : $this->esc_log( $message ) ) );
     }
 
-    public function __construct() {
+    private function exit_with_instructions() {
+        $doc_root = isset( $_SERVER['DOCUMENT_ROOT'] ) ? $_SERVER['DOCUMENT_ROOT'] : ABSPATH;
 
-        // exit on local access
-        // don't run on install / upgrade
-        if ( php_sapi_name() === 'cli'
-            || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR']
-            || defined( 'WP_INSTALLING' ) && WP_INSTALLING
-        )
-            return;
+        $iframe_msg = sprintf( '<p style="font:14px \'Open Sans\',sans-serif">
+            <strong style="color:#DD3D36">ERROR:</strong> This is <em>not</em> a normal plugin,
+            and it should not be activated as one.<br />
+            Instead, <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code>
+            must be copied to <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code></p>',
 
-        // don't redirect to admin
-        remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
-
-        // logins
-        add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
-        add_action( 'wp_login', array( $this, 'login' ) );
-        add_action( 'wp_logout', array( $this, 'logout' ) );
-        add_action( 'retrieve_password', array( $this, 'lostpass' ) );
-
-        // non-existent URLs
-        add_action( 'init', array( $this, 'url_hack' ) );
-        add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
-
-        // on robot and human 404
-        add_action( 'plugins_loaded', array( $this, 'robot_403' ), 0 );
-        add_action( 'template_redirect', array( $this, 'wp_404' ) );
-
-        // on non-empty wp_die messages
-        add_filter( 'wp_die_ajax_handler', array( $this, 'wp_die_ajax' ), 1 );
-        add_filter( 'wp_die_xmlrpc_handler', array( $this, 'wp_die_xmlrpc' ), 1 );
-        add_filter( 'wp_die_handler', array( $this, 'wp_die' ), 1 );
-
-        // ban spammers (Contact Form 7 Robot Trap)
-        add_action( 'robottrap_hiddenfield', array( $this, 'wpcf7_spam' ) );
-        add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
-
+            str_replace( $doc_root, '', __FILE__ ),
+            str_replace( $doc_root, '', trailingslashit( WPMU_PLUGIN_DIR ) ) . basename( __FILE__ )
+        );
+        exit( $iframe_msg );
     }
 
     public function wp_404() {

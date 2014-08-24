@@ -24,9 +24,8 @@ if ( ! class_exists( 'ZipArchive' ) )
 
 $zip = new ZipArchive;
 
-$opened = $zip->open( ZIP );
-if ( $opened !== true )
-    exit( 'Open error' );
+if ( ! $zip->open( ZIP ) )
+    exit( 'ZIP open error (' . ZIP . ')' );
 
 // extract the zip file in place
 if ( ! $zip->extractTo( '.' ) )
