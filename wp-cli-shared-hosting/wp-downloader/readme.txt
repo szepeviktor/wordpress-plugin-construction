@@ -1,4 +1,4 @@
-=== Easy Watermark ===
+=== WP Downloader ===
 Contributors: szaleq
 Tags: zip, zipper, download, downloader, plugin download, theme download, code, development
 Requires at least: 3.3

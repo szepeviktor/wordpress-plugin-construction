@@ -96,6 +96,7 @@ find . -type f -not -name "*.php" -delete
 find wp-content/themes/ -mindepth 1 -maxdepth 1 -type d -not -name twentyfourteen \
     | xargs rm -rf
 
+# modify WP core for PHPXref
 find . -type f -name "*.php" -printf "%P\n" \
     | while read FILE; do
         echo "${FILE} ..."
@@ -111,11 +112,13 @@ find . -type f -name "*.php" -printf "%P\n" \
         wpcontent_dir
     done
 
+# missed functions
 echo "All that left is:"
 grep --color -P -rnH "(include|include_once|require|require_once)\b.*(dirname|ABSPATH|WP_CONTENT_DIR)" *
 
 popd
 
+# manually
 echo "Run phpxref.pl"
-echo "put files in the WEBROOT/subdomain"
+echo "move output files to <WEBROOT>"
 
