@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Reports 404s and various attacks in error.log for fail2ban
-Version: 0.9
+Version: 0.9.1
 Upstream: based on WordPress fail2ban MU v2.5
 License: The MIT License (MIT)
 Author: Viktor Szépe
@@ -29,33 +29,6 @@ class O1_ErrorLog404 {
 
     private $hide_robot_404 = false;
 
-    private function esc_log( $string ) {
-
-        $string = serialize( $string ) ;
-        // trim long data
-        $string = mb_substr( $string, 0, 200, 'utf-8' );
-        // replace non-printables with "¿" - sprintf( '%c%c', 194, 191 )
-        $string = preg_replace( '/[^\P{C}]+/u', "\xC2\xBF", $string );
-
-        return ' (' . $string . ')';
-    }
-
-    private function is_robot( $ua ) {
-
-        // test user agent string (robot = not modern browser)
-        // based on: http://www.useragentstring.com/pages/Browserlist/
-        return ( ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
-            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
-            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
-        );
-    }
-
-    private function trigger( $slug, $message = '' ) {
-        error_log( $this->prefix
-                   . $slug
-                   . ( empty( $message ) ? '' : $this->esc_log( $message ) ) );
-    }
-
     public function __construct() {
 
         // admin
@@ -64,8 +37,7 @@ class O1_ErrorLog404 {
             $errorlog_404_admin = new O1_Errorlog_404_admin();
         }
 
-        // admin_init() does it
-        //register_activation_hook( __FILE__, array( $this, 'activate' ) );
+        // admin_init() does register_activation_hook
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
         //TODO uninstall hook/file
 
@@ -151,6 +123,33 @@ class O1_ErrorLog404 {
         }
     }
 
+    private function esc_log( $string ) {
+
+        $string = serialize( $string ) ;
+        // trim long data
+        $string = mb_substr( $string, 0, 200, 'utf-8' );
+        // replace non-printables with "¿" - sprintf( '%c%c', 194, 191 )
+        $string = preg_replace( '/[^\P{C}]+/u', "\xC2\xBF", $string );
+
+        return ' (' . $string . ')';
+    }
+
+    private function is_robot( $ua ) {
+
+        // test user agent string (robot = not modern browser)
+        // based on: http://www.useragentstring.com/pages/Browserlist/
+        return ( ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
+            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
+            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
+        );
+    }
+
+    private function trigger( $slug, $message = '' ) {
+        error_log( $this->prefix
+                   . $slug
+                   . ( empty( $message ) ? '' : $this->esc_log( $message ) ) );
+    }
+
     public function deactivate() {
 
         // clean up options
@@ -159,7 +158,7 @@ class O1_ErrorLog404 {
         delete_option( 'o1_errorlog_login' );
     }
 
-    // ----------------------- >8 -------------------------------------
+    // below the copy of WP fail2ban MU's public functions
 
     public function wp_404() {
 

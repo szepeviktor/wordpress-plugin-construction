@@ -4,3 +4,6 @@
 [submodule "wp-cli-shared-hosting/wordpress-php-info"]
 	path = wp-cli-shared-hosting/wordpress-php-info
 	url = https://github.com/wp-plugins/wordpress-php-info
+[submodule "wp-cli-shared-hosting/ftptail"]
+	path = wp-cli-shared-hosting/ftptail
+	url = https://github.com/johntdyer/ftptail.git
