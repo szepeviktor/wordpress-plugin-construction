@@ -285,10 +285,12 @@ class O1_Bad_Request {
 new O1_Bad_Request();
 
 /*TODO
-readme: snippet copy, require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );, mu-plugin, plugin
+readme: snippet, require_once(), mu-plugin, plugin
 php-doc
-
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
+POST: login, postpass, resetpass, lostpassword, register
+GET: logout, rp, lostpassword
+non-WP POSTs
 
 
 */

@@ -2,28 +2,36 @@
 /*
 Plugin Name: Contact Form 7 Robot Trap
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Description: Put this in the contact form <code>[robottrap email-verify id:email-verify tabindex:2]</code> and hide it by CSS
-Version: 0.1
+Description: Use <code>[robottrap email-verify class:email-verify tabindex:2]</code> in the contact form and hide it by CSS
+Version: 0.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 */
 
 /**
- * A module for the following tag type:
- *  [robottrap]  # Hidden input field for stopping robots
+ * A module for the following Contenct Form 7 tag type:
+ *  [robottrap]
+ * It generates an input field for catching robots.
+ * Hide it by CSS:
+ *  .email-verify { display: none; }
  *
- * Test #1 Is the hidden text filed filled in?
- * Test #2 Does the submitted email address' domain name accept email?
+ * Test #1
+ *  Is the hidden text field filled in?
+ * Test #2
+ *  Has the submitted email address' domain got a mailserver?
+ *  Disable it by define( 'WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE', true );
  *
- * use the `robottrap_hiddenfield` and `robottrap_mx` hooks to do something with the spammer
+ * Use the `robottrap_hiddenfield` and `robottrap_mx` hooks to do something with the spammer.
  *
  */
 
 add_action( 'wpcf7_init', 'wpcf7_add_shortcode_robottrap' );
 add_filter( 'wpcf7_validate_robottrap', 'wpcf7_robottrap_validation_filter', 1, 2 );
-add_filter( 'wpcf7_validate_email', 'wpcf7_robottrap_domain_validation_filter', 1, 2 );
-add_filter( 'wpcf7_validate_email*', 'wpcf7_robottrap_domain_validation_filter', 1, 2 );
+if ( ! ( defined( 'WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE' ) && WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE ) ) {
+    add_filter( 'wpcf7_validate_email', 'wpcf7_robottrap_domain_validation_filter', 1, 2 );
+    add_filter( 'wpcf7_validate_email*', 'wpcf7_robottrap_domain_validation_filter', 1, 2 );
+}
 
 function wpcf7_add_shortcode_robottrap() {
     wpcf7_add_shortcode(
@@ -123,4 +131,3 @@ function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
 
     return $result;
 }
-
