@@ -9,11 +9,14 @@
  * License: GNU General Public License (GPL) version 2
  */
 
+add_action( 'admin_init', 'solarized_colors' );
+
 function solarized_tiny_mce_css( $mce_css ) {
     $mce_css .= ',' . plugins_url( 'css/tiny-mce.css', __FILE__ );
 
     return $mce_css;
 }
+
 function solarized_colors() {
     add_filter( 'mce_css', 'solarized_tiny_mce_css' );
 
@@ -27,4 +30,3 @@ function solarized_colors() {
         array( 'base' => '#93a1a1', 'focus' => '#586e75', 'current' => '#657b83' )
     );
 }
-add_action( 'admin_init', 'solarized_colors' );
