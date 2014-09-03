@@ -10,7 +10,7 @@ add_shortcode( 'block7', 'o1_block_shortcode' );
 add_shortcode( 'block8', 'o1_block_shortcode' );
 add_shortcode( 'block9', 'o1_block_shortcode' );
 
-function o1_block_shortcode( $atts, $content = '' ) {
+function o1_block_shortcode( $atts, $content = null ) {
     return o1_tag( 'div', $atts, $content );
 }
 
