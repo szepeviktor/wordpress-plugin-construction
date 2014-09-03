@@ -25,7 +25,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  *
  * 1. Add this line to your style.css:
  *
- * .nfrt { display: none; }
+ * .nfrt { display: none !important; }
  *
  * 2. Add the allow page and the nofollow page to your sitemap.
  *
