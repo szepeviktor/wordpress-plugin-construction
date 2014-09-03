@@ -10,6 +10,12 @@ Author URI: http://www.online1.hu/webdesign/
 Idea: Pavel (aka Immortal) Petrov http://www.webbamboo.net/
 */
 
+if ( ! function_exists( 'add_filter' ) ) {
+    error_log( 'File does not exist: errorlog_direct_access ' . $_SERVER['REQUEST_URI'] );
+    header( 'Status: 403 Forbidden' );
+    header( 'HTTP/1.1 403 Forbidden' );
+    exit();
+}
 
 add_filter('sanitize_title', 'restore_nonlatin_title', 9, 3);
 //FIXME also in navigation menu classes
@@ -263,4 +269,3 @@ function remove_nonlatin_accents( $string ) {
 
         return $string;
 }
-

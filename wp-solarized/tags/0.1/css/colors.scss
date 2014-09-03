@@ -1,0 +1,72 @@
+// background DARK
+$base03:    #002b36; // D
+$base02:    #073642; // D
+
+//content
+$base01:    #586e75; // D L 01 emphasized
+$base00:    #657b83; //   L 00 default
+$base0:     #839496; // D
+$base1:     #93a1a1; // D L 1  secondary
+
+// background LIGHT
+$base2:     #eee8d5; //   L 2  background highlight
+$base3:     #fdf6e3; //   L 3  background
+
+// accent colors
+$yellow:    #b58900;
+$orange:    #cb4b16;
+$red:       #dc322f;
+$magenta:   #d33682;
+$violet:    #6c71c4;
+$blue:      #268bd2;
+$cyan:      #2aa198;
+$green:     #859900;
+
+// $base-color, $menu-submenu-background, $menu-submenu-focus-text, $notification-color
+// '#657b83', '#586e75', '#fdf6e3', '#859900'
+// $icon-color, focus, current
+// '#93a1a1', '#586e75', '#657b83'
+
+// light
+$base-color: $base00;
+$icon-color: $base1;
+$highlight-color: $blue;
+$notification-color: $green;
+$button-color: $blue;
+
+$menu-submenu-text: $base2;
+$menu-submenu-focus-text: $base3;
+$menu-submenu-background: $base01;
+
+@import "../_admin.scss";
+
+html {
+    background: $base3;
+}
+body {
+    color: $base00;
+}
+.feature-filter, .imgedit-group, .popular-tags, .stuffbox, .widgets-holder-wrap, .wp-editor-container, p.popular-tags, table.widefat {
+    background: $base2;
+}
+.alt, .alternate {
+    background-color: $base3;
+}
+input[type="email"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"], select, textarea,
+#titlediv #title,
+.plugins tr,
+.theme-overlay .theme-wrap,
+#screen-meta,
+#contextual-help-link-wrap, #screen-options-link-wrap {
+    background-color: $base3;
+}
+.postbox,
+.plugins .active td, .plugins .active th,
+.theme-overlay .theme-backdrop,
+.contextual-help-tabs .active,
+#contextual-help-back {
+    background-color: $base2;
+}
+.plugins .active th.check-column {
+    border-left: 4px solid $blue;
+}

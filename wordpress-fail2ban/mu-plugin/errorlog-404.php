@@ -12,7 +12,7 @@ Author URI: http://www.online1.hu/webdesign/
 if ( ! function_exists( 'add_filter' ) ) {
     error_log( 'File does not exist: errorlog_direct_access '
                . esc_url( $_SERVER['REQUEST_URI'] ) );
-    ob_end_clean();
+    ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.0 403 Forbidden' );
     exit();

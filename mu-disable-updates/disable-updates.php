@@ -10,6 +10,7 @@ Author URI: http://www.online1.hu/webdesign/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
+    // for fail2ban
     error_log( 'File does not exist: errorlog_direct_access ' . $_SERVER['REQUEST_URI'] );
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.1 403 Forbidden' );
@@ -121,4 +122,3 @@ class Disable_Version_Check_MU {
 }
 
 new Disable_Version_Check_MU();
-
