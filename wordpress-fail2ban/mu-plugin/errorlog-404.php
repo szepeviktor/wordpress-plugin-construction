@@ -295,7 +295,7 @@ new O1_ErrorLog404_MU();
 - log proxy IP: HTTP_X_FORWARDED_FOR, HTTP_INCAP_CLIENT_IP, HTTP_CF_CONNECTING_IP (could be faked)
 - scores system:
     double score for
-        obots, humans ???
+        robots, humans ???
         human non-GET 404 (robots get 403)
     403 immediate ban
     rob/hum score-pair templates in <select>

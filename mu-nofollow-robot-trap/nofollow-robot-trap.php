@@ -94,9 +94,9 @@ class NofollowTrap {
     public function robotstxt_disallow( $output ) {
 
         $output .= sprintf( "\nUser-agent: *\nDisallow: %s\nAllow: %s\nAllow: %s\n",
-            home_url( $this->block_url ),
-            home_url( $this->allow_url ),
-            home_url( $this->nofollow_url )
+            home_url( $this->block_url, 'relative' ),
+            home_url( $this->allow_url, 'relative' ),
+            home_url( $this->nofollow_url, 'relative' )
         );
 
         return $output;

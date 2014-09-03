@@ -291,6 +291,6 @@ require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 POST: login, postpass, resetpass, lostpassword, register
 GET: logout, rp, lostpassword
 non-WP POSTs
-
+comment POST etc.
 
 */
