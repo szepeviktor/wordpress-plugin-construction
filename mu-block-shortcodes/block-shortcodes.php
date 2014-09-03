@@ -17,7 +17,7 @@ function o1_block_shortcode( $atts, $content = '' ) {
 function o1_tag( $tag, $attributes = array(), $content = null ) {
 
     if ( empty( $tag ) || ! is_array( $attributes ) )
-        return '';
+        return $content;
 
     foreach ( $attributes as $attribute => &$data ) {
         if ( empty( $data ) || true === $data ) {
