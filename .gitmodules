@@ -7,3 +7,6 @@
 [submodule "wp-cli-shared-hosting/ftptail"]
 	path = wp-cli-shared-hosting/ftptail
 	url = https://github.com/johntdyer/ftptail.git
+[submodule "wp-cli-commands/wp-cli-check-update"]
+	path = wp-cli-commands/wp-cli-check-update
+	url = https://github.com/szepeviktor/wp-cli-check-update.git
