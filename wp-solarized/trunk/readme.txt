@@ -3,12 +3,12 @@ Contributors: szepe.viktor
 Donate link: https://szepe.net/wp-donate/
 Tags: solarized, admin, dashboard, color, color scheme
 Requires at least: 3.8
-Tested up to: 3.9.2
+Tested up to: 4.0
 Stable tag: 0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Make the dashboard Solarized
+Make the dashboard Solarized, ease your eyes
 
 == Description ==
 Adds an admin color scheme which not only colorizes the admin menu and
@@ -17,6 +17,12 @@ the admin bar but the whole dashboard.
 Use it if you know the dashboard, if you know the location of every part
 of dashboard because Solarized's contrast is lower than other color schemes
 to ease your eyes.
+
+This plugin is based on [Ethan Schoonover's](http://ethanschoonover.com/solarized) project of the same name.
+
+= How do I switch color scheme? =
+
+On the Dashboard go to Users / Your Profile and click on "Solarized".
 
 
 == Installation ==

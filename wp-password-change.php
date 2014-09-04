@@ -1,5 +1,4 @@
 <pre><?php
-
 /*
 Snippet Name: Reset your own WordPress password
 Description: Copy this file to the WordPress root and load it in your browser
@@ -10,10 +9,11 @@ Version: 1.0
 */
 
 /**
- * 1. change login name below to the selected user ($user)
- * 2. set passwrod ($plain_pass)
- * 3. comment out `die;`
- * 4. run again to set password
+ * 1. load it in your browser to see user names
+ * 2. change login name below to the selected user ($user)
+ *    + set password ($plain_pass)
+ *    + comment out `die;`
+ * 3. reload it to set password
  */
 
 ini_set('display_errors', 1);
