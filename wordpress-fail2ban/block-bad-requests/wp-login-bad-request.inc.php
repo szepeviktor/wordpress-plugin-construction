@@ -235,7 +235,7 @@ class O1_Bad_Request {
         // IE8 logins
         if ( $this->allow_ie8_login ) {
 
-            if ( 1 === preg_match( '/^Mozilla\/4\.0\ \(compatible; MSIE 8\.0;/', $user_agent ) )
+            if ( 1 === preg_match( '/^Mozilla\/4\.0 \(compatible; MSIE [78]\.0;/', $user_agent ) )
                 return false;
         }
 
