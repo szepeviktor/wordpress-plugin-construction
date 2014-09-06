@@ -25,7 +25,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  *
  * 1. Add this line to your style.css:
  *
- * .nfrt { display: none !important; }
+ * .nfrt { display: none; }
  *
  * 2. Add the allow page and the nofollow page to your sitemap.
  *
@@ -48,6 +48,9 @@ if ( ! function_exists( 'add_filter' ) ) {
 
 class NofollowTrap {
 
+    private $version = '0.1';
+    private $activation;
+
     private $prefix = 'File does not exist: ';
     private $trigger_count = 6;
 
@@ -61,9 +64,8 @@ class NofollowTrap {
 
     public function __construct() {
 
-        // frontend only
-        if ( is_admin() )
-            return;
+        // Must-Use plugins don't have activation
+        //register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
         // generate URLs
         /*$sprintf('%u', crc32( get_bloginfo( 'url' ) ) );
@@ -79,8 +81,13 @@ class NofollowTrap {
         $this->hide_class = 'nfrt';
         $this->anchor_text = '&nbsp;';
 
-        // setup
+        // setup - also on admin
         add_action( 'init', array( $this, 'register_urls' ) );
+
+        // frontend only
+        if ( is_admin() )
+            return;
+
         // add lines to robots.txt
         add_filter('robots_txt', array( $this, 'robotstxt_disallow' ), 2, 1);
         // add the hidden link to the front page
@@ -117,17 +124,30 @@ class NofollowTrap {
 
     public function register_urls() {
 
+        $this->activation = get_site_option( 'nfrt_activate' );
+
         // permit missing trailing slash
         add_rewrite_rule( '^' . $this->block_url . '?$', 'index.php?nfrt=block', 'top' );
         add_rewrite_rule( '^' . $this->allow_url . '?$', 'index.php?nfrt=allow', 'top' );
         add_rewrite_rule( '^' . $this->nofollow_url . '?$', 'index.php?nfrt=nofollow', 'top' );
-        flush_rewrite_rules();
 
         // Rewrite Api cannot handle this
         // see: function protocol_relative() below
         //add_rewrite_rule( '^' . preg_quote( $this->protocol_relative_url ) . '$', 'index.php?nfrt=relprot', 'top' );
 
         add_rewrite_tag( '%nfrt%', '(block|allow|nofollow)');
+
+        // flush rules on first run - dashboard only
+        if ( ! $this->activation || $this->activation !== $this->version )
+            // flush on shutdown to be safe
+            add_action( 'shutdown', array( $this, 'activate' ) );
+
+    }
+
+    public function activate() {
+
+        update_site_option( 'nfrt_activate', $this->version );
+        flush_rewrite_rules();
     }
 
     public function generate_pages() {
