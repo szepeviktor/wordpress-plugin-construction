@@ -25,7 +25,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  *
  * 1. Add this line to your style.css:
  *
- * .nfrt { display: none; }
+ * .nfrt { display: none !important; }
  *
  * 2. Add the allow page and the nofollow page to your sitemap.
  *
@@ -137,9 +137,9 @@ class NofollowTrap {
 
         add_rewrite_tag( '%nfrt%', '(block|allow|nofollow)');
 
-        // flush rules on first run - dashboard only
+        // flush rules on first run
         if ( ! $this->activation || $this->activation !== $this->version )
-            // flush on shutdown to be safe
+            // flush at shutdown to be safe
             add_action( 'shutdown', array( $this, 'activate' ) );
 
     }
