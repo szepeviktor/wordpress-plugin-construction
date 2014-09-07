@@ -240,7 +240,7 @@ class O1_Bad_Request {
         }
 
         // botnets
-        if ( 1 === preg_match('/Firefox\/1|bot|spider|crawl|user-agent/i', $user_agent ) )
+        if ( 1 === preg_match('/Firefox\/1|bot|spider|crawl|user-agent|random/i', $user_agent ) )
             return 'bad_request_http_post_user_agent_botnet';
 
         // modern browsers

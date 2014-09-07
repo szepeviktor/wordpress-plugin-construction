@@ -23,11 +23,15 @@ if ( ! function_exists( 'add_filter' ) ) {
 /**
  * Catch malicious robots
  *
- * 1. Add this line to your style.css:
+ * 1. Add the following line to your style.css.
  *
  * .nfrt { display: none !important; }
  *
  * 2. Add the allow page and the nofollow page to your sitemap.
+ *
+ * 3. Optionally add cache exceptions for the four URLs.
+ *
+ * 4. Flush rules on deletion of this mu-plugin (wp rewrite flush).
  *
  * Bait pages and links
  *  - invisible link on the front page: allow page
@@ -256,8 +260,8 @@ class NofollowTrap {
 new NofollowTrap();
 
 /*TODO
+- add readme.md
 - trap type: fail2ban, .htaccess, nginx.conf, CloudFlare API, call itsec
 - set cookie for robots -> measure next request frequency -> log
 - different traps?? for: rel nofollow, robots meta, robots.txt, realtive protocol
-
 */

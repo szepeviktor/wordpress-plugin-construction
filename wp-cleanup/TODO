@@ -1,5 +1,7 @@
 tool
 
+idea: wp-clean-up
+
 db
 - DB check & optimization
 - delete transients with conditions
@@ -23,3 +25,4 @@ dashboard
 
 What db tables WP has?
 
++ wp-cli implementation

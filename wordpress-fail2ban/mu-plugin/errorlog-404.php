@@ -287,6 +287,7 @@ new O1_ErrorLog404_MU();
 
 /*
 - write test.sh
+- option to immediately ban on non-WP scripts (\.php$)
 - new: invalid user/email during registration
 - new: invalid user during lost password
 - new: invalid "lost password" token
