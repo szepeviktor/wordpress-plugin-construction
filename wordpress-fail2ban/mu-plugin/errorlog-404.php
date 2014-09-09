@@ -85,6 +85,7 @@ class O1_ErrorLog404_MU {
         // based on: http://www.useragentstring.com/pages/Browserlist/
         return ( ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
             && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
+            && ( 'Mozilla/4.0 (compatible; MSIE 7.0;' !== substr( $ua, 0, 34 ) )
             && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
         );
     }
@@ -287,7 +288,8 @@ new O1_ErrorLog404_MU();
 
 /*
 - write test.sh
-- option to immediately ban on non-WP scripts (\.php$)
+- option to immediately ban on non-WP scripts (\.php$ \.aspx?$)
+- update non-mu plugin
 - new: invalid user/email during registration
 - new: invalid user during lost password
 - new: invalid "lost password" token
