@@ -1,4 +1,4 @@
-## WordPress fail2ban MU
+# WordPress fail2ban MU
 
 This is the Must Use (mu-plugin) version of WordPess fail2ban.
 
@@ -7,6 +7,11 @@ This is the Must Use (mu-plugin) version of WordPess fail2ban.
 - Early execution: Must Use plugins run before normal plugins thus banning sooner, causing less server load on DoS
 - Security: cannot be deactivated, fiddled with by WordPress administrators
 - Speed: because it is much simplier then the normal plugin with options
+
+## Parts
+
+- p
+- p
 
 #### Disabling parts
 

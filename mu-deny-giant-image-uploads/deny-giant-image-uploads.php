@@ -23,3 +23,10 @@ function tomjn_deny_giant_images( $file ) {
 }
 add_filter( 'wp_handle_upload_prefilter', 'tomjn_deny_giant_images' );
 
+/*
+TODO
+- ban camera file names (pattern)
+- ".php" in name
+- too small size
+- i18n
+*/
