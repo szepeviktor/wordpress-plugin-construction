@@ -4,6 +4,8 @@ Trigger banning on malicious requests.
 
 ### block-bad-requests
 
+In wp-config.php:
+
 ```php
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 ```
