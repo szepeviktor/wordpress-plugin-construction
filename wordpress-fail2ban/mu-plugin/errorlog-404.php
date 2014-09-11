@@ -91,12 +91,14 @@ class O1_ErrorLog404_MU {
     }
 
     private function trigger( $slug, $message = '' ) {
+
         error_log( $this->prefix
                    . $slug
                    . ( empty( $message ) ? '' : $this->esc_log( $message ) ) );
     }
 
     private function exit_with_instructions() {
+
         $doc_root = isset( $_SERVER['DOCUMENT_ROOT'] ) ? $_SERVER['DOCUMENT_ROOT'] : ABSPATH;
 
         $iframe_msg = sprintf( '<p style="font:14px \'Open Sans\',sans-serif">
@@ -122,7 +124,7 @@ class O1_ErrorLog404_MU {
         // don't show the 404 page for robots
         if ( ! is_user_logged_in() && $this->is_robot( $ua ) ) {
 
-            ob_end_clean();
+            ob_get_level() && ob_end_clean();
             $this->trigger( 'errorlog_robot404', $request_uri );
             header( 'Status: 404 Not Found' );
             header( 'HTTP/1.0 404 Not Found' );
@@ -264,7 +266,7 @@ class O1_ErrorLog404_MU {
         ) {
 
             //FIXME wp-includes/ms-files.php:12
-            ob_end_clean();
+            ob_get_level() && ob_end_clean();
             $this->trigger( 'errorlog_robot403', $request_path );
             header( 'Status: 403 Forbidden' );
             header( 'HTTP/1.0 403 Forbidden' );

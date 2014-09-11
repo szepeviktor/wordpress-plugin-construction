@@ -86,7 +86,7 @@ class O1_Bad_Request {
         error_log( 'HTTP headers: ' . serialize( $server ) );
         error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
 
-        ob_end_clean();
+        ob_get_level() && ob_end_clean();
         header( 'Status: 403 Forbidden' );
         header( 'HTTP/1.0 403 Forbidden' );
         exit();
@@ -119,7 +119,7 @@ class O1_Bad_Request {
         // --------------------------- >8 ---------------------------
 
         if ( ! empty($_POST['log'] ) ) {
-            $username = $_POST['log'];
+            $username = trim( $_POST['log'] );
 
             // banned usernames
             if ( in_array( strtolower( $username ), $this->names2ban ) )
