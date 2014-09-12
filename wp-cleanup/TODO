@@ -1,6 +1,6 @@
 tool
 
-idea: wp-clean-up
+idea: wp-clean-up, https://github.com/ruhanirabin/WP-Optimize
 
 db
 - DB check & optimization

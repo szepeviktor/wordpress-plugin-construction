@@ -10,3 +10,6 @@
 [submodule "wp-cli-commands/wp-cli-check-update"]
 	path = wp-cli-commands/wp-cli-check-update
 	url = https://github.com/szepeviktor/wp-cli-check-update.git
+[submodule "whats-running"]
+	path = whats-running
+	url = git@github.com:szepeviktor/whats-running.git
