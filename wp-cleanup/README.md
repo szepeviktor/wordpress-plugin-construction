@@ -7,6 +7,9 @@ db
 - delete transients with conditions
 - delete revisions, drafts
 - orphan post meta, comment meta, user meta
+- SELECT SUBSTRING_INDEX(`option_name`, '_', 1) AS `prefix`, SUM(LENGTH(option_value)) AS `bytes` FROM `subd_options` GROUP BY prefix
+  SELECT SUBSTRING_INDEX(`option_name`, '_', 2) AS `prefix`, SUM(LENGTH(option_value)) AS `bytes` FROM `subd_options` GROUP BY prefix
+  exclude core options by pattern
 
 comments
 - spam/trash comments
