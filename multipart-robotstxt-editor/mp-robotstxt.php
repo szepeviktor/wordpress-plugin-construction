@@ -2,7 +2,7 @@
 /*
 Plugin Name: Multipart robots.txt editor
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Description: Reports 404s and various attacks in error.log for fail2ban
+Description: Customize your site's robots.txt and include remote content to it
 Version: 0.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
