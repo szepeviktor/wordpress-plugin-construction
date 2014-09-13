@@ -13,3 +13,6 @@
 [submodule "whats-running"]
 	path = whats-running
 	url = git@github.com:szepeviktor/whats-running.git
+[submodule "wp-cli-shared-hosting/search-replace-db"]
+	path = wp-cli-shared-hosting/search-replace-db
+	url = https://github.com/interconnectit/Search-Replace-DB.git

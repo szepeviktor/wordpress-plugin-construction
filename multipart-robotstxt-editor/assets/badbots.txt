@@ -1,0 +1,131 @@
+# language
+User-Agent: ExB Language Crawler
+Disallow: /
+
+# seo
+User-Agent: sistrix
+Disallow: /
+
+# seo
+User-agent: spbot
+Disallow: /
+
+# seo moz
+User-agent: Ezooms
+Disallow: /
+
+# news portal
+User-agent: Mail.Ru
+Disallow: /
+
+# Apache Nutch based
+User-agent: Nutch
+Disallow: /
+
+# news
+User-agent: FeedBooster
+Disallow: /
+
+# search engine www.sengine.info
+User-agent: netEstate NE Crawler
+Disallow: /
+
+# plagiarism check
+User-agent: turnitinbot
+Disallow: /
+
+# seo
+User-agent: SiteExplorer
+Disallow: /
+
+# search engine
+User-agent: wotbox
+Disallow: /
+
+# seo
+User-agent: BLEXBot
+Disallow: /
+
+# seo
+User-agent: lipperhey
+Disallow: /
+
+# brand protection
+User-agent: BPImageWalker/2.0
+Disallow: /
+
+# seo
+User-agent: SemrushBot
+Disallow: /
+
+# search engine
+User-agent: SeznamBot
+Disallow: /
+
+# "analyses the structure of the WWW"
+User-Agent: UnisterBot
+Disallow: /
+
+# Web crawler
+User-agent: ScreenerBot
+Disallow: /
+
+# part of Ware Bay Best Buys Search engine
+User-agent: WBSearchBot
+Disallow: /
+
+# kostenlose Backlinkchecker von Torsten Rückert Internetdiestleistungen
+User-agent: SEOkicks-Robot
+Disallow: /
+
+# the Internet Archive's open-source, extensible, scalable, archival-quality Web crawler
+User-agent: heritrix
+Disallow: /
+
+# search engine
+User-agent: Aboundexbot
+Disallow: /
+
+# ??? search engine
+User-agent: LinkpadBot
+Disallow: /
+
+# scalable, fully distributed crawler
+User-agent: BUbiNG
+Disallow: /
+
+# chinese search engine
+User-agent: sogou spider
+Disallow: /
+
+# chinese search engine
+User-agent: EasouSpider
+Disallow: /
+
+# Mixdata : data for big business
+User-agent: MixBot
+Disallow: /
+
+# search engine
+User-agent: Aboundexbot
+Disallow: /
+
+# search engine
+User-agent: EasouSpider
+Disallow: /
+
+# tiscali.it search bot
+User-agent: IstellaBot
+Disallow: /
+
+# panscient.com
+User-agent: panscient.com
+Disallow: /
+
+# SEO services
+User-agent: SearchmetricsBot
+Disallow: /
+
+# The web search API
+User-agent: meanpathbot
+Disallow: /

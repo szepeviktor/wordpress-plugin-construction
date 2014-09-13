@@ -14,8 +14,17 @@ function vs_html_attrs( $attributes = array() ) {
 
     return $attributes ? ' ' . implode( ' ', $attributes ) : '';
 }
+
+function vs_description_display( $description = '' ) {
+
+	printf( '<p class="description">%s</p>',
+		wp_kses_post( $description )
+	);
+}
+
 function vs_display_text_field( $value, $setting, $args ) {
 
+	// custom attributes
 	if ( empty( $args['attributes'] ) ) {
 	    $attribute_string = '';
 	} else {
@@ -29,44 +38,49 @@ function vs_display_text_field( $value, $setting, $args ) {
 		esc_attr( $attribute_string )
 	);
 
-	if ( empty( $args['description'] ) )
-		return;
-
-	printf( '<p class="description">%s</p>',
-		wp_kses_post( $args['description'] )
-	);
+	// description
+	if ( ! empty( $args['description'] ) )
+		vs_description_display( $args['description'] );
 }
 
 function vs_display_dropdown( $value, $setting, $args ) {
-	if( ! isset( $args['options'] ) ) {
-		print '<p class="error">An options argument is required in the <code>$args</code> array to use <code>vs_display_dropdown()</code></p>';
+
+	if( ! isset( $args['options'] ) )
 		return;
 
+	// custom attributes
+	if ( empty( $args['attributes'] ) ) {
+	    $attribute_string = '';
 	} else {
-		printf( '<select id="%s" name="%s">',
-			esc_attr( $setting->get_field_id() ),
-			esc_attr( $setting->get_field_name() )
-		);
-		foreach( $args['options'] as $option_value => $option_text )
-			printf( '<option value="%s"%s>%s</option>',
-				esc_attr( $option_value ),
-				selected( $option_value, $value, false ),
-				$option_text
-			);
-		print '</select>';
-
-		if( empty( $args['description'] ) )
-			return;
-		printf( '<p class="description">%s</p>',
-			wp_kses_post( $args['description'] )
-		);
+		$attribute_string = vs_html_attrs( (array) $args['attributes'] );
 	}
+
+	// options
+	$options = '';
+	foreach( $args['options'] as $option_value => $option_text ) //TODO disabled, groups
+		$options .= sprintf( '<option value="%s"%s>%s</option>',
+			esc_attr( $option_value ),
+			selected( $option_value, $value, false ),
+			$option_text
+		);
+
+	printf( '<select id="%s" name="%s"%s>%s</select>',
+		esc_attr( $setting->get_field_id() ),
+		esc_attr( $setting->get_field_name() ),
+		esc_attr( $attribute_string ),
+		$options
+	);
+
+	// description
+	if ( ! empty( $args['description'] ) )
+		vs_description_display( $args['description'] );
 }
 
 function vs_display_textarea( $value, $setting, $args ) {
 
+	// custom attributes
 	if ( empty( $args['attributes'] ) ) {
-	    $attribute_string = '';
+		$attribute_string = '';
 	} else {
 		$attribute_string = vs_html_attrs( (array) $args['attributes'] );
 	}
@@ -78,24 +92,28 @@ function vs_display_textarea( $value, $setting, $args ) {
 		esc_html( $value )
 	);
 
-	if ( empty( $args['description'] ) )
-		return;
-	printf( '<p class="description">%s</p>',
-		wp_kses_post( $args['description'] )
-	);
+	// description
+	if ( ! empty( $args['description'] ) )
+		vs_description_display( $args['description'] );
 }
 
 function vs_display_checkbox( $value, $setting, $args ) {
-	printf( '<input name="%s" id="%s"%s value="1" type="checkbox" />',
+
+	// custom attributes
+	if ( empty( $args['attributes'] ) ) {
+	    $attribute_string = '';
+	} else {
+		$attribute_string = vs_html_attrs( (array) $args['attributes'] );
+	}
+
+	printf( '<input name="%s" id="%s"%s value="1" type="checkbox" %s/>',
 		esc_attr( $setting->get_field_name() ),
 		esc_attr( $setting->get_field_id() ),
-		checked( '1', $value, false )
+		checked( '1', $value, false ),
+		esc_attr( $attribute_string )
 	);
 
-	if ( empty( $args['description'] ) )
-		return;
-	printf( '<p class="description">%s</p>',
-		wp_kses_post( $args['description'] )
-	);
+	// description
+	if ( ! empty( $args['description'] ) )
+		vs_description_display( $args['description'] );
 }
-

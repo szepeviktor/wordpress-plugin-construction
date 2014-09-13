@@ -30,21 +30,6 @@ function vs_sanitize_text($value, $setting, $args) {
 }
 
 /**
- * Always reset to the output of 'robots_txt' hook
- *
- * @param variable $value
- * @param Voce_Setting $setting
- * @param array $args
- * @return variable
- */
-function vs_sanitize_robots_txt( $value, $setting, $args ) {
-
-    $public = get_option( 'blog_public' );
-//    return apply_filters( 'robots_txt', "### WordPress ###" . PHP_EOL, $public );
-    return mprt_do_robots();
-}
-
-/**
  *
  * @param variable $value
  * @param Voce_Setting $setting
