@@ -92,7 +92,7 @@ class Voce_Settings_API {
                 foreach( $group->settings as $setting ) {
                     $defaults[$setting->setting_key] = $this->get_setting( $setting->setting_key, $group->group_key );
                 }
-                add_option( $group->group_key, $group->sanitize_callback( $defaults ), '', $group->autoload );
+                add_option( $group->group_key, $group->sanitize_callback( $defaults, $defaults ), '', $group->autoload );
                 //$this->applied_defaults[] = $group->title;
             }
         }
