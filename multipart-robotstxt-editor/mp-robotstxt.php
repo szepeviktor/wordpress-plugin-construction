@@ -41,6 +41,7 @@ class Multipart_Robotstxt {
             add_action( 'do_robots', array( $this, 'generate' ) );
         }
 
+        add_filter( 'pre_update_option_mprt_records', array( $this, 'purge_remote' ), 10, 2 );
         add_action( 'admin_menu', array( $this, 'settings' ) );
     }
 
@@ -218,7 +219,6 @@ Disallow: %1$s/%2$s/
                 'sslverify'   => false
             );
             $response = wp_remote_get( $remote_url, $http_args );
-
             if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
                 $content = wp_remote_retrieve_body( $response );
             } else {
@@ -230,6 +230,16 @@ Disallow: %1$s/%2$s/
         }
 
         return $content;
+    }
+
+    /**
+     * Clean up old transient on plugin option update.
+     *
+     */
+    public function purge_remote( $new, $old) {
+
+        delete_transient( 'mprt_remote_content' );
+        return $new;
     }
 
     /**
