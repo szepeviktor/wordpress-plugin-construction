@@ -1,0 +1,435 @@
+/*
+    Reset defaults
+*/
+.gauntlet {
+    box-sizing: border-box;
+}
+.gauntlet *, 
+.gauntlet *:before, 
+.gauntlet *:after {
+    box-sizing: inherit;
+}
+.wrap h2{
+    margin:0;
+}
+#wpcontent .update-nag, #update-nag{
+    /* This whole plugin _is_ an update nag */
+    display:none;
+}
+
+
+
+/*
+    Max width
+*/
+.content_wrap{
+	max-width:1000px;
+}
+
+
+
+/*
+	Hide alerts until they're under the header
+*/
+#screen-meta div.updated{
+	display:none !important;
+}
+#wpbody-content div.updated{
+	display:block;
+}
+
+
+
+/*
+    Header
+*/
+.gauntlet .header{
+	margin-bottom:1em;
+}
+.gauntlet .header_liner{
+	background-color:#f85d18;
+    padding:2em;
+}
+.gauntlet .logo{
+    display:block;
+	color:white;
+	
+	/* Replace text with logo */
+	text-indent:-9999px;
+	background:url(../images/logo_200.png) no-repeat 0 0;
+	width:200px;
+	height:43px;
+}
+@media screen and (min-width: 400px){
+    .gauntlet .logo{
+    	background:url(../images/logo_300.png) no-repeat 0 0;
+    	width:300px;
+    	height:64px;
+    }
+}
+.gauntlet .info_link{
+    display:inline-block;
+    margin:2em 0 0;
+    color:white;
+    background:rgba(255,255,255, 0.25);
+    padding:3px 10px;
+    text-decoration:none;
+}
+.gauntlet .info_link:hover{
+    background:rgba(255,255,255, 0.5);
+}
+@media screen and (min-width: 560px){
+    .gauntlet .logo{
+        float:left;
+    }
+    .gauntlet .info_link{
+        float:right;
+        margin:1em 0;
+    }
+}
+
+
+
+/*
+    Main Page
+*/
+.plugin_blurb{
+	font-size:115%;
+}
+.disclaimer{
+    margin:2em 0;
+    border-left:4px solid #f85d18;
+    padding:7px 1em;
+}
+.disclaimer_toggle{
+    font-weight:bold;
+}
+.disclaimer_body{
+    display:none;
+}
+.show_disclaimer .disclaimer_body{
+    display:block;
+}
+
+
+/*
+    Test Listing
+*/
+.gauntlet ol{
+	margin:0;
+	list-style:none;
+    border-top:1px solid #f1f1f1;
+}
+.gauntlet ol > li{
+	margin:0;
+	background: #FFF;
+	padding: 2px 1em;
+    border-left:1px solid #f1f1f1;
+    border-right:1px solid #D4D4D4;
+    border-bottom:1px solid #D4D4D4;
+}
+
+
+
+/*
+    Test Titles
+*/
+.gauntlet ol h2{
+	font-size:15px;
+	line-height:1.6;
+	margin:0;
+	padding:0;
+}
+.gauntlet ol > li.open h2{
+	margin:0.5em 0;
+}
+
+
+
+/*
+    Toggle Links
+*/
+.gauntlet .toggle{
+	cursor:pointer;
+}
+.gauntlet .more_link{
+	float:right;
+    margin-top:2px;
+    margin-left:0.5em;
+    font-size:82%;
+    line-height:1;
+	color: #666;
+    font-weight:normal;
+    padding:3px 5px;
+    border:1px solid #ddd;
+    border-radius:4px;
+}
+.gauntlet .open h2.toggle:hover .more_link,
+.gauntlet .open .more_link{
+    display:none;
+}
+.gauntlet a.toggle_all{
+	float:right;
+    margin-right:1em;
+}
+
+
+
+/*
+    Sub-test Listing
+*/
+.gauntlet ol ol,
+.gauntlet ol ul{
+	margin:1em 0;
+}
+.gauntlet ol ol{
+	width:75%;
+	list-style:decimal;
+	margin-left:2em;
+}
+.gauntlet ol ol li{
+	background:transparent;
+	border:none;
+}
+
+
+
+/*
+    Test Message (can be expanded with toggle links)
+*/
+.gauntlet .test_message{
+	background-color: #EEE;
+	margin: 1em 0;
+	padding:1em;
+
+	border:transparent 1px solid;
+	border-radius: 1em;
+}
+@media screen and (min-width: 569px){
+    .gauntlet .test_message{
+    	margin: 1em;
+    }
+}
+.gauntlet ol li .test_message{
+	display:none;
+}
+.gauntlet ol li.open .test_message{
+	display:block;
+}
+
+
+
+/*
+    Test Message Sections
+*/
+.gauntlet .result_details,
+.gauntlet .sub_tests,
+.gauntlet .why_important,
+.gauntlet .how_to_fix{
+	margin-bottom: 1.25em;
+}
+.gauntlet .test_message div:last-child{
+	margin-bottom:0;
+}
+
+
+
+/*
+    Test Headings
+*/
+.gauntlet h3{
+	margin-top:2em;
+}
+.gauntlet h3 .sub-head{
+	font-weight:normal;
+}
+.gauntlet .test_message h3{
+	font-size: 1em;
+	margin: 0 0 1em;
+}
+
+
+
+/*
+    Code Samples
+*/
+.gauntlet .test_message code{
+	font-size:0.9em;
+	display: block;
+	margin: 1em 0;
+	background-color:#FAFEFF;
+	padding: 3px 8px;
+	overflow: auto;
+	white-space:pre;
+}
+
+
+/*
+    Display Paths
+*/
+.gauntlet .abspath{
+	color:#A8A7A7;
+}
+
+
+/*
+    Lists Within Test Message
+*/
+.gauntlet ol ul li{
+	list-style:disc;
+	margin-left:1.5em;
+}
+
+
+
+/*
+    Sub-test Tables
+*/
+.gauntlet table{
+	min-width:45%;
+	border-collapse:collapse;
+	margin-bottom:2em;
+	background-color: #EEE;
+	border:transparent 1px solid;
+	border-radius: 1em;
+}
+.gauntlet td,
+.gauntlet th{
+	border-bottom: 1px solid #BEBDBD;
+	padding: 2px 10px;
+}
+.gauntlet tr:last-child td{
+	border-bottom: 0;
+}
+
+
+
+/*
+    Test Result Text Styles
+*/
+.gauntlet .error{
+	color:red;
+}
+.gauntlet .okay{
+	color:#444;
+	color:initial;
+}
+.gauntlet .warning{
+	color:#DB2C64;
+}
+.critical h2, table .critical td{
+	color:red;
+	font-weight:bold;
+}
+.undetermined h2{
+	color:#7F7F7F;
+}
+
+
+
+/*
+    Icons
+*/
+.gauntlet .has_icon_lg:before{
+    content:' ';
+    display:block;
+    float:left;
+    width:20px;
+    height:20px;
+	margin-right:0.75em;
+    margin-top:2px;
+    background-position:0 0;
+    background-repeat:no-repeat;
+    background-image:url(../images/icon_sprite_20.png);
+}
+.gauntlet .notrun h2:before{
+	background-position: 0 0;
+}
+.gauntlet .running h2:before{
+	background-position: -20px 0;
+}
+.gauntlet .pass h2:before{
+	background-position: -40px 0;
+}
+.gauntlet .critical h2:before{
+	background-position: -60px 0;
+}
+.gauntlet .fail h2:before{
+	background-position: -80px 0;
+}
+.gauntlet .undetermined h2:before{
+	background-position: -100px 0;
+}
+
+/*
+    Spinning icon
+*/
+.gauntlet .running h2:before{
+    -webkit-animation: spin 1.5s infinite ease-in-out;
+    -moz-animation: spin 1.5s infinite ease-in-out;
+    -o-animation: spin 1.5s infinite ease-in-out;
+    animation: spin 1.5s infinite ease-in-out;
+}
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+    0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(360deg); }
+}
+@-o-keyframes spin {
+    0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(360deg); }
+}
+@keyframes spin {
+    0% {transform:rotate(0deg);}
+    100% {transform:rotate(360deg);}
+}
+
+
+
+/*
+    About Page
+*/
+.gauntlet-about .main{
+}
+.gauntlet-about .sidebar{
+    background:white;
+    border:1px solid #D4D4D4;
+    padding:0.5em 1em 1em;
+}
+@media screen and (min-width: 569px){
+    .gauntlet-about .main{
+        float:left;
+        width:47%;
+    }
+    .gauntlet-about .sidebar{
+        float:right;
+        width:47%;
+    }
+}
+@media screen and (min-width: 782px){
+    .gauntlet-about .main{
+        width:62%;
+    }
+    .gauntlet-about .sidebar{
+        width:30%;
+    }
+}
+.gauntlet-about h3{
+    margin-top:1em;
+}
+.gauntlet-about .content_box{
+    margin-bottom:3em;
+}
+.gauntlet-about .donate_wrapper{
+    margin:1em 0;
+    text-align:center;
+}
+.gauntlet-about ul{
+    list-style:disc;
+}
+.gauntlet-about li{
+    margin-left:1.5em;
+}
