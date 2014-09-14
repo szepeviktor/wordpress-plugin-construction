@@ -268,6 +268,7 @@ Disallow: %1$s/%2$s/
                 }
                 $buffer = '';
             } else {
+                //FIXME: $buffer = array(); array_unique() when put to $any/records
                 $buffer .= $line . PHP_EOL;
             }
         }
@@ -365,6 +366,7 @@ Disallow: %1$s/%2$s/
         if ( ! current_user_can( 'activate_plugins' ) )
             return;
 
+        delete_transient( 'mprt_remote_content' );
         $MPRT = new Multipart_Robotstxt();
         $MPRT->settings();
         Voce_Settings_API::GetInstance()->set_defaults( 'mp-robotstxt' );
@@ -384,8 +386,9 @@ Disallow: %1$s/%2$s/
 
         $plugin_option = get_option( 'mprt_plugin' );
         if ( $plugin_option && true == $plugin_option['forget_records'] )
-            del_option( 'mprt_records' );
-            del_option( 'mprt_plugin' );
+            delete_option( 'mprt_records' );
+            delete_option( 'mprt_plugin' );
+            delete_transient( 'mprt_remote_content' );
     }
 }
 

@@ -14,7 +14,7 @@ Customize your site's robots.txt and include remote content to it
 = This is a 'just released' plugin! =
 
 You can edit your robots.txt and add remote content to it.
-E.g. you have several site and want to use a centralized robots.txt.
+E.g. you have several sites and want to use a centralized robots.txt.
 
 = Features =
 
