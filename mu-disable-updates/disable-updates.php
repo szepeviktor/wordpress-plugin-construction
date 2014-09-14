@@ -150,12 +150,10 @@ class Disable_Version_Check_MU {
      */
     public function last_checked() {
 
-        global $wp_version;
-
         return (object) array(
             'last_checked'    => time(),
             'updates'         => array(),
-            'version_checked' => $wp_version,
+            'version_checked' => get_bloginfo( 'version' ),
         );
     }
 
