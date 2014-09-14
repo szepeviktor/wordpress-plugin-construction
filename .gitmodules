@@ -16,3 +16,6 @@
 [submodule "wp-cli-shared-hosting/search-replace-db"]
 	path = wp-cli-shared-hosting/search-replace-db
 	url = https://github.com/interconnectit/Search-Replace-DB.git
+[submodule "wp-cli-commands/wp-cli-database-prefix-command"]
+	path = wp-cli-commands/wp-cli-database-prefix-command
+	url = git@github.com:szepeviktor/wp-cli-database-prefix-command.git
