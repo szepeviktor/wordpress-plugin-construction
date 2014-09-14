@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: security, secure, vulnerability, exploit, hacks, audit, scanner, virus, gauntlet, checklist, protection
 Requires at least: 3.4
 Tested up to: 4.0
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -91,9 +91,9 @@ Gauntlet Security can find opportunities for improvement and recommend ways to h
 
 == Screenshots ==
 
-1. The main page. 
-2. All checks include a detailed explanation and instructions on how to fix the issue. 
-3. Not all issues need to be fixed. Less important tests are included for the paranoid. 
+1. The main page.
+2. All checks include a detailed explanation and instructions on how to fix the issue.
+3. Not all issues need to be fixed. Less important tests are included for the paranoid.
 
 == Changelog ==
 

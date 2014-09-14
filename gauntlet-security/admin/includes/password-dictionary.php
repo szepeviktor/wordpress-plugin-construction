@@ -1,4 +1,8 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+<?php
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) )
+    exit;
 
 $password_dictionary = <<<EOD
 

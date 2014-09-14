@@ -47,9 +47,10 @@ class gus_PluginAudit extends gus_TestBase
 		$args = array();
 		$response = wp_remote_request( 'http://api.wordpress.org/plugins/info/1.0/' . $slug . '.json', $args );
 
-		if( ! is_object($response) && ( $response['response']['code'] == 200 ) && ( isset($response['body'])) )
-		{
+		if( ! is_object($response) && ( $response['response']['code'] == 200 ) && ( isset($response['body'])) ) {
 			$json = json_decode($response['body']);
+		} else {
+			$json = null;
 		}
 		
 		// Default is a pass
