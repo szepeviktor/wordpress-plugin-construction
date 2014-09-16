@@ -1,11 +1,11 @@
-[submodule "wp-cli-shared-hosting/update-control"]
-	path = wp-cli-shared-hosting/update-control
+[submodule "shared-hosting-aid/update-control"]
+	path = shared-hosting-aid/update-control
 	url = https://github.com/chipbennett/update-control
-[submodule "wp-cli-shared-hosting/wordpress-php-info"]
-	path = wp-cli-shared-hosting/wordpress-php-info
+[submodule "shared-hosting-aid/wordpress-php-info"]
+	path = shared-hosting-aid/wordpress-php-info
 	url = https://github.com/wp-plugins/wordpress-php-info
-[submodule "wp-cli-shared-hosting/ftptail"]
-	path = wp-cli-shared-hosting/ftptail
+[submodule "shared-hosting-aid/ftptail"]
+	path = shared-hosting-aid/ftptail
 	url = https://github.com/johntdyer/ftptail.git
 [submodule "wp-cli-commands/wp-cli-check-update"]
 	path = wp-cli-commands/wp-cli-check-update
@@ -13,8 +13,8 @@
 [submodule "whats-running"]
 	path = whats-running
 	url = git@github.com:szepeviktor/whats-running.git
-[submodule "wp-cli-shared-hosting/search-replace-db"]
-	path = wp-cli-shared-hosting/search-replace-db
+[submodule "shared-hosting-aid/search-replace-db"]
+	path = shared-hosting-aid/search-replace-db
 	url = https://github.com/interconnectit/Search-Replace-DB.git
 [submodule "wp-cli-commands/wp-cli-database-prefix-command"]
 	path = wp-cli-commands/wp-cli-database-prefix-command

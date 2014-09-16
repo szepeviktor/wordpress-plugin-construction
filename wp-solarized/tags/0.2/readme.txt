@@ -44,7 +44,7 @@ This plugin is to ease your eyes not to provide high visibility
 == Changelog ==
 
 = 0.2 =
-* support CSS debugging and small corrections
+* support CSS debugging and small corrections 
 
 = 0.1 =
 * Initial release after some testing. Not complete!

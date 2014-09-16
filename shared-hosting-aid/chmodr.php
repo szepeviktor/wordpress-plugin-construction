@@ -1,8 +1,25 @@
 <pre><?php
 
+// uncomment it!
 exit;
 
+
+// a specific directory
+//chmod_R('./dir', 0777, 0777);
+
+// and all directories from the current down
+$xdh = opendir('.');
+while (($xfile = readdir($xdh)) !== false) {
+    if ($xfile != '.' && $xfile != '..') {
+        $xfullpath = $xfile;
+        // file and dir permissions
+        chmod_R($xfullpath, 0664, 0775);
+    }
+}
+closedir($dh);
+
 function chmod_R($path, $filemode, $dirmode) {
+
     if (is_dir($path) ) {
         if (!chmod($path, $dirmode)) {
             $dirmode_str=decoct($dirmode);
@@ -11,14 +28,17 @@ function chmod_R($path, $filemode, $dirmode) {
             return;
         }
         print "$path - OK\n";
+
         $dh = opendir($path);
         while (($file = readdir($dh)) !== false) {
-            if($file != '.' && $file != '..') {  // skip self and parent pointing directories
+            // skip self and parent pointing directories
+            if ($file != '.' && $file != '..') {
                 $fullpath = $path.'/'.$file;
                 chmod_R($fullpath, $filemode,$dirmode);
             }
         }
         closedir($dh);
+
     } else {
         if (is_link($path)) {
             print "link '$path' is skipped\n";
@@ -32,17 +52,5 @@ function chmod_R($path, $filemode, $dirmode) {
         print "$path - OK\n";
     }
 }
-
-//chmod_R('./dir', 0777, 0777);
-
-$xdh = opendir('.');
-while (($xfile = readdir($xdh)) !== false) {
-    if ($xfile != '.' && $xfile != '..') {
-        $xfullpath = $xfile;
-                        //  file  _dir
-        chmod_R($xfullpath, 0664, 0775);
-    }
-}
-closedir($dh);
 
 ?></pre>

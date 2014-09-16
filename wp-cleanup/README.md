@@ -29,3 +29,10 @@ dashboard
 What db tables WP has?
 
 + wp-cli implementation
+
+integration with other plugin
+- Yoast
+- pods
+- itsec
+- Google XML Sitemaps
+- etc.

@@ -1,11 +1,18 @@
 <?php
 
-function encode_full_url($url) {
-    // a) detect whether this is a relative or absolute url
-    // b) parse it
-    // c) url_encode the parts which need encoding
-    // d) re-build the url
-    // e) only then -> pass it on to wp_redirect()
+/**
+ * Encode all parts of any URL
+ *
+ * a) relative or absolute
+ * b) parse it
+ * c) url_encode the parts which need encoding (relative protocol, IDN, accents, query)
+ * d) re-build the url
+ * e) ??? only then -> pass it on to wp_redirect()
+ *
+ * @param string any URL
+ * @var string encoded URL
+ */
+function o1_encode_url( $url ) {
 
     // scheme http://tools.ietf.org/html/rfc3986#section-3.1
     to lower
@@ -17,4 +24,3 @@ function encode_full_url($url) {
     // path
     rawurlencode()
 }
-
