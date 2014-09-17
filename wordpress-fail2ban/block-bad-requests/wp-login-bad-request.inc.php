@@ -6,7 +6,7 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.6
+Version: 1.7
 Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
 */
 
@@ -52,44 +52,33 @@ class O1_Bad_Request {
     private $allow_two_capitals = false;
     private $result = false;
 
-    private function parse_query( $query_string ) {
-        $field_strings = explode( '&', $query_string );
-        $fields = array();
+    public function __construct() {
+        // options
+        if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
+            $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
 
-        foreach ( $field_strings as $field_string ) {
-            $name_value = explode( '=', $field_string );
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_REG' ) && O1_BAD_REQUEST_ALLOW_REG )
+            $this->allow_registration = true;
 
-            // check field name
-            if ( empty( $name_value[0] ) )
-                continue;
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_IE8' ) && O1_BAD_REQUEST_ALLOW_IE8 )
+            $this->allow_ie8_login = true;
 
-            // set field value
-            $fields[$name_value[0]] = isset( $name_value[1] ) ? $name_value[1] : '';
-        }
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_OLD_PROXIES' ) && O1_BAD_REQUEST_ALLOW_OLD_PROXIES )
+            $this->allow_old_proxies = true;
 
-        return $fields;
-    }
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE' ) && O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE )
+            $this->allow_connection_close = true;
 
-    private function trigger() {
-        // trigger fail2ban
-        for ( $i = 0; $i < $this->trigger_count; $i++ ) {
+        if ( defined( 'O1_BAD_REQUEST_ALLOW_TWO_CAPS' ) && O1_BAD_REQUEST_ALLOW_TWO_CAPS )
+            $this->allow_two_capitals = true;
 
-            error_log( $this->prefix  . $this->result );
-        }
+        $this->result = $this->check();
 
-        // help learning attack internals
-        $server = array();
-        foreach ( $_SERVER as $header => $value ) {
-            if ( 'HTTP_' === substr( $header, 0, 5 ) )
-                $server[$header] = $value;
-        }
-        error_log( 'HTTP headers: ' . serialize( $server ) );
-        error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
+        //DEBUG echo '<pre>blocked by O1_Bad_Request, reason: <strong>'.$this->result;error_log('Bad_Request:'.$this->result);return;
 
-        ob_get_level() && ob_end_clean();
-        header( 'Status: 403 Forbidden' );
-        header( 'HTTP/1.0 403 Forbidden' );
-        exit();
+        // false means NO bad requests
+        if ( false !== $this->result )
+            $this->trigger();
     }
 
     private function check() {
@@ -251,33 +240,44 @@ class O1_Bad_Request {
         return false;
     }
 
-    function __construct() {
-        // options
-        if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
-            $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
+    private function trigger() {
+        // trigger fail2ban
+        for ( $i = 0; $i < $this->trigger_count; $i++ ) {
 
-        if ( defined( 'O1_BAD_REQUEST_ALLOW_REG' ) && O1_BAD_REQUEST_ALLOW_REG )
-            $this->allow_registration = true;
+            error_log( $this->prefix  . $this->result );
+        }
 
-        if ( defined( 'O1_BAD_REQUEST_ALLOW_IE8' ) && O1_BAD_REQUEST_ALLOW_IE8 )
-            $this->allow_ie8_login = true;
+        // help learning attack internals
+        $server = array();
+        foreach ( $_SERVER as $header => $value ) {
+            if ( 'HTTP_' === substr( $header, 0, 5 ) )
+                $server[$header] = $value;
+        }
+        error_log( 'HTTP headers: ' . serialize( $server ) );
+        error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
 
-        if ( defined( 'O1_BAD_REQUEST_ALLOW_OLD_PROXIES' ) && O1_BAD_REQUEST_ALLOW_OLD_PROXIES )
-            $this->allow_old_proxies = true;
+        ob_get_level() && ob_end_clean();
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.0 403 Forbidden' );
+        exit();
+    }
 
-        if ( defined( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE' ) && O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE )
-            $this->allow_connection_close = true;
+    private function parse_query( $query_string ) {
+        $field_strings = explode( '&', $query_string );
+        $fields = array();
 
-        if ( defined( 'O1_BAD_REQUEST_ALLOW_TWO_CAPS' ) && O1_BAD_REQUEST_ALLOW_TWO_CAPS )
-            $this->allow_two_capitals = true;
+        foreach ( $field_strings as $field_string ) {
+            $name_value = explode( '=', $field_string );
 
-        $this->result = $this->check();
+            // check field name
+            if ( empty( $name_value[0] ) )
+                continue;
 
-        //DEBUG echo '<pre>blocked by O1_Bad_Request, reason: <strong>'.$this->result;error_log('Bad_Request:'.$this->result);return;
+            // set field value
+            $fields[$name_value[0]] = isset( $name_value[1] ) ? $name_value[1] : '';
+        }
 
-        // false means NO bad requests
-        if ( false !== $this->result )
-            $this->trigger();
+        return $fields;
     }
 
 }
@@ -292,5 +292,4 @@ POST: login, postpass, resetpass, lostpassword, register
 GET: logout, rp, lostpassword
 non-WP POSTs
 comment POST etc.
-
 */
