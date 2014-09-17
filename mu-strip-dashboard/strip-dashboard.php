@@ -20,13 +20,17 @@ add_action('admin_init', 'o1_disable_comments_admin_menu_redirect');
 // Remove links from admin bar
 function o1_remove_admin_bar_links() {
     global $wp_admin_bar;
+
     $wp_admin_bar->remove_menu('wp-logo');          // Remove the WordPress logo
-     $wp_admin_bar->remove_menu('about');            // Remove the about WordPress link
-     $wp_admin_bar->remove_menu('wporg');            // Remove the WordPress.org link
-     $wp_admin_bar->remove_menu('documentation');    // Remove the WordPress documentation link
-     $wp_admin_bar->remove_menu('support-forums');   // Remove the support forums link
-     $wp_admin_bar->remove_menu('feedback');         // Remove the feedback link
+
+    $wp_admin_bar->remove_menu('about');            // Remove the about WordPress link
+    $wp_admin_bar->remove_menu('wporg');            // Remove the WordPress.org link
+    $wp_admin_bar->remove_menu('documentation');    // Remove the WordPress documentation link
+    $wp_admin_bar->remove_menu('support-forums');   // Remove the support forums link
+    $wp_admin_bar->remove_menu('feedback');         // Remove the feedback link
+
     $wp_admin_bar->remove_menu('comments');         // Remove the comments link
+
 }
 add_action( 'wp_before_admin_bar_render', 'o1_remove_admin_bar_links' );
 
