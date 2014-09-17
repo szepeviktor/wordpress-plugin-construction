@@ -15,6 +15,7 @@ class Machine_Language {
     private $option = 'machine_language';
     private $nonce = 'machine_language';
     private $machine;
+    // this is a mu-plugin, so no js file
     private $js_template = '<script type="text/javascript" id="machine-lang">
         jQuery(function ($) {
             var postdata,
@@ -55,7 +56,7 @@ class Machine_Language {
                             return this.nodeType == 3 && $.trim(this.nodeValue) != "";
                         })
                         .first();
-                    if (!elem.length) {console.info("bailout");return;}
+                    if (!elem.length) return;
                     if (machine) {
                         $(e).prop("data-machine-lang", elem[0].textContent);
                         name = $(e).find("input[type=radio]").prop("name");
@@ -63,7 +64,6 @@ class Machine_Language {
                         if ($.trim(value) == "") value = noContent;
                         elem[0].textContent = name + "|" + value;
                     } else {
-                        console.error( $(e).prop("data-machine-lang") );
                         elem[0].textContent = $(e).prop("data-machine-lang");
                     }
                 });
@@ -138,14 +138,22 @@ class Machine_Language {
 
     public function __construct() {
 
+        $action = 'admin_init';
+        if ( defined( 'MACHINE_LANGUAGE_HOOK' ) && MACHINE_LANGUAGE_HOOK )
+            $action = MACHINE_LANGUAGE_HOOK;
+
+        add_action( $action, array( $this, 'hooks' ) );
+        // update user option on checkbox state change
+        add_action( 'wp_ajax_o1_toggle_descriptions', array( $this, 'ajax_receiver' ) );
+    }
+
+    public function hooks() {
         // add the checkbox to "Screen Options"
         add_filter( 'screen_settings', array( $this, 'checkbox' ), 99, 2 );
         // hide descriptions by CSS
         add_action( 'admin_print_styles', array( $this, 'style' ) );
         // Javascript for the checkbox
         add_action( 'admin_head', array( $this, 'script' ) );
-        // update user option on checkbox state change
-        add_action( 'wp_ajax_o1_toggle_descriptions', array( $this, 'ajax_receiver' ) );
     }
 
     public function checkbox( $settings, $obj ) {
