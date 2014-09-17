@@ -1,102 +1,121 @@
 <?php
-/**
- * Plugin Name: WP Downloader
- * Plugin URI: http://szalkiewicz.pl/
- * Description: This plugin allows you to download other plugins and themes installed on your site as a zip package, ready to install on another site.
- * Version: 1.1
- * Author: Wojtek Szałkiewicz
- * Author URI: http://szalkiewicz.pl
- * Requires at least: 3.5
- * Tested up to: 3.7.1
- */
+/*
+Plugin Name: Theme and Plugin Downloader
+Version: 2.0
+Plugin URI: http://wordpress.org/plugins/wp-downloader/
+Description: Download themes and plugins installed on your site as a ZIP archive, ready to install on another site.
+Author: Viktor Szépe, Wojtek Szałkiewicz
+Author URI: http://www.online1.hu/webdesign/
+License: GNU General Public License (GPL) version 2
 
-add_action('plugins_loaded', 'wpd_load');
 
-function wpd_load() {
-    add_filter('plugin_action_links', 'wpd_plugin_action_links', 10, 2);
-    add_filter('theme_action_links', 'wpd_theme_action_links', 10, 2);
-    add_action('admin_footer', 'wpd_scripts');
+Copyright 2014  Viktor Szépe  (email: viktor@szepe.net)
 
-    // zip & download
-    if ( isset( $_GET['wpd'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'wpd-download' ) ) {
-        wpd_download();
-    }
-}
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License, version 2, as
+published by the Free Software Foundation.
 
-function wpd_plugin_action_links( $links, $file ) {
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    $settings_link = '<a href="'
-                     . wp_nonce_url( admin_url( '?wpd=plugin&object='.$file), 'wpd-download') . '">'
-                     . __('Download') . '</a>';
-    array_push($links, $settings_link);
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 
-    return $links;
-}
+class WP_Downloader {
 
-function wpd_theme_action_links($links, $theme){
+    private $script_template = '<script type="text/javascript" id="wp-downloader">
+            jQuery(function ($) {
+                $("#wpbody .theme .theme-actions .load-customize").each(function (i, e) {
+                    var url = $(e).prop("href");
 
-    $settings_link = '<a href="'
-                     . wp_nonce_url( admin_url( '?wpd=theme&object='.$theme->get_stylesheet()), 'wpd-download') . '">'
-                     . __('Download') . '</a>';
-    array_push($links, $settings_link);
-
-    return $links;
-}
-
-function wpd_scripts() {
-
-    $screen = get_current_screen()->id;
-
-    if ( $screen == 'themes') {
-        $url = wp_nonce_url( admin_url( '?wpd=theme&object=' . get_stylesheet() ), 'wpd-download' );
-        ?>
-<script>
-(function($) {
-    $(function() {
-        $('#current-theme .theme-options')
-            .after('<div class="theme-options"><a href="<?php echo $url; ?>"><?php _e('Download'); ?></a></div>')
-    });
-}(jQuery))
+                    $(e).removeClass("load-customize");
+                    $(e).text("Download");
+                    $(e).prop("href", "%s" + url.replace(/.*theme=(.*)(&|$)/, "$1") );
+                });
+            });
 </script>
-        <?php
+    ';
+
+    public function __construct() {
+
+        add_action('plugins_loaded', array( $this, 'load' ) );
+        add_filter('plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
+        add_action('admin_footer-themes.php', array( $this, 'theme_script' ), 99 );
+    }
+
+    public function load() {
+
+        if ( isset( $_GET['wpd'] )
+            && wp_verify_nonce( $_GET['_wpnonce'], 'wpd-download' )
+        ) {
+            $this->download();
+        }
+    }
+
+    public function plugin_action_links( $links, $file ) {
+
+        $download_link = sprintf( '<a href="%s">%s</a>',
+            wp_nonce_url( admin_url( '?wpd=plugin&object=' . $file ), 'wpd-download' ),
+            __('Download')
+        );
+        array_push( $links, $download_link );
+
+        return $links;
+    }
+
+    public function theme_script() {
+
+        // scripts don't need HTML encoding
+        $url = admin_url( '?wpd=theme&_wpnonce='. wp_create_nonce( 'wpd-download' ) . '&object=' );
+        printf( $this->script_template, $url );
+    }
+
+    private function download() {
+
+        if ( ! class_exists( 'PclZip' ) ) {
+            require ABSPATH . 'wp-admin/includes/class-pclzip.php';
+        }
+
+        $what = $_GET['wpd'];
+        $object = $_GET['object'];
+
+        switch ($what) {
+            case 'plugin':
+                // plugin in a subdir
+                if ( strpos( $object, '/' ) ) {
+                    $object = dirname( $object );
+                }
+                $root = WP_PLUGIN_DIR;
+                break;
+            case 'theme':
+                $root = get_theme_root( $object );
+                break;
+        }
+
+        $object = sanitize_file_name( $object );
+        $path = $root . '/' . $object;
+
+        // create zip in the uploads directory
+        $upload_dir = wp_upload_dir();
+        $zip = trailingslashit( $upload_dir['path'] ) . $object . '.zip';
+
+        $archive = new PclZip( $zip );
+        $archive->add( $path, PCLZIP_OPT_REMOVE_PATH, $root );
+
+        header( 'Content-type: application/zip' );
+        header( 'Content-Disposition: attachment; filename="' . $object . '.zip"' );
+
+        readfile( $zip );
+
+        // remove temporary ZIP file
+        unlink( $zip );
+
+        exit;
     }
 }
 
-function wpd_download(){
-
-    if(!class_exists('PclZip')){
-        include ABSPATH . 'wp-admin/includes/class-pclzip.php';
-    }
-
-    $what = $_GET['wpd'];
-    $object = $_GET['object'];
-
-    switch ($what) {
-        case 'plugin':
-            if ( strpos($object, '/' ) ) {
-                $object = dirname( $object );
-            }
-            $root = WP_PLUGIN_DIR;
-            break;
-
-        case 'theme':
-            $root = get_theme_root($object);
-            break;
-    }
-
-    $path = $root . '/' . $object;
-    $fileName = $object . '.zip';
-
-    $archive = new PclZip($fileName);
-    $archive->add($path, PCLZIP_OPT_REMOVE_PATH, $root);
-
-    header('Content-type: application/zip');
-    header('Content-Disposition: attachment; filename="'.$fileName.'"');
-    readfile($fileName);
-
-    // remove tmp zip file
-    unlink($fileName);
-
-    exit;
-}
-
+new WP_Downloader();
