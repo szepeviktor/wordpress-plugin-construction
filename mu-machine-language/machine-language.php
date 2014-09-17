@@ -19,7 +19,9 @@ class Machine_Language {
         jQuery(function ($) {
             var postdata,
                 disableDesc = $("#machine-language"),
-                spinner = disableDesc.siblings(".spinner").css("margin-top", "5px"),
+                spinner = disableDesc.siblings(".spinner")
+                    .css("float", "right")
+                    .css("margin-top", "5px"),
                 machineLang = %s,
                 noContent = "\u2205";
 
@@ -27,7 +29,7 @@ class Machine_Language {
                 $("label[for]:not(:has(*))").each(function (i,e) {
                     if (machine) {
                         $(e).prop("data-machine-lang", $(e).html());
-                        $(e).html($(e).attr("for"));
+                        $(e).html($(e).prop("for"));
                     } else {
                         $(e).html($(e).prop("data-machine-lang"));
                     }
@@ -41,13 +43,13 @@ class Machine_Language {
                     if (!elem.length) return;
                     if (machine) {
                         $(e).prop("data-machine-lang", elem[0].textContent);
-                        elem[0].textContent = $(e).attr("for");
+                        elem[0].textContent = $(e).prop("for");
                     } else {
                         elem[0].textContent = $(e).prop("data-machine-lang");
                     }
                 });
                 $("label:not([for]):has(input[type=radio])").each(function (i,e) {
-                    var value,
+                    var value, name,
                         elem = $(e).contents()
                         .filter(function () {
                             return this.nodeType == 3 && $.trim(this.nodeValue) != "";
@@ -56,9 +58,10 @@ class Machine_Language {
                     if (!elem.length) {console.info("bailout");return;}
                     if (machine) {
                         $(e).prop("data-machine-lang", elem[0].textContent);
-                        value = $(e).find("input[type=radio]").attr("value");
+                        name = $(e).find("input[type=radio]").prop("name");
+                        value = $(e).find("input[type=radio]").prop("value");
                         if ($.trim(value) == "") value = noContent;
-                        elem[0].textContent = value;
+                        elem[0].textContent = name + "|" + value;
                     } else {
                         console.error( $(e).prop("data-machine-lang") );
                         elem[0].textContent = $(e).prop("data-machine-lang");
@@ -73,24 +76,42 @@ class Machine_Language {
                     if (!elem.length) return;
                     if (machine) {
                         $(e).prop("data-machine-lang", elem[0].textContent);
-                        value = $(e).find("input[type=radio]").attr("value");
+                        value = $(e).find("input[type=radio]").prop("value");
                         if ($.trim(value) == "") value = noContent;
                         elem[0].textContent = value;
                     } else {
                         elem[0].textContent = $(e).prop("data-machine-lang");
                     }
                 });
+                $("select:has(option)").each(function (i,e) {
+                    var title = [],
+                        options = $(e).find("option");
+
+                    if (machine) {
+                        options.each(function (n,o) {
+                            var value = $(o).val();
+                            title.push(value);
+                            $(o).prop("data-machine-lang", $(o).text());
+                            $(o).text($(o).text() + "|" + value);
+                        });
+                        $(e).prop("data-machine-lang", $(e).prop("title"));
+                        $(e).prop("title", title.join(", "));
+                    } else {
+                        options.each(function (n,o) {
+                            $(o).text($(o).prop("data-machine-lang"));
+                        });
+                        $(e).prop("title", $(e).prop("data-machine-lang"));
+                    }
+                });
             }
 
-            if (machineLang) translate(true);
-
-            disableDesc.click(function () {
+            function onClick() {
                 var state;
 
                 disableDesc.prop("disabled", true);
                 spinner.css("display", "block");
                 state = disableDesc.prop("checked");
-                $("#wpbody .description").slideToggle();
+                $("#wpbody p.description,#wpbody span.description").slideToggle();
                 translate(state);
                 postdata = {
                     action: "o1_toggle_descriptions",
@@ -107,7 +128,10 @@ class Machine_Language {
                         }
                     }
                 );
-            });
+            };
+
+            if (machineLang) translate(true);
+            disableDesc.click(onClick);
         });
 </script>
     ';
@@ -143,15 +167,17 @@ class Machine_Language {
         $this->machine = get_user_option( $this->option, get_current_user_id() );
 
         if ( $this->machine )
-            printf( '<style type="text/css">#wpbody .description { display:none; }</style>' );
+            printf( '<style type="text/css">#wpbody p.description,#wpbody span.description {display:none;}</style>' );
     }
 
     public function script() {
 
         $nonce = wp_create_nonce( $this->nonce );
+
         printf( $this->js_template,
             $this->machine ? 'true' :  'false',
-            $nonce );
+            $nonce
+        );
     }
 
     public function ajax_receiver() {
