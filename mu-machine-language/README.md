@@ -1,1 +1,1 @@
-![machine lang](http://i.snag.gy/Hdafi.jpg)
+![machine lang](http://i.snag.gy/Zngmf.jpg)
