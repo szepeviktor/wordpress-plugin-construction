@@ -193,9 +193,9 @@ class Machine_Language {
     public function checkbox( $settings, $obj ) {
 
         $machine_language_checkbox = sprintf( '<div class="screen-options-machine-lang">
-            <label for="machine-language" style="font-style: italic;"><input id="machine-language"
-            name="machine-language" type="checkbox"%s />%s%s<span class="spinner"></span>
-            </label></div>',
+            <label for="machine-language" style="float: none;font-style: italic;"><input
+            id="machine-language" name="machine-language" type="checkbox"%s />%s%s<span
+            class="spinner"></span></label></div>',
             checked( $this->enabled, true, false ),
             __( 'Machine language', 'machinelanguage' ),
             $this->hook
@@ -210,7 +210,8 @@ class Machine_Language {
         $this->enabled = get_user_option( $this->option, get_current_user_id() );
 
         if ( $this->enabled )
-            printf( '<style type="text/css">#wpbody p.description,#wpbody span.description {display:none;}</style>' );
+            printf( '<style type="text/css" id="hide-descriptions">
+                #wpbody p.description,#wpbody span.description {display:none;}</style>' );
     }
 
     public function script() {
