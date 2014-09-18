@@ -2,14 +2,16 @@
 Contributors: szepe.viktor
 Donate link: https://szepe.net/wp-donate/
 Tags: debug, debugger, debugging, developer, development, admin, screen, setting, settings, option, options
-Requires at least: 3.5
+Requires at least: 3.8
 Tested up to: 4.0
 Stable tag: 0.3
 License: GPLv2
 
-Toggles human and machine language (aka IDs) on admin pages.
+Admin page debugger tool
 
 == Description ==
+
+Toggles human and machine language (aka IDs) on admin pages.
 
 = Only for development! =
 

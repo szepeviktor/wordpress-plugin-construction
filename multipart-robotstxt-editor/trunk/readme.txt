@@ -18,10 +18,10 @@ E.g. you have several sites and want to use a centralized robots.txt.
 
 = Features =
 
-- Include or exclude WordPress' own robots.txt
-- Include or exclude plugins (e.g. sitemap plugins) output to robots.txt
-- Include or exclude a remote text file
-- Include or exclude custom records from the settings page
+- Include or exclude WordPress' own robots.txt (core function)
+- Include or exclude plugins - e.g. sitemap plugins - output to robots.txt (filter output)
+- Include or exclude a remote text file (the common part)
+- Include or exclude custom records from the settings page (the site specific part)
 
 = TODO =
 

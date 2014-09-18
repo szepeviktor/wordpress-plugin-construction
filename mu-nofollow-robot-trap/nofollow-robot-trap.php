@@ -72,7 +72,7 @@ class NofollowTrap {
         //register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
         // generate URLs
-        /*$sprintf('%u', crc32( get_bloginfo( 'url' ) ) );
+        /*$sprintf('%u', crc32( get_bloginfo( 'url' ) ) . '1' ); 1 for block_url, 2 for allow_url ...
         defined();
         // options-general.php fieldset
         get_option();*/
