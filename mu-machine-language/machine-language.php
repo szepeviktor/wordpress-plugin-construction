@@ -10,12 +10,44 @@ Author URI: http://www.online1.hu/webdesign/
 Text Domain: machinelanguage
 */
 
+if ( ! function_exists( 'add_filter' ) ) {
+    error_log( 'File does not exist: errorlog_direct_access '
+               . esc_url( $_SERVER['REQUEST_URI'] ) );
+
+    ob_get_level() && ob_end_clean();
+    header( 'Status: 403 Forbidden' );
+    header( 'HTTP/1.0 403 Forbidden' );
+    exit();
+}
+
+if ( ! class_exists( 'Machine_Language' ) ):
+/**
+ * Toggles human and machine language (aka IDs) on admin pages.
+ * A one-class plugin
+ *
+ * @package Machine_Language
+ */
 class Machine_Language {
 
+    /**
+     * @var string User option name
+     */
     private $option = 'machine_language';
+    /**
+     * @var string Nonce name
+     */
     private $nonce = 'machine_language';
-    private $machine;
-    // this is a mu-plugin, so no js file
+    /**
+     * @var string Hook name for the Screen Option message
+     */
+    private $hook = '';
+    /**
+     * @var bool Enabled/disabled
+     */
+    private $enabled;
+    /**
+     * @var bool Javascript template, a mu-plugin needs one file
+     */
     private $js_template = '<script type="text/javascript" id="machine-lang">
         jQuery(function ($) {
             var postdata,
@@ -139,8 +171,10 @@ class Machine_Language {
     public function __construct() {
 
         $action = 'admin_init';
-        if ( defined( 'MACHINE_LANGUAGE_HOOK' ) && MACHINE_LANGUAGE_HOOK )
+        if ( defined( 'MACHINE_LANGUAGE_HOOK' ) && MACHINE_LANGUAGE_HOOK ) {
             $action = MACHINE_LANGUAGE_HOOK;
+            $this->hook = '<span>&nbsp;@</span><code>' . $action . '</code>';
+        }
 
         add_action( $action, array( $this, 'hooks' ) );
         // update user option on checkbox state change
@@ -160,10 +194,11 @@ class Machine_Language {
 
         $machine_language_checkbox = sprintf( '<div class="screen-options-machine-lang">
             <label for="machine-language" style="font-style: italic;"><input id="machine-language"
-            name="machine-language" type="checkbox"%s />%s<span class="spinner"></span>
+            name="machine-language" type="checkbox"%s />%s%s<span class="spinner"></span>
             </label></div>',
-            checked( $this->machine, true, false ),
-            __( 'Machine language', 'machinelanguage' )
+            checked( $this->enabled, true, false ),
+            __( 'Machine language', 'machinelanguage' ),
+            $this->hook
         );
 
         return $settings . $machine_language_checkbox;
@@ -172,9 +207,9 @@ class Machine_Language {
     public function style() {
 
         // early enough to set it here (@admin_print_styles)
-        $this->machine = get_user_option( $this->option, get_current_user_id() );
+        $this->enabled = get_user_option( $this->option, get_current_user_id() );
 
-        if ( $this->machine )
+        if ( $this->enabled )
             printf( '<style type="text/css">#wpbody p.description,#wpbody span.description {display:none;}</style>' );
     }
 
@@ -183,7 +218,7 @@ class Machine_Language {
         $nonce = wp_create_nonce( $this->nonce );
 
         printf( $this->js_template,
-            $this->machine ? 'true' :  'false',
+            $this->enabled ? 'true' :  'false',
             $nonce
         );
     }
@@ -197,5 +232,6 @@ class Machine_Language {
         wp_die( 1 );
     }
 }
+endif;
 
 new Machine_Language();
