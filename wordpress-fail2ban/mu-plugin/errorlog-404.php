@@ -71,6 +71,16 @@ class O1_ErrorLog404_MU {
 
     private function trigger( $slug, $message = '' ) {
 
+        // some environments don't prepend IP address, nor append referer
+        /*
+        error_log( '[' . @$_SERVER['REMOTE_ADDR'] . '] '
+            . $this->prefix
+            . $slug
+            . ( empty( $message ) ? '' : $this->esc_log( $message ) )
+            . ', ' . $this->esc_log( @$_SERVER['HTTP_REFERER'] )
+        );
+        */
+
         error_log( $this->prefix
             . $slug
             . ( empty( $message ) ? '' : $this->esc_log( $message ) )
