@@ -304,7 +304,7 @@ class O1_ErrorLog404 {
 
             // exclude missing media files but not '.php'
             && ( false === strstr( $request_path, basename( $uploads['baseurl'] ) )
-                || false !== substr( $request_path, '.php' )
+                || false !== stristr( $request_path, '.php' )
             )
 
             // exclude XML RPC (xmlrpc.php)

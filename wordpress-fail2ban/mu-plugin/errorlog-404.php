@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Reports 404s and various attacks in error.log for fail2ban. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 2.6
+Version: 2.7
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -11,7 +11,8 @@ Author URI: http://www.online1.hu/webdesign/
 
 if ( ! function_exists( 'add_filter' ) ) {
     error_log( 'File does not exist: errorlog_direct_access '
-               . esc_url( $_SERVER['REQUEST_URI'] ) );
+        . addslashes( $_SERVER['REQUEST_URI'] )
+    );
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.0 403 Forbidden' );
@@ -68,49 +69,12 @@ class O1_ErrorLog404_MU {
 
     }
 
-    private function esc_log( $string ) {
-
-        $string = serialize( $string ) ;
-        // trim long data
-        $string = mb_substr( $string, 0, 200, 'utf-8' );
-        // replace non-printables with "¿" - sprintf( '%c%c', 194, 191 )
-        $string = preg_replace( '/[^\P{C}]+/u', "\xC2\xBF", $string );
-
-        return ' (' . $string . ')';
-    }
-
-    private function is_robot( $ua ) {
-
-        // test user agent string (robot = not modern browser)
-        // based on: http://www.useragentstring.com/pages/Browserlist/
-        return ( ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
-            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
-            && ( 'Mozilla/4.0 (compatible; MSIE 7.0;' !== substr( $ua, 0, 34 ) )
-            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
-        );
-    }
-
     private function trigger( $slug, $message = '' ) {
 
         error_log( $this->prefix
-                   . $slug
-                   . ( empty( $message ) ? '' : $this->esc_log( $message ) ) );
-    }
-
-    private function exit_with_instructions() {
-
-        $doc_root = isset( $_SERVER['DOCUMENT_ROOT'] ) ? $_SERVER['DOCUMENT_ROOT'] : ABSPATH;
-
-        $iframe_msg = sprintf( '<p style="font:14px \'Open Sans\',sans-serif">
-            <strong style="color:#DD3D36">ERROR:</strong> This is <em>not</em> a normal plugin,
-            and it should not be activated as one.<br />
-            Instead, <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code>
-            must be copied to <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code></p>',
-
-            str_replace( $doc_root, '', __FILE__ ),
-            str_replace( $doc_root, '', trailingslashit( WPMU_PLUGIN_DIR ) ) . basename( __FILE__ )
+            . $slug
+            . ( empty( $message ) ? '' : $this->esc_log( $message ) )
         );
-        exit( $iframe_msg );
     }
 
     public function wp_404() {
@@ -143,7 +107,6 @@ class O1_ErrorLog404_MU {
             || strstr( $request_uri, '../' ) !== false
             || strstr( $request_uri, '/..' ) !== false
         ) {
-
             // remember this to prevent double-logging in redirect()
             $this->is_redirect = true;
             $this->trigger( 'errorlog_url_hack', $request_uri );
@@ -182,6 +145,46 @@ class O1_ErrorLog404_MU {
         }
 
         error_log( 'WordPress lost password:' . $this->esc_log( $username ) );
+    }
+
+    /**
+     * Non-frontend requests from robots.
+     */
+    public function robot_403() {
+
+        $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $request_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+        $admin_path = parse_url( admin_url(), PHP_URL_PATH );
+        $wp_dirs = 'wp-admin|wp-includes|wp-content|' . basename( WP_CONTENT_DIR );
+        $uploads = wp_upload_dir();
+
+        if ( ! is_user_logged_in()
+            // a robot or < IE8
+            && $this->is_robot( $ua )
+
+            // robots may only enter on the frontend (index.php)
+            // trigger only in WP dirs: wp-admin, wp-includes, wp-content
+            && 1 === preg_match( '/\/(' . $wp_dirs . ')\//i', $request_path )
+
+            // exclude missing media files but not '.php'
+            && ( false === strstr( $request_path, basename( $uploads['baseurl'] ) )
+                || false !== stristr( $request_path, '.php' )
+            )
+
+            // exclude XML RPC (xmlrpc.php)
+            && ! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
+
+            // exclude trackback (wp-trackback.php)
+            && 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path )
+        ) {
+
+            //FIXME wp-includes/ms-files.php:12
+            ob_get_level() && ob_end_clean();
+            $this->trigger( 'errorlog_robot403', $request_path );
+            header( 'Status: 403 Forbidden' );
+            header( 'HTTP/1.0 403 Forbidden' );
+            exit();
+        }
     }
 
     public function wp_die_ajax( $arg ) {
@@ -236,44 +239,6 @@ class O1_ErrorLog404_MU {
         call_user_func( $this->wp_die_handler, $message, $title, $args );
     }
 
-    // non-frontend requests from robots
-    public function robot_403() {
-
-        $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
-        $request_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-        $admin_path = parse_url( admin_url(), PHP_URL_PATH );
-        $wp_dirs = 'wp-admin|wp-includes|wp-content|' . basename( WP_CONTENT_DIR );
-        $uploads = wp_upload_dir();
-
-        if ( ! is_user_logged_in()
-            // a robot or < IE8
-            && $this->is_robot( $ua )
-
-            // robots may only enter on the frontend (index.php)
-            // trigger only in WP dirs: wp-admin, wp-includes, wp-content
-            && 1 === preg_match( '/\/(' . $wp_dirs . ')\//i', $request_path )
-
-            // exclude missing media files but not '.php'
-            && ( false === strstr( $request_path, basename( $uploads['baseurl'] ) )
-                || false !== substr( $request_path, '.php' )
-            )
-
-            // exclude XML RPC (xmlrpc.php)
-            && ! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
-
-            // exclude trackback (wp-trackback.php)
-            && 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path )
-        ) {
-
-            //FIXME wp-includes/ms-files.php:12
-            ob_get_level() && ob_end_clean();
-            $this->trigger( 'errorlog_robot403', $request_path );
-            header( 'Status: 403 Forbidden' );
-            header( 'HTTP/1.0 403 Forbidden' );
-            exit();
-        }
-    }
-
     public function wpcf7_spam( $text ) {
 
         $this->trigger( 'errorlog_wpcf7_spam', $text );
@@ -282,6 +247,44 @@ class O1_ErrorLog404_MU {
     public function wpcf7_spam_mx( $domain ) {
 
         $this->trigger( 'errorlog_wpcf7_spam_mx', $domain );
+    }
+
+    private function is_robot( $ua ) {
+
+        // test user agent string (robot = not modern browser)
+        // based on: http://www.useragentstring.com/pages/Browserlist/
+        return ( ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
+            && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
+            && ( 'Mozilla/4.0 (compatible; MSIE 7.0;' !== substr( $ua, 0, 34 ) )
+            && ( 'Opera/9.80' !== substr( $ua, 0, 10 ) )
+        );
+    }
+
+    private function esc_log( $string ) {
+
+        $string = serialize( $string ) ;
+        // trim long data
+        $string = mb_substr( $string, 0, 200, 'utf-8' );
+        // replace non-printables with "¿" - sprintf( '%c%c', 194, 191 )
+        $string = preg_replace( '/[^\P{C}]+/u', "\xC2\xBF", $string );
+
+        return ' (' . $string . ')';
+    }
+
+    private function exit_with_instructions() {
+
+        $doc_root = isset( $_SERVER['DOCUMENT_ROOT'] ) ? $_SERVER['DOCUMENT_ROOT'] : ABSPATH;
+
+        $iframe_msg = sprintf( '<p style="font:14px \'Open Sans\',sans-serif">
+            <strong style="color:#DD3D36">ERROR:</strong> This is <em>not</em> a normal plugin,
+            and it should not be activated as one.<br />
+            Instead, <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code>
+            must be copied to <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code></p>',
+
+            str_replace( $doc_root, '', __FILE__ ),
+            str_replace( $doc_root, '', trailingslashit( WPMU_PLUGIN_DIR ) ) . basename( __FILE__ )
+        );
+        exit( $iframe_msg );
     }
 
 }
