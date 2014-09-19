@@ -15,10 +15,11 @@ Toggles human and machine language (aka IDs) on admin pages.
 
 = Only for development! =
 
-This plugin shows you the IDs of almost all form fields including selects, checkboxes and radio buttons.
+This plugin shows you the IDs of almost all form fields including selects,
+checkboxes and radio buttons like in `wp-admin/options.php`.
 
-It works only on WordPress Settings API-like formatted - not necessarily API generated - admin pages.
-E.g. the `<input>`-s cannot be wrapped in `<span>`-s.
+It works only on WordPress Settings API-like formatted — not necessarily API generated — admin pages.
+E.g. `<input>` elements cannot be wrapped in `<span>`.
 
 = Activation =
 
