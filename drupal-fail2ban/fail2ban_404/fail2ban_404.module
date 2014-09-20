@@ -23,7 +23,7 @@ function fail2ban_404_watchdog( $log_entry ) {
                 . 'File does not exist: '
                 . 'errorlog_404'
                 . ' (' . addslashes( $log_entry['request_uri'] ) . ')'
-                . ', ' . $log_entry['referer']
+                . ', ' . addslashes( $log_entry['referer'] )
             );
             */
             break;
@@ -38,7 +38,7 @@ function fail2ban_404_watchdog( $log_entry ) {
                 . 'File does not exist: '
                 . 'errorlog_403'
                 . ' (' . addslashes( $log_entry['request_uri'] ) . ')'
-                . ', ' . $log_entry['referer']
+                . ', ' . addslashes( $log_entry['referer'] )
             );
             */
             break;
