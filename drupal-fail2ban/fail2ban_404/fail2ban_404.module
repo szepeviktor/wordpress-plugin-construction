@@ -1,0 +1,46 @@
+<?php
+/**
+ * @file
+ * fail2ban 404, a one-function module to trigger fail2ban.
+ * Also trigger on 403.
+ */
+
+/**
+ * Hook watchdog to get 403/404 requests
+ * @see drupal_deliver_html_page
+ * includes/common.php:2601
+ */
+function fail2ban_404_watchdog( $log_entry ) {
+    switch ( $log_entry['type'] ) {
+        case 'page not found':
+            error_log( 'File does not exist: '
+                . 'errorlog_404'
+                . ' (' . addslashes( $log_entry['request_uri'] ) . ')'
+            );
+            // some environments don't prepend IP address, nor append referer
+            /*
+            error_log( '[' . $log_entry['ip'] . '] '
+                . 'File does not exist: '
+                . 'errorlog_404'
+                . ' (' . addslashes( $log_entry['request_uri'] ) . ')'
+                . ', ' . $log_entry['referer']
+            );
+            */
+            break;
+        case 'access denied':
+            error_log( 'File does not exist: '
+                . 'errorlog_403'
+                . ' (' . addslashes( $log_entry['request_uri'] ) . ')'
+            );
+            // some environments don't prepend IP address, nor append referer
+            /*
+            error_log( '[' . $log_entry['ip'] . '] '
+                . 'File does not exist: '
+                . 'errorlog_403'
+                . ' (' . addslashes( $log_entry['request_uri'] ) . ')'
+                . ', ' . $log_entry['referer']
+            );
+            */
+            break;
+    }
+}

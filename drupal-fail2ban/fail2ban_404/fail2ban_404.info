@@ -1,0 +1,9 @@
+name = Fail2Ban
+description = Reports 404 requests for fail2ban.
+package = "Security"
+core = 7.x
+
+version = "7.x-0.1"
+core = "7.x"
+datestamp = "1411217463"
+
