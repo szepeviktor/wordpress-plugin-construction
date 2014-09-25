@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Disable Comments
+Plugin Name: Disable Comments MU
 Plugin URI: http://wordpress.org/extend/plugins/disable-comments/
-Description: Allows administrators to globally disable comments on their site. Comments can be disabled according to post type.
+Description: Globally disables comments.
 Version: 0.1
 Requires at least: 3.6
-Author: Samir Shah, Viktor Szépe
+Author: Samir Shah
 Author URI: http://rayofsolaris.net/
 License: GPL2
 */
@@ -36,6 +36,7 @@ class Disable_Comments_MU {
     }
 
     function setup_filters(){
+/* It does not work this way. Something is too early?
         $typeargs = array( 'public' => true );
         if( $this->networkactive )
             // stick to known types for network
@@ -49,29 +50,17 @@ class Disable_Comments_MU {
                 remove_post_type_support( $type, 'trackbacks' );
             }
         }
+*/
         add_filter( 'comments_open', array( $this, 'filter_comment_status' ), 20, 2 );
         add_filter( 'pings_open', array( $this, 'filter_comment_status' ), 20, 2 );
 
         // Filters for the admin only
         if ( is_admin() ) {
-            if ( $this->networkactive ) {
-                add_action( 'network_admin_menu', array( $this, 'settings_menu' ) );
-                add_filter( 'network_admin_plugin_action_links', array( $this, 'plugin_actions_links'), 10, 2 );
-            } else {
-                add_action( 'admin_menu', array( $this, 'settings_menu' ) );
-                add_filter( 'plugin_action_links', array( $this, 'plugin_actions_links'), 10, 2 );
-                // We're on a multisite setup, but the plugin isn't network activated.
-                if ( is_multisite() )
-                    register_deactivation_hook( __FILE__, array( $this, 'single_site_deactivate' ) );
-            }
-
             add_action( 'admin_print_footer_scripts', array( $this, 'discussion_notice' ) );
 
-            // if only certain types are disabled, remember the original post status
-            if ( !( $this->persistent_mode_allowed() && $this->options['permanent'] ) && !$this->options['remove_everywhere'] ) {
-                add_action( 'edit_form_advanced', array( $this, 'edit_form_inputs' ) );
-                add_action( 'edit_page_form', array( $this, 'edit_form_inputs' ) );
-            }
+            // remember the original post status
+            add_action( 'edit_form_advanced', array( $this, 'edit_form_inputs' ) );
+            add_action( 'edit_page_form', array( $this, 'edit_form_inputs' ) );
 
             if ( $this->options['remove_everywhere'] ) {
                 add_action( 'admin_menu', array( $this, 'filter_admin_menu' ), 9999 );    // do this as late as possible
@@ -95,7 +84,7 @@ class Disable_Comments_MU {
         }
     }
 
-//Could it be this __FILE__ with a hack?
+//Could the template be this __FILE__ with a hack?
     function dummy_comments_template() {
         return dirname( __FILE__ ) . '/comments-template.php';
     }
@@ -157,14 +146,13 @@ class Disable_Comments_MU {
             foreach( $this->options['disabled_post_types'] as $type )
                 $names[$type] = get_post_type_object( $type )->labels->name;
 
-                printf( '<script>jQuery(function ($) { $(".wrap h2").first().after( %s ); });</script>',
-                    json_encode(  sprintf( '<div style="color: #900"><p>Note:
-                        The <em>Disable Comments</em> plugin is currently active, and comments are completely disabled on: %s.
-                        Many of the settings below will not be applicable for those post types.</p></div>',
-                        implode( __( ', ' ), $names )
-                    ))
-                );
-            }
+            printf( '<script>jQuery(function ($) { $(".wrap h2").first().after( %s ); });</script>',
+                json_encode(  sprintf( '<div style="color: #900"><p>Note:
+                    The <em>Disable Comments</em> plugin is currently active, and comments are completely disabled on: %s.
+                    Many of the settings below will not be applicable for those post types.</p></div>',
+                    implode( __( ', ' ), $names )
+                ))
+            );
         }
     }
 
