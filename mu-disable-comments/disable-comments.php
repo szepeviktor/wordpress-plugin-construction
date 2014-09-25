@@ -56,18 +56,16 @@ class Disable_Comments_MU {
 
         // Filters for the admin only
         if ( is_admin() ) {
-            add_action( 'admin_print_footer_scripts', array( $this, 'discussion_notice' ) );
+//commented below            add_action( 'admin_print_footer_scripts', array( $this, 'discussion_notice' ) );
 
             // remember the original post status
             add_action( 'edit_form_advanced', array( $this, 'edit_form_inputs' ) );
             add_action( 'edit_page_form', array( $this, 'edit_form_inputs' ) );
 
-            if ( $this->options['remove_everywhere'] ) {
-                add_action( 'admin_menu', array( $this, 'filter_admin_menu' ), 9999 );    // do this as late as possible
-                add_action( 'admin_head', array( $this, 'hide_dashboard_bits' ) );
-                add_action( 'wp_dashboard_setup', array( $this, 'filter_dashboard' ) );
-                add_filter( 'pre_option_default_pingback_flag', '__return_zero' );
-            }
+            add_action( 'admin_menu', array( $this, 'filter_admin_menu' ), 9999 );    // do this as late as possible
+            add_action( 'admin_head', array( $this, 'hide_dashboard_bits' ) );
+            add_action( 'wp_dashboard_setup', array( $this, 'filter_dashboard' ) );
+            add_filter( 'pre_option_default_pingback_flag', '__return_zero' );
         }
         // Filters for front end only
         else {
@@ -76,7 +74,7 @@ class Disable_Comments_MU {
     }
 
     function check_comment_template() {
-        if( is_singular() && ( $this->options['remove_everywhere'] || in_array( get_post_type(), $this->options['disabled_post_types'] ) ) ) {
+        if ( is_singular() ) {
             // Kill the comments template. This will deal with themes that don't check comment stati properly!
             add_filter( 'comments_template', array( $this, 'dummy_comments_template' ), 20 );
             // Remove comment-reply script for themes that include it indiscriminately
@@ -140,8 +138,9 @@ class Disable_Comments_MU {
         }
     }
 
+/* same here:  $types
     function discussion_notice() {
-        if ( get_current_screen()->id == 'options-discussion' && !empty( $this->options['disabled_post_types'] ) ) {
+        if ( get_current_screen()->id == 'options-discussion' ) {
             $names = array();
             foreach( $this->options['disabled_post_types'] as $type )
                 $names[$type] = get_post_type_object( $type )->labels->name;
@@ -155,6 +154,7 @@ class Disable_Comments_MU {
             );
         }
     }
+*/
 
     function filter_admin_menu() {
         global $pagenow;
@@ -185,8 +185,7 @@ class Disable_Comments_MU {
     }
 
     function filter_comment_status( $open, $post_id ) {
-        $post = get_post( $post_id );
-        return ( $this->options['remove_everywhere'] || in_array( $post->post_type, $this->options['disabled_post_types'] ) ) ? false : $open;
+        return false;
     }
 
     function disable_rc_widget() {
