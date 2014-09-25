@@ -303,6 +303,7 @@ new O1_ErrorLog404_MU();
 
 /*
 - write test.sh
+- append: http://plugins.svn.wordpress.org/block-bad-queries/trunk/block-bad-queries.php
 - option to immediately ban on non-WP scripts (\.php$ \.aspx?$)
 - update non-mu plugin
 - new: invalid user/email during registration

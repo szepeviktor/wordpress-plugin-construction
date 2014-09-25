@@ -25,6 +25,7 @@ links
 
 dashboard
 - remove some parts of the dashboard
+- remove comments/posts https://github.com/solarissmoke/disable-comments/raw/master/disable-comments.php
 
 What db tables WP has?
 
