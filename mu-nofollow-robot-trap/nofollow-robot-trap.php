@@ -102,28 +102,16 @@ class NofollowTrap {
         add_filter( 'redirect_canonical', array( $this, 'protocol_relative' ), 1, 2 );
     }
 
-    public function robotstxt_disallow( $output ) {
+    private function trigger() {
+        // trigger fail2ban
+        for ( $i = 0; $i < $this->trigger_count; $i++ ) {
+            error_log( $this->prefix  . 'nofollow_robot_trap' );
+        }
 
-        $output .= sprintf( "\nUser-agent: *\nDisallow: %s\nAllow: %s\nAllow: %s\n",
-            home_url( $this->block_url, 'relative' ),
-            home_url( $this->allow_url, 'relative' ),
-            home_url( $this->nofollow_url, 'relative' )
-        );
-
-        return $output;
-    }
-
-    public function add_allow_url() {
-
-        if ( ! is_front_page() )
-            return;
-
-        printf ( '<div class="%s"><a href="%s">%s</a></div>%s',
-            $this->hide_class,
-            home_url( $this->allow_url ),
-            $this->anchor_text,
-            PHP_EOL
-        );
+        ob_get_level() && ob_end_clean();
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.0 403 Forbidden' );
+        exit();
     }
 
     public function register_urls() {
@@ -148,10 +136,28 @@ class NofollowTrap {
 
     }
 
-    public function activate() {
+    public function robotstxt_disallow( $output ) {
 
-        update_site_option( 'nfrt_activate', $this->version );
-        flush_rewrite_rules();
+        $output .= sprintf( "\nUser-agent: *\nDisallow: %s\nAllow: %s\nAllow: %s\n",
+            home_url( $this->block_url, 'relative' ),
+            home_url( $this->allow_url, 'relative' ),
+            home_url( $this->nofollow_url, 'relative' )
+        );
+
+        return $output;
+    }
+
+    public function add_allow_url() {
+
+        if ( ! is_front_page() )
+            return;
+
+        printf ( '<div class="%s"><a href="%s">%s</a></div>%s',
+            $this->hide_class,
+            home_url( $this->allow_url ),
+            $this->anchor_text,
+            PHP_EOL
+        );
     }
 
     public function generate_pages() {
@@ -240,16 +246,10 @@ class NofollowTrap {
         );
     }
 
-    private function trigger() {
-        // trigger fail2ban
-        for ( $i = 0; $i < $this->trigger_count; $i++ ) {
-            error_log( $this->prefix  . 'nofollow_robot_trap' );
-        }
+    public function activate() {
 
-        ob_get_level() && ob_end_clean();
-        header( 'Status: 403 Forbidden' );
-        header( 'HTTP/1.0 403 Forbidden' );
-        exit();
+        update_site_option( 'nfrt_activate', $this->version );
+        flush_rewrite_rules();
     }
 
     private function str_endswith( $haystack, $needle ) {
