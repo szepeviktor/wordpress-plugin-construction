@@ -22,3 +22,6 @@
 [submodule "wp-cli-commands/wp-cli-option-list-command"]
 	path = wp-cli-commands/wp-cli-option-list-command
 	url = git@github.com:szepeviktor/wp-cli-option-list-command.git
+[submodule "mu-disable-comments"]
+	path = mu-disable-comments
+	url = https://github.com/solarissmoke/disable-comments-mu.git

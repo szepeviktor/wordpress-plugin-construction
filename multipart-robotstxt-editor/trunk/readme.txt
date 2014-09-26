@@ -4,14 +4,14 @@ Donate link: https://szepe.net/wp-donate/
 Tags: google, robot, robots, robots.txt, search, seo, crawlers, spiders, editor
 Requires at least: 3.8
 Tested up to: 4.0
-Stable tag: 0.1
+Stable tag: 0.2
 License: GPLv2
 
 Customize your site's robots.txt and include remote content to it
 
 == Description ==
 
-= This is a 'just released' plugin! =
+= This plugin need more documentation! =
 
 You can edit your robots.txt and add remote content to it.
 E.g. you have several sites and want to use a centralized robots.txt.
@@ -46,6 +46,9 @@ This section describes how to install the plugin and get it working.
 Every 24 hours and when you press the Sava Changes button on the setting page.
 
 == Changelog ==
+
+= 0.2 =
+* Fixed some serious PHP Notices, sorry
 
 = 0.1 =
 * Initial release

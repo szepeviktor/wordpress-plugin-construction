@@ -3,7 +3,7 @@
 Plugin Name: Multipart robots.txt editor
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Customize your site's robots.txt and include remote content to it
-Version: 0.1
+Version: 0.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -96,10 +96,10 @@ class Multipart_Robotstxt {
      */
     public function settings() {
 
-        require_once( $this->plugin_path . 'display-callbacks.php' );
-        require_once( $this->plugin_path . 'sanitize-callbacks.php' );
+        require_once( $this->plugin_path . 'admin/display-callbacks.php' );
+        require_once( $this->plugin_path . 'admin/sanitize-callbacks.php' );
         if ( ! class_exists( 'Voce_Settings_API' ) ) {
-            require_once( $this->plugin_path . 'voce-settings-api.php' );
+            require_once( $this->plugin_path . 'admin/voce-settings-api.php' );
         }
 
         $site_url = parse_url( site_url() );
@@ -148,33 +148,33 @@ Disallow: %1$s/%2$s/
                     'default_value' => true,
                     'display_callback' => 'vs_display_checkbox',
                     'description' => 'Enable or disable this part.',
-                    'sanitize_callbacks' => array( 'vs_santize_checkbox' )
+                    'sanitize_callbacks' => array( 'vs_sanitize_checkbox' )
                 ))->group
                 ->add_setting( 'WordPress core record', 'core_robotstxt_hook', array(
                     'default_value' => $this->core_robots(),
                     'display_callback' => 'vs_display_textarea',
                     'description' => 'This is generated content, <strong>not editable</strong>. It makes up the TOP part of your robots.txt.',
-                    'sanitize_callbacks' => array( $this, 'sanitize_core_robots_txt' ),
+                    'sanitize_callbacks' => array( array( $this, 'sanitize_core_robots_txt' ) ),
                     'attributes' => array( 'disabled' => true )
                 ))->group
                 ->add_setting( 'Add plugin and theme generated records', 'enable_plugin_robotstxt_hook', array(
                     'default_value' => true,
                     'display_callback' => 'vs_display_checkbox',
                     'description' => 'Enable or disable this part.',
-                    'sanitize_callbacks' => array( 'vs_santize_checkbox' )
+                    'sanitize_callbacks' => array( 'vs_sanitize_checkbox' )
                 ))->group
                 ->add_setting( 'Plugin and theme generated records', 'plugin_robotstxt_hook', array(
                     'default_value' => $this->do_robots(),
                     'display_callback' => 'vs_display_textarea',
                     'description' => 'This is generated content, <strong>not editable</strong>. It comes after the TOP part of your robots.txt.',
-                    'sanitize_callbacks' => array( $this, 'sanitize_plugin_robots_txt' ),
+                    'sanitize_callbacks' => array( array( $this, 'sanitize_plugin_robots_txt' ) ),
                     'attributes' => array( 'disabled' => true )
                 ))->group
                 ->add_setting( 'Add remote robots.txt', 'enable_remote_url', array(
                     'default_value' => true,
                     'display_callback' => 'vs_display_checkbox',
                     'description' => 'Enable or disable this part.',
-                    'sanitize_callbacks' => array( 'vs_santize_checkbox' )
+                    'sanitize_callbacks' => array( 'vs_sanitize_checkbox' )
                 ))->group
                 ->add_setting( 'URL of the remote robots.txt', 'remote_url', array(
                     'default_value' => plugins_url( 'assets/badbots.txt', __FILE__ ),
@@ -185,7 +185,7 @@ Disallow: %1$s/%2$s/
                     'default_value' => true,
                     'display_callback' => 'vs_display_checkbox',
                     'description' => 'Enable or disable this part.',
-                    'sanitize_callbacks' => array( 'vs_santize_checkbox' )
+                    'sanitize_callbacks' => array( 'vs_sanitize_checkbox' )
                 ))->group
                 ->add_setting( 'Custom records', 'manual_records', array(
                     'default_value' => $manual_records_default,
@@ -198,7 +198,7 @@ Disallow: %1$s/%2$s/
                     'default_value' => false,
                     'display_callback' => 'vs_display_checkbox',
                     'description' => 'Detele all settings when the plugin is Uninstalled.',
-                    'sanitize_callbacks' => array( 'vs_santize_checkbox' )
+                    'sanitize_callbacks' => array( 'vs_sanitize_checkbox' )
             ) );
     }
 
