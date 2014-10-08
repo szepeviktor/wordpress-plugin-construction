@@ -10,7 +10,7 @@ Author URI: http://www.online1.hu/webdesign/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'File does not exist: errorlog_direct_access '
+    error_log( 'File does not exist: wpf2b_direct_access '
         . addslashes( $_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
@@ -19,8 +19,14 @@ if ( ! function_exists( 'add_filter' ) ) {
     exit();
 }
 
-class O1_ErrorLog404_MU {
+/*
+ * Settings
+ * define( 'WPF2B_LOG_CLIENT_DATA', true );
+ */
 
+class O1_WP_Fail2ban_MU {
+
+    //private $prefix = 'Malicious sign detected by WPf2b: ';
     private $prefix = 'File does not exist: ';
     private $wp_die_ajax_handler;
     private $wp_die_xmlrpc_handler;
@@ -69,22 +75,42 @@ class O1_ErrorLog404_MU {
 
     }
 
-    private function trigger( $slug, $message = '' ) {
+    private function trigger( $slug, $message, $level = 'error', $prefix = '' ) {
 
-        // some environments don't prepend IP address, nor append referer
-        /*
-        error_log( '[' . @$_SERVER['REMOTE_ADDR'] . '] '
-            . $this->prefix
-            . $slug
-            . ( empty( $message ) ? '' : $this->esc_log( $message ) )
-            . ', ' . $this->esc_log( @$_SERVER['HTTP_REFERER'] )
-        );
-        */
+        if ( empty( $prefix ) )
+            $prefix = $this->prefix;
 
-        error_log( $this->prefix
-            . $slug
-            . ( empty( $message ) ? '' : $this->esc_log( $message ) )
-        );
+        // when error messages are sent to a file (aka. PHP error log)
+        // IP address and referer are not logged
+        $log_enabled = '1' === ini_get( 'log_errors' );
+        $log_destination = ini_get( 'error_log' );
+
+        // log_errors option does not disable logging
+        //if ( ! $log_enabled || empty( $log_destination ) ) {
+        if ( empty( $log_destination ) ) {
+            // SAPI should add client data
+            error_log( $prefix
+                . $slug
+                . $this->esc_log( $message )
+            );
+
+        } else {
+            // add client data to log message
+            if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+                $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );
+            } else {
+                $referer = false;
+            }
+
+            error_log( '[' . $level . '] '
+                . '[client ' . @$_SERVER['REMOTE_ADDR'] . '] '
+                . $prefix
+                . $slug
+                . $this->esc_log( $message )
+                // space after "referer:" comes from esc_log()
+                . ( $referer ? ', referer:' . $referer : '' )
+            );
+        }
     }
 
     public function wp_404() {
@@ -99,14 +125,14 @@ class O1_ErrorLog404_MU {
         if ( ! is_user_logged_in() && $this->is_robot( $ua ) ) {
 
             ob_get_level() && ob_end_clean();
-            $this->trigger( 'errorlog_robot404', $request_uri );
+            $this->trigger( 'wpf2b_robot404', $request_uri, 'info' );
             header( 'Status: 404 Not Found' );
             header( 'HTTP/1.0 404 Not Found' );
             exit();
         }
 
         // humans
-        $this->trigger( 'errorlog_404', $request_uri );
+        $this->trigger( 'wpf2b_404', $request_uri, 'info' );
     }
 
     public function url_hack() {
@@ -119,33 +145,38 @@ class O1_ErrorLog404_MU {
         ) {
             // remember this to prevent double-logging in redirect()
             $this->is_redirect = true;
-            $this->trigger( 'errorlog_url_hack', $request_uri );
+            $this->trigger( 'wpf2b_url_hack', $request_uri );
         }
     }
 
     public function redirect( $redirect_url, $requested_url ) {
 
         if ( false === $this->is_redirect )
-            $this->trigger( 'errorlog_redirect', $requested_url );
+            $this->trigger( 'wpf2b_redirect', $requested_url, 'notice' );
 
         return $redirect_url;
     }
 
     public function login_failed( $username ) {
 
-        $this->trigger( 'errorlog_login_failed', $username );
+        $this->trigger( 'wpf2b_login_failed', $username );
     }
 
     public function login( $username ) {
 
-        error_log( 'WordPress logged in: ' . $username );
+        trigger( 'logged in', $username, 'info', 'Wordpress auth: ' );
     }
 
     public function logout() {
 
-        $current_user = wp_get_current_user();
+        if ( is_user_logged_in() ) {
+            $current_user = wp_get_current_user();
+            $user = $current_user->user_login;
+        } else {
+            $user = '""';
+        }
 
-        error_log( 'WordPress logout: ' . $current_user->user_login );
+        trigger( 'logout', $user, 'info', 'Wordpress auth: ' );
     }
 
     public function lostpass( $username ) {
@@ -154,7 +185,7 @@ class O1_ErrorLog404_MU {
             //FIXME higher score !!!
         }
 
-        error_log( 'WordPress lost password:' . $this->esc_log( $username ) );
+        trigger( 'lost password', $username, 'warn', 'Wordpress auth: ' );
     }
 
     /**
@@ -190,7 +221,7 @@ class O1_ErrorLog404_MU {
 
             //FIXME wp-includes/ms-files.php:12
             ob_get_level() && ob_end_clean();
-            $this->trigger( 'errorlog_robot403', $request_path );
+            $this->trigger( 'wpf2b_robot403', $request_path );
             header( 'Status: 403 Forbidden' );
             header( 'HTTP/1.0 403 Forbidden' );
             exit();
@@ -209,7 +240,7 @@ class O1_ErrorLog404_MU {
 
         // wp-admin/includes/ajax-actions.php returns -1 of security breach
         if ( ! is_scalar( $message ) || (int) $message < 0 )
-            $this->trigger( 'errorlog_wpdie_ajax' );
+            $this->trigger( 'wpf2b_wpdie_ajax', $message );
 
         // call previous handler
         call_user_func( $this->wp_die_ajax_handler, $message, $title, $args );
@@ -226,7 +257,7 @@ class O1_ErrorLog404_MU {
     public function wp_die_xmlrpc_handler( $message, $title, $args ) {
 
         if ( ! empty( $message ) )
-            $this->trigger( 'errorlog_wpdie_xmlrpc', $message );
+            $this->trigger( 'wpf2b_wpdie_xmlrpc', $message );
 
         // call previous handler
         call_user_func( $this->wp_die_xmlrpc_handler, $message, $title, $args );
@@ -243,7 +274,7 @@ class O1_ErrorLog404_MU {
     public function wp_die_handler( $message, $title, $args ) {
 
         if ( ! empty( $message ) )
-            $this->trigger( 'errorlog_wpdie', $message );
+            $this->trigger( 'wpf2b_wpdie', $message );
 
         // call previous handler
         call_user_func( $this->wp_die_handler, $message, $title, $args );
@@ -251,12 +282,12 @@ class O1_ErrorLog404_MU {
 
     public function wpcf7_spam( $text ) {
 
-        $this->trigger( 'errorlog_wpcf7_spam', $text );
+        $this->trigger( 'wpf2b_wpcf7_spam', $text );
     }
 
     public function wpcf7_spam_mx( $domain ) {
 
-        $this->trigger( 'errorlog_wpcf7_spam_mx', $domain );
+        $this->trigger( 'wpf2b_wpcf7_spam_mx', $domain, 'warn' );
     }
 
     private function is_robot( $ua ) {
@@ -299,7 +330,7 @@ class O1_ErrorLog404_MU {
 
 }
 
-new O1_ErrorLog404_MU();
+new O1_WP_Fail2ban_MU();
 
 /*
 - write test.sh

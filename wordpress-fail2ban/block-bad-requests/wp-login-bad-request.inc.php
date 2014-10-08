@@ -53,6 +53,7 @@ class O1_Bad_Request {
     private $result = false;
 
     public function __construct() {
+
         // options
         if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
             $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
@@ -82,6 +83,7 @@ class O1_Bad_Request {
     }
 
     private function check() {
+
         // exit on local access
         // don't run on install / upgrade
         if ( php_sapi_name() === 'cli'
@@ -241,17 +243,46 @@ class O1_Bad_Request {
     }
 
     private function trigger() {
+
+        $error_msg = '';
+
+        // when error messages are sent to a file (aka. PHP error log)
+        // IP address and referer are not logged
+        $log_enabled = '1' === ini_get( 'log_errors' );
+        $log_destination = ini_get( 'error_log' );
+
+        // log_errors option does not disable logging
+        //if ( ! $log_enabled || empty( $log_destination ) ) {
+        if ( empty( $log_destination ) ) {
+            // SAPI should add client data
+            $error_msg = $this->prefix . $this->result;
+
+        } else {
+            // add client data to log message
+            if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+                $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );
+            } else {
+                $referer = false;
+            }
+
+            $error_msg = '[' . $level . '] '
+                . '[client ' . @$_SERVER['REMOTE_ADDR'] . '] '
+                . $this->prefix
+                . $this->result
+                // space after "referer:" comes from esc_log()
+                . ( $referer ? ', referer:' . $referer : '' );
+        }
+
         // trigger fail2ban
         for ( $i = 0; $i < $this->trigger_count; $i++ ) {
-
-            error_log( $this->prefix  . $this->result );
+            error_log( $error_msg );
         }
 
         // help learning attack internals
         $server = array();
         foreach ( $_SERVER as $header => $value ) {
             if ( 'HTTP_' === substr( $header, 0, 5 ) )
-                $server[$header] = $value;
+                $server[$header] = addslashes( $value );
         }
         error_log( 'HTTP headers: ' . serialize( $server ) );
         error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
@@ -278,6 +309,17 @@ class O1_Bad_Request {
         }
 
         return $fields;
+    }
+
+    private function esc_log( $string ) {
+
+        $string = serialize( $string ) ;
+        // trim long data
+        $string = mb_substr( $string, 0, 200, 'utf-8' );
+        // replace non-printables with "¿" - sprintf( '%c%c', 194, 191 )
+        $string = preg_replace( '/[^\P{C}]+/u', "\xC2\xBF", $string );
+
+        return ' (' . $string . ')';
     }
 
 }
