@@ -159,7 +159,7 @@ class O1_WP_Fail2ban_MU {
 
     public function login( $username ) {
 
-        trigger( 'logged in', $username, 'info', 'Wordpress auth: ' );
+        $this->trigger( 'logged in', $username, 'info', 'Wordpress auth: ' );
     }
 
     public function logout() {
@@ -171,7 +171,7 @@ class O1_WP_Fail2ban_MU {
             $user = '""';
         }
 
-        trigger( 'logout', $user, 'info', 'Wordpress auth: ' );
+        $this->trigger( 'logout', $user, 'info', 'Wordpress auth: ' );
     }
 
     public function lostpass( $username ) {
@@ -180,7 +180,7 @@ class O1_WP_Fail2ban_MU {
             //FIXME higher score !!!
         }
 
-        trigger( 'lost password', $username, 'warn', 'Wordpress auth: ' );
+        $this->trigger( 'lost password', $username, 'warn', 'Wordpress auth: ' );
     }
 
     /**
