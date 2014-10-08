@@ -3,14 +3,14 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Reports 404s and various attacks in error.log for fail2ban. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 2.7
+Version: 2.8
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'File does not exist: wpf2b_direct_access '
+    error_log( 'Malicious sign detected by WPf2b: wpf2b_direct_access '
         . addslashes( $_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
@@ -18,11 +18,6 @@ if ( ! function_exists( 'add_filter' ) ) {
     header( 'HTTP/1.0 403 Forbidden' );
     exit();
 }
-
-/*
- * Settings
- * define( 'WPF2B_LOG_CLIENT_DATA', true );
- */
 
 class O1_WP_Fail2ban_MU {
 
