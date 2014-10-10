@@ -6,10 +6,11 @@ jQuery(function ($) {
 
         if (!plugin_file) console.error('No plugin data for' + String($(this).prop('id')));
 
-        action_link.click(function () {
+        action_link.click(function (e) {
             var postdata,
                 action_link = $(this);
 
+            e.preventDefault();
             postdata = {
                 action: "o1_plugin_changelog_watch",
                 _nonce: O1_PluginChangelog_nonce,

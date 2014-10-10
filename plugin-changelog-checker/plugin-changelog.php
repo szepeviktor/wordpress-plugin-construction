@@ -2,9 +2,22 @@
 /*
 Plugin Name: WordPress plugin changelog checker
 Version: 0.1.0
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+Description: Notifies you - the plugin developer - about WP.org not displaying changelog correctly.
+License: The MIT License (MIT)
+Author: Viktor Szépe
+Author URI: http://www.online1.hu/webdesign/
 */
 
-//403
+if ( ! function_exists( 'add_filter' ) ) {
+    error_log( 'Malicious sign detected: wpf2b_direct_access '
+        . addslashes( $_SERVER['REQUEST_URI'] )
+    );
+    ob_get_level() && ob_end_clean();
+    header( 'Status: 403 Forbidden' );
+    header( 'HTTP/1.0 403 Forbidden' );
+    exit();
+}
 
 class O1_Plugin_Changelog_Checker {
 
@@ -12,14 +25,16 @@ class O1_Plugin_Changelog_Checker {
     private $compare_lines = 20;
     private $alert_address;
 
-    private function get_top_lines( $html ) {
+    private function get_top_lines( $html, $compare_lines ) {
 
         $lines = array();
         $i = 0;
+        if ( ! $compare_lines )
+            $compare_lines = $this->compare_lines;
 
         foreach( preg_split( '/((\r?\n)|(\r\n?))/', $html ) as $line ) {
             $lines[] = trim( strip_tags( $line ) );
-            if ( ++$i > $this->compare_lines )
+            if ( $i++ > $compare_lines )
                 break;
         }
 
@@ -64,39 +79,49 @@ class O1_Plugin_Changelog_Checker {
 
         // the Changelog page
         $changelog_page = wp_remote_get( $changelog_page_url, $http_args );
-        //if ( is_wp_error( $changelog_page ) ) { $response->get_error_message()
+        if ( is_wp_error( $changelog_page ) )
+            return;
         $changelog_page_html = wp_remote_retrieve_body( $changelog_page );
-        // if empty(
-        preg_match( '/<div class="block-content">(.+)$/sD', $changelog_page_html, $changelog_page_top );
-        // 1 !==
-        $changelog_page_10 = $this->get_top_lines( $changelog_page_top[1] );
+        if ( empty( $changelog_page_html ) )
+            return;
+        $match = preg_match( '/<div class="block-content">(.+)<\/div><!-- block-content-->/sU',
+            $changelog_page_html, $changelog_page_top );
+        if (  1 !== $match )
+            return;
+        $changelog_page_20 = $this->get_top_lines( $changelog_page_top[1] );
 
         // readme.txt from trunk parsed with Readme Validator
         $post_args = array( 'body' => array( 'url' => '1', 'readme_url' => $svn_url ) );
         $svn = wp_remote_post( $this->validator_url, array_merge( $http_args, $post_args ) );
-        //if ( is_wp_error( $changelog_page ) ) { $response->get_error_message()
+        if ( is_wp_error( $svn ) )
+            return;
         $svn_html = wp_remote_retrieve_body( $svn );
-        // if empty(
-        preg_match( '/<h3>Changelog<\/h3>\n(.+)$/sD', $svn_html, $svn_top );
-        // 1 !==, empty([1]
-        $svn_10 = $this->get_top_lines( $svn_top[1] );
+        if ( empty( $svn_html ) )
+            return;
+        $match = preg_match( '/<h3>Changelog<\/h3>\n(.+)<hr \/>/sU',
+            $svn_html, $svn_top );
+        if ( 1 !== $match )
+            return;
+        // changelog can be shorter than $compare_lines
+        $svn_20 = $this->get_top_lines( $svn_top[1], count( $changelog_page_20 ) );
 
         // compare
-        if ( $changelog_page_10 === $svn_10 )
+        if ( $changelog_page_20 === $svn_20 )
             return;
 
         $message = sprintf(
             'SVN first line: %s' . "\n" . 'Changelog page first line: %s' . "\n" . '%s',
-            serialize($svn_10[0]),
-            serialize($changelog_page_10[0]),
+            serialize($svn_20[0]),
+            serialize($changelog_page_20[0]),
             $changelog_page_url
         );
         $subject = sprintf(
             '[%s] Changelog mismatch',
             $plugin
         );
-        wp_mail( $this->alert_address, $subject, $message );
-        // if false ===
+        $sent = wp_mail( $this->alert_address, $subject, $message );
+        if ( false === $sent )
+            error_log( 'O1_Plugin_Changelog_Checker could not sent notification:' . $subject );
     }
 
     public function plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
@@ -141,7 +166,7 @@ class O1_Plugin_Changelog_Checker {
 
     public function plugin_script( $hook ) {
 
-        // only in Plugins page
+        // only on Plugins page
         if ( 'plugins.php' !== $hook )
             return;
 
