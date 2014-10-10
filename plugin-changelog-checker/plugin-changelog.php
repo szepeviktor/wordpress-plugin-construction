@@ -1,12 +1,13 @@
 <?php
 /*
-Plugin Name: WordPress plugin changelog checker
-Version: 0.1.0
+Plugin Name: Plugin changelog checker
+Version: 0.2.0
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Notifies you - the plugin developer - about WP.org not displaying changelog correctly.
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/plugin-changelog-checker
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
