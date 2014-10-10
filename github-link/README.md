@@ -1,6 +1,6 @@
 ## GitHub Link
 
-Displays GitHub link on the **Plugins** page given there is a `GitHub Plugin URI` plugin header.
+Displays GitHub link on the **Plugins** page given there is a `GitHub Plugin URI` [plugin header](https://github.com/szepeviktor/wordpress-plugin-construction/blob/master/github-link/github-link.php#L10).
 
 ### GitHub headers
 
