@@ -6,7 +6,7 @@ Displays GitHub link on the **Plugins** page given there is a GitHub Plugin URI`
 
 - "GitHub Plugin URI" shown as a normal GitHub icon
 - "GitHub Branch" shown as text after the GitHub icon
-- "GitHub Access Token" (aka. secret repo) shown as an inverted GitHub icon
+- "GitHub Access Token" (aka. private repo) shown as an inverted GitHub icon
 
 ### Bitbucket headers
 
