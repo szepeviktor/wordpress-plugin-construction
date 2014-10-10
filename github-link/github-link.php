@@ -7,7 +7,7 @@ Description: Displays GitHub link on the Plugins page given there is a <code>Git
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/github-link
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/github-link
 */
 
 add_filter( 'plugin_action_links', 'GHL_plugin_link', 10, 4 );
