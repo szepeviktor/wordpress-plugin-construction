@@ -16,3 +16,9 @@ Displays GitHub link on the **Plugins** page given there is a `GitHub Plugin URI
 
 - `Bitbucket Plugin URI` shown as a Bitbucket logo ![Bitbucket logo](https://raw.githubusercontent.com/szepeviktor/wordpress-plugin-construction/master/github-link/icon/bitbucket_32_darkblue_atlassian.png)
 - `Bitbucket Branch` shown as text after the Bitbucket icon
+
+### Related Information
+
+These plugin header enable automatic updates to your GitHub or Bitbucket hosted WordPress
+plugins and themes using the [GitHub Updater plugin] (https://github.com/afragen/github-updater).
+GitHub Updater is not found on WordPress.org.
