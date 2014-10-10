@@ -1,6 +1,6 @@
 ## GitHub Link
 
-Displays GitHub link on the **Plugins** page given there is a GitHub Plugin URI` plugin header.
+Displays GitHub link on the **Plugins** page given there is a `GitHub Plugin URI` plugin header.
 
 ### GitHub headers
 
@@ -10,7 +10,7 @@ Displays GitHub link on the **Plugins** page given there is a GitHub Plugin URI`
 | inverted icon |
 | -------------:|
 |               |
-| "GitHub Access Token" (aka. private repo) shown as an inverted GitHub icon <a style="background:black;" target="_blank" href="https://raw.githubusercontent.com/szepeviktor/wordpress-plugin-construction/master/github-link/icon/GitHub-Mark-Light-32px.png"><img style="max-width:100%;" alt="GitHub inverted" src="https://raw.githubusercontent.com/szepeviktor/wordpress-plugin-construction/master/github-link/icon/GitHub-Mark-Light-32px.png"></a> |
+| "GitHub Access Token" (aka. private repo) shown as an inverted GitHub icon ![GitHub inverted](https://raw.githubusercontent.com/szepeviktor/wordpress-plugin-construction/master/github-link/icon/GitHub-Mark-Light-32px.png) |
 
 ### Bitbucket headers
 
