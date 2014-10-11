@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: GitHub Link
-Version: 0.1.0
+Version: 0.2.0
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Displays GitHub link on the Plugins page given there is a <code>GitHub Plugin URI</code> plugin header.
 License: The MIT License (MIT)
@@ -10,52 +10,86 @@ Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/github-link
 */
 
-add_filter( 'plugin_action_links', 'GHL_plugin_link', 10, 4 );
+if ( ! function_exists( 'add_filter' ) ) {
+    error_log( 'Malicious sign detected: wpf2b_direct_access '
+        . addslashes( $_SERVER['REQUEST_URI'] )
+    );
+    ob_get_level() && ob_end_clean();
+    header( 'Status: 403 Forbidden' );
+    header( 'HTTP/1.0 403 Forbidden' );
+    exit();
+}
+
+add_filter( "extra_plugin_headers", "GHL_extra_headers" );
+add_filter( "plugin_action_links", "GHL_plugin_link", 10, 4 );
+
+function GHL_extra_headers( $extra_headers ) {
+
+    // keys will get lost
+    return array_merge( $extra_headers, array(
+        "GitHubURI" => "GitHub Plugin URI",
+        "GitHubBranch" => "GitHub Branch",
+        "GitHubToken" => "GitHub Access Token",
+        "BitbucketURI" => "Bitbucket Plugin URI",
+        "BitbucketBranch" => "Bitbucket Branch"
+    ) );
+}
 
 function GHL_plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
 
-    if ( 'search' !== $context ) {
-        $plugin_data = get_file_data( trailingslashit( WP_PLUGIN_DIR ) . $plugin_file, array(
-            "GitHubURI" => "GitHub Plugin URI",
-            "GitHubBranch" => "GitHub Branch",
-            "GitHubToken" => "GitHub Access Token",
-            "BitbucketURI" => "Bitbucket Plugin URI",
-            "BitbucketBranch" => "Bitbucket Branch"
-        ) );
-        $link_template = '<a href="%s" target="_blank"><img src="%s" style="vertical-align:-3px" height="16" width="16" alt="%s" />%s</a>';
+    // no GitHub data on search
+    if ( 'search' === $context )
+        return $actions;
 
-        if ( ! empty( $plugin_data["GitHubURI"] ) ) {
-            $icon = "icon/GitHub-Mark-32px.png";
-            $branch = '';
+    $link_template = '<a href="%s" target="_blank"><img src="%s" style="vertical-align:-3px" height="16" width="16" alt="%s" />%s</a>';
 
-            if ( ! empty( $plugin_data["GitHubToken"] ) )
-                $icon = 'icon/GitHub-Mark-Light-32px.png" style="vertical-align:-3px;background-color:black;border-radius:50%';
-            if ( ! empty( $plugin_data["GitHubBranch"] ) )
-                $branch = '/' . $plugin_data["GitHubBranch"];
+    $on_wporg = false;
+    _maybe_update_plugins();
+    $plugin_state = get_site_transient( 'update_plugins' );
+    if ( isset( $plugin_state->response[$plugin_file] )
+        || isset( $plugin_state->no_update[$plugin_file] )
+    )
+        $on_wporg = true;
 
-            $actions['github'] = sprintf(
+    if ( ! empty( $plugin_data["GitHub Plugin URI"] ) ) {
+        $icon = "icon/GitHub-Mark-32px.png";
+        $branch = '';
+
+        if ( ! empty( $plugin_data["GitHub Access Token"] ) )
+            $icon = 'icon/GitHub-Mark-Light-32px.png" style="vertical-align:-3px;background-color:black;border-radius:50%';
+        if ( ! empty( $plugin_data["GitHub Branch"] ) )
+            $branch = '/' . $plugin_data["GitHub Branch"];
+
+        // WP.org preferred
+        if ( ! $on_wporg || ! ( empty( $branch ) || '/master' === $branch ) ) {
+            $new_action = array ('github' => sprintf(
                 $link_template,
-                $plugin_data["GitHubURI"],
+                $plugin_data["GitHub Plugin URI"],
                 plugins_url( $icon, __FILE__ ),
                 "GitHub",
                 $branch
-            );
+            ) );
+            $actions = array_merge( $new_action, $actions );
         }
+    }
 
-        if ( ! empty( $plugin_data["BitbucketURI"] ) ) {
-            $icon = "icon/bitbucket_32_darkblue_atlassian.png";
-            $branch = '';
+    if ( ! empty( $plugin_data["Bitbucket Plugin URI"] ) ) {
+        $icon = "icon/bitbucket_32_darkblue_atlassian.png";
+        $branch = '';
 
-            if ( ! empty( $plugin_data["BitbucketBranch"] ) )
-                $branch = '/' . $plugin_data["BitbucketBranch"];
+        if ( ! empty( $plugin_data["Bitbucket Branch"] ) )
+            $branch = '/' . $plugin_data["Bitbucket Branch"];
 
-            $actions['bitbucket'] = sprintf(
+        // WP.org preferred
+        if ( ! $on_wporg || ! ( empty( $branch ) || '/master' === $branch ) ) {
+            $new_action = array('bitbucket' => sprintf(
                 $link_template,
-                $plugin_data["BitbucketURI"],
+                $plugin_data["Bitbucket URI"],
                 plugins_url( $icon, __FILE__ ),
                 "Bitbucket",
                 $branch
-            );
+            ) );
+            $actions = array_merge( $new_action, $actions );
         }
     }
 
