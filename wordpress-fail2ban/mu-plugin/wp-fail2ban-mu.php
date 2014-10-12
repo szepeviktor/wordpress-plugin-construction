@@ -7,6 +7,7 @@ Version: 2.8
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/wordpress-fail2ban/mu-plugin
 */
 
 if ( ! function_exists( 'add_filter' ) ) {

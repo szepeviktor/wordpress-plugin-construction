@@ -12,15 +12,15 @@
  * @param string any URL
  * @var string encoded URL
  */
-function o1_encode_url( $url ) {
+function encode_full_url( $url ) {
 
     // scheme http://tools.ietf.org/html/rfc3986#section-3.1
-    to lower
-    relative protocol (scheme) support
+    //to lower
+    //relative protocol (scheme) support
     // user, host, port http://tools.ietf.org/html/rfc3986#section-3.2
-    no user:password!
-    IDN
-    ipv4, ipv6
+    //no user:password!
+    //IDN
+    //ipv4, ipv6
     // path
-    rawurlencode()
+    //rawurlencode()
 }

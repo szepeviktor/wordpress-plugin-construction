@@ -7,6 +7,7 @@ Version: 4.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-latin-accent-urls
 Idea: Pavel (aka Immortal) Petrov http://www.webbamboo.net/
 */
 

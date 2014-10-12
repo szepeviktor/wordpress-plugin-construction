@@ -7,6 +7,7 @@ Version: 0.3
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-disable-updates
 */
 
 /**

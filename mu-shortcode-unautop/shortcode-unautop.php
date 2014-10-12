@@ -6,6 +6,7 @@ Description: Improves the big monster shortcode_unautop() regular expression, wh
 Author: Leho Kraav
 Author URI: http://leho.kraav.com
 Version: 1.0
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-shortcode-unautop
 */
 
 if ( ! function_exists( 'add_filter' ) ) {

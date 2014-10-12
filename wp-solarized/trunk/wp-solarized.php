@@ -1,13 +1,14 @@
 <?php
-/**
- * Plugin Name: WordPress Solarized
- * Plugin URI: http://wordpress.org/plugins/wp-solarized/
- * Description: Make the Dashboard Solarized
- * Version: 0.2
- * Author: Viktor Szépe
- * Author URI: http://www.online1.hu/webdesign/
- * License: GNU General Public License (GPL) version 2
- */
+/*
+Plugin Name: WordPress Solarized
+Plugin URI: http://wordpress.org/plugins/wp-solarized/
+Description: Make the Dashboard Solarized
+Version: 0.2
+Author: Viktor Szépe
+Author URI: http://www.online1.hu/webdesign/
+License: GNU General Public License (GPL) version 2
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/wp-solarized/trunk
+*/
 
 add_action( 'admin_init', 'solarized_colors' );
 
