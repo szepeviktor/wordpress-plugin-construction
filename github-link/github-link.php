@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: GitHub Link
-Version: 0.2.0
+Version: 0.3.0
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Displays GitHub link on the Plugins page given there is a <code>GitHub Plugin URI</code> plugin header.
 License: The MIT License (MIT)
