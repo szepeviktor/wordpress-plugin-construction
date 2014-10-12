@@ -60,15 +60,17 @@ function GHL_plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
         if ( ! empty( $plugin_data["GitHub Branch"] ) )
             $branch = '/' . $plugin_data["GitHub Branch"];
 
-        // WP.org preferred
-        if ( ! $on_wporg || ! ( empty( $branch ) || '/master' === $branch ) ) {
-            $new_action = array ('github' => sprintf(
-                $link_template,
-                $plugin_data["GitHub Plugin URI"],
-                plugins_url( $icon, __FILE__ ),
-                "GitHub",
-                $branch
-            ) );
+        $new_action = array ('github' => sprintf(
+            $link_template,
+            $plugin_data["GitHub Plugin URI"],
+            plugins_url( $icon, __FILE__ ),
+            "GitHub",
+            $branch
+        ) );
+        // if on WP.org + master -> put the icon after other actions
+        if ( $on_wporg && ( empty( $branch ) || '/master' === $branch ) ) {
+            $actions = array_merge( $actions, $new_action );
+        } else {
             $actions = array_merge( $new_action, $actions );
         }
     }
@@ -80,15 +82,17 @@ function GHL_plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
         if ( ! empty( $plugin_data["Bitbucket Branch"] ) )
             $branch = '/' . $plugin_data["Bitbucket Branch"];
 
-        // WP.org preferred
-        if ( ! $on_wporg || ! ( empty( $branch ) || '/master' === $branch ) ) {
-            $new_action = array('bitbucket' => sprintf(
-                $link_template,
-                $plugin_data["Bitbucket URI"],
-                plugins_url( $icon, __FILE__ ),
-                "Bitbucket",
-                $branch
-            ) );
+        $new_action = array('bitbucket' => sprintf(
+            $link_template,
+            $plugin_data["Bitbucket URI"],
+            plugins_url( $icon, __FILE__ ),
+            "Bitbucket",
+            $branch
+        ) );
+        // if on WP.org + master -> put the icon after other actions
+        if ( $on_wporg && ( empty( $branch ) || '/master' === $branch ) ) {
+            $actions = array_merge( $actions, $new_action );
+        } else {
             $actions = array_merge( $new_action, $actions );
         }
     }
