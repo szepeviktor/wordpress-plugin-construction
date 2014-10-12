@@ -1,6 +1,6 @@
 jQuery(function ($) {
 
-    $('#wpbody #the-list tr').each(function () {
+    $('#wpbody #the-list tr.active, #wpbody #the-list tr.inactive').each(function () {
         var action_link = $(this).find('.plugin-title span.watch a'),
             plugin_file = action_link.data('plugin-file');
 
@@ -16,13 +16,17 @@ jQuery(function ($) {
                 _nonce: O1_PluginChangelog_nonce,
                 plugin: plugin_file
             };
-            $.post(
-                ajaxurl,
-                postdata,
-                function (result) {
-                    action_link.html($.parseJSON(result));
+            $.ajax({
+                url: ajaxurl,
+                type: "POST",
+                data: postdata,
+                error: function (jqXHR, status, errormessage) {
+                    console.error("AJAX error! " + status + "/" + errormessage);
+                },
+                success: function (response, status, jqXHR) {
+                    action_link.html(response.data);
                 }
-            );
+            });
         });
     });
 

@@ -127,7 +127,7 @@ class O1_Plugin_Changelog_Checker {
 
     public function plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
 
-        if ( 'search' !== $context ) {
+        if ( ! in_array( $context, array( 'search', 'mustuse', 'dropins' ) ) ) {
             $watching = get_option( 'o1_plugin_changelog' );
             if ( ! $watching )
                 $watching = array();
@@ -161,7 +161,7 @@ class O1_Plugin_Changelog_Checker {
         }
 
         update_option( 'o1_plugin_changelog', $watching );
-        wp_die( json_encode( $action ) );
+        wp_send_json_success( $action );
 
     }
 
