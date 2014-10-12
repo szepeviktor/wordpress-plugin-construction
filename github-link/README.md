@@ -3,8 +3,8 @@
 Displays GitHub link on the **Plugins** page given there is a `GitHub Plugin URI`
 [plugin header](https://github.com/szepeviktor/wordpress-plugin-construction/blob/master/github-link/github-link.php#L10).
 
-When you plugin in on WordPress.org also and there is no `GitHub Branch` header (or its value is "master")
-the GitHub icon is displayed after other plugin actions (links), otherwise it is the first action.
+When your plugin is on WordPress.org also and there is no `GitHub Branch` header (or its value is "master")
+the GitHub icon is displayed **after** other plugin actions (links), otherwise it is the **first** action.
 
 ### GitHub headers
 
