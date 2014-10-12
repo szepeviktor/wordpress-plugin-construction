@@ -7,6 +7,7 @@ Version: 0.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/contact-form-7-robot-trap
 */
 
 /**
