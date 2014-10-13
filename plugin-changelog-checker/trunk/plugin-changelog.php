@@ -7,7 +7,7 @@ Description: Notifies you - the plugin developer - about WP.org not displaying c
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/plugin-changelog-checker
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/plugin-changelog-checker/trunk
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
