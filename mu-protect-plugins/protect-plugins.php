@@ -43,7 +43,9 @@ class O1_Protect_Plugins {
 	public function __construct() {
 
 		foreach ( $this->protected_plugins as $protected ) {
-			add_action( 'deactivate_' . $protected, function ($network_wide) use ($protected) { $this->reactivate( $protected, $network_wide ); } );
+			add_action( 'deactivate_' . $protected,
+				function ($network_wide) use ($protected) { $this->reactivate( $protected, $network_wide ); }
+			);
 			add_filter( 'network_admin_plugin_action_links_' . $protected, array( $this, 'remove_actions' ) );
 			add_filter( 'plugin_action_links_' . $protected, array( $this, 'remove_actions' ) );
 		}
@@ -61,10 +63,21 @@ class O1_Protect_Plugins {
 
 		if ( $this->is_protected( $plugin ) ) {
 			add_filter( 'pre_update_option_' . 'active_plugins',
-				function ( $value, $old_value ) { return $old_value; }, 10, 2 );
+				array( $this, 'revert_values' ), 10, 2 );
 			add_filter( 'pre_update_site_option_' . 'active_sitewide_plugins',
-				function ( $value, $old_value ) { return $old_value; }, 10, 2 );
+				array( $this, 'revert_values' ), 10, 2 );
 		}
+	}
+
+	/**
+	 * Revert the previous value.
+	 *
+	 * @access public
+	 * @param string $value The new value.
+	 * @param bool $old_value The previous value.
+	 */
+	public function revert_values( $value, $old_value ) {
+		return $old_value;
 	}
 
 	/**
@@ -87,7 +100,7 @@ class O1_Protect_Plugins {
 	}
 
 	/**
-	 * Check whether the plugin is protected thus should be always activated.
+	 * Check whether the plugin is protected thus should be always activate.
 	 *
 	 * @access private
 	 * @param string $plugin Base plugin path from plugins directory.

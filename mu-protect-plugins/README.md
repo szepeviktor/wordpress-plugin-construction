@@ -4,3 +4,8 @@
 1. Activate your plugins once.
 1. From that time on they cannot be deactivated or deleted.
 1. Automatic updates are enabled.
+
+```
+# wp plugin deactivate wp-solarized
+Warning: Could not deactivate the 'wp-solarized' plugin.
+```
