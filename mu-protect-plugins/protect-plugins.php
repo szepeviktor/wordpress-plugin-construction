@@ -3,7 +3,7 @@
 Plugin Name:       Protect normal plugins MU
 Plugin URI:        https://github.com/szepeviktor/wordpress-plugin-construction
 Description:       Prevent deletion of normal plugins
-Version:           1.0.0
+Version:           1.0.1
 Author:            Viktor Szépe
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
@@ -43,16 +43,20 @@ class O1_Protect_Plugins {
 	public function __construct() {
 
 		foreach ( $this->protected_plugins as $protected ) {
+			// reactivate on deactivation
 			add_action( 'deactivate_' . $protected,
-				function ($network_wide) use ($protected) { $this->reactivate( $protected, $network_wide ); }
+				function ( $network_wide ) use ( $protected ) {
+					$this->reactivate( $protected, $network_wide );
+				}
 			);
+			// remove Deactivate and Delete actions
 			add_filter( 'network_admin_plugin_action_links_' . $protected, array( $this, 'remove_actions' ) );
 			add_filter( 'plugin_action_links_' . $protected, array( $this, 'remove_actions' ) );
 		}
 	}
 
 	/**
-	 * Activate a plugin if it is protected and not active.
+	 * Activate a plugin when it is deactivated.
 	 *
 	 * @access public
 	 * @param string $plugin Base plugin path from plugins directory.
@@ -61,12 +65,10 @@ class O1_Protect_Plugins {
 	 */
 	public function reactivate( $plugin, $network_wide ) {
 
-		if ( $this->is_protected( $plugin ) ) {
-			add_filter( 'pre_update_option_' . 'active_plugins',
-				array( $this, 'revert_values' ), 10, 2 );
-			add_filter( 'pre_update_site_option_' . 'active_sitewide_plugins',
-				array( $this, 'revert_values' ), 10, 2 );
-		}
+		add_filter( 'pre_update_option_' . 'active_plugins',
+			array( $this, 'revert_values' ), 10, 2 );
+		add_filter( 'pre_update_site_option_' . 'active_sitewide_plugins',
+			array( $this, 'revert_values' ), 10, 2 );
 	}
 
 	/**
@@ -77,6 +79,7 @@ class O1_Protect_Plugins {
 	 * @param bool $old_value The previous value.
 	 */
 	public function revert_values( $value, $old_value ) {
+
 		return $old_value;
 	}
 
@@ -97,18 +100,6 @@ class O1_Protect_Plugins {
 		}
 
 		return $actions;
-	}
-
-	/**
-	 * Check whether the plugin is protected thus should be always activate.
-	 *
-	 * @access private
-	 * @param string $plugin Base plugin path from plugins directory.
-	 * @return bool True, if in the protected plugins list. False, not in the list.
-	 */
-	private function is_protected( $plugin ) {
-
-		return in_array( $plugin, $this->protected_plugins );
 	}
 
 }
