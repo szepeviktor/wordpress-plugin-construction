@@ -6,8 +6,8 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.7
-Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
+Version: 1.8
+Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_CDN_HEADER, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
 */
 
 class O1_Bad_Request {
@@ -45,6 +45,7 @@ class O1_Bad_Request {
         'username',
         'webmaster'
     );
+    private $cdn_header;
     private $allow_registration = false;
     private $allow_ie8_login = false;
     private $allow_old_proxies = false;
@@ -57,6 +58,9 @@ class O1_Bad_Request {
         // options
         if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
             $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
+
+        if ( defined( 'O1_BAD_REQUEST_CDN_HEADER' ) )
+            $this->cdn_header = O1_BAD_REQUEST_CDN_HEADER;
 
         if ( defined( 'O1_BAD_REQUEST_ALLOW_REG' ) && O1_BAD_REQUEST_ALLOW_REG )
             $this->allow_registration = true;
@@ -94,6 +98,13 @@ class O1_Bad_Request {
 
         $request_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
         $server_name = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
+
+        // block non-static requests from CDN
+        if ( ! empty( $this->cdn_header ) && isset( $_SERVER[$this->cdn_header] ) ) {
+            // workaround to prevent edge server banning
+            $this->prefix = 'Attack from CDN: ';
+            return 'bad_request_cdn_attack';
+        }
 
         // author sniffing
         // don't ban on post listing by author
@@ -327,6 +338,7 @@ class O1_Bad_Request {
 new O1_Bad_Request();
 
 /*TODO
+check POST: no more, no less variables  a:5:{s:11:"redirect_to";s:28:"http://drprezi.com/wp-admin/";s:10:"testcookie";s:1:"1";s:3:"log";s:5:"admin";s:3:"pwd";s:6:"123456";s:9:"wp-submit";s:6:"Log In";}
 readme: snippet, require_once(), mu-plugin, plugin
 php-doc
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );

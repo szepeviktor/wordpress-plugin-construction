@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Reports 404s and various attacks in error.log for fail2ban. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 2.8
+Version: 2.9
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -194,6 +194,8 @@ class O1_WP_Fail2ban_MU {
         $admin_path = parse_url( admin_url(), PHP_URL_PATH );
         $wp_dirs = 'wp-admin|wp-includes|wp-content|' . basename( WP_CONTENT_DIR );
         $uploads = wp_upload_dir();
+        $uploads = basename( $uploads['baseurl'] );
+        $cache = basename( WP_CONTENT_DIR ) . '/cache';
 
         if ( ! is_user_logged_in()
             // a robot or < IE8
@@ -203,8 +205,10 @@ class O1_WP_Fail2ban_MU {
             // trigger only in WP dirs: wp-admin, wp-includes, wp-content
             && 1 === preg_match( '/\/(' . $wp_dirs . ')\//i', $request_path )
 
-            // exclude missing media files but not '.php'
-            && ( false === strstr( $request_path, basename( $uploads['baseurl'] ) )
+            // exclude missing media files and cache dirs but not '.php'
+            && ( ( false === strstr( $request_path, $uploads )
+                    && false === strstr( $request_path, $cache )
+                )
                 || false !== stristr( $request_path, '.php' )
             )
 

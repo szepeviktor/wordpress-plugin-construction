@@ -3,7 +3,7 @@
 Plugin Name: Nofollow Robot Trap
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
-Version: 0.1
+Version: 0.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -88,13 +88,13 @@ class NofollowTrap {
 
         // setup - also on admin
         add_action( 'init', array( $this, 'register_urls' ) );
+        // add lines to robots.txt
+        add_filter('robots_txt', array( $this, 'robotstxt_disallow' ), 2, 1);
 
         // frontend only
         if ( is_admin() )
             return;
 
-        // add lines to robots.txt
-        add_filter('robots_txt', array( $this, 'robotstxt_disallow' ), 2, 1);
         // add the hidden link to the front page
         add_action('wp_footer', array( $this, 'add_allow_url' ), 100 );
         // generate output or block

@@ -27,8 +27,7 @@ This is the Must Use (mu-plugin) version of WordPess fail2ban.
 #### Disabling parts
 
 By default all options (fail2ban triggers) are enabled. If you would like to disable any of them
-you have to comment out the corresponding `add_action()` or `add_filter()` in the constructor.
-Please remeber to repeate this on each plugin update.
+you have to a `remove_action()` or `remove_filter()` in your own code at `init`.
 
 ### Warning on updates!
 

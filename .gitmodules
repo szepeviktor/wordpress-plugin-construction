@@ -25,3 +25,6 @@
 [submodule "mu-disable-comments"]
 	path = mu-disable-comments
 	url = https://github.com/solarissmoke/disable-comments-mu.git
+[submodule "shared-hosting-aid/yoast-debug"]
+	path = shared-hosting-aid/yoast-debug
+	url = https://github.com/Yoast/yoast-debug
