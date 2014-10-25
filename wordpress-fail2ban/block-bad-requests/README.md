@@ -10,7 +10,7 @@ To install copy `wp-login-bad-request.inc.php` beside your `wp-config.php` and p
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 ```
 
-Or - in a worse case - install it as an mu-plugin, or in the **worst case** as a normal plugin.
+Or – in a worse case – install it as an mu-plugin, or in the **worst case** as a normal plugin.
 It [executes very early](https://wordpress.org/plugins/whats-running/) when require()-d,
 as an mu-plugin WordPress loads before it executes,
 as a normal plugin the theme and some (any plugin before this one) active plugins are executed before it executes.

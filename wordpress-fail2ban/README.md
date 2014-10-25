@@ -1,6 +1,8 @@
 # WordPress fail2ban
 
-Trigger banning on malicious requests.
+Trigger banning on malicious requests by the fail2ban daemon running on a server.
+Shared hosting has no server-wide banning (because of security reasons)
+but you can use it without fail2ban to stop attack temprarily by setting trigger count to 1.
 
 ### block-bad-requests
 
@@ -12,13 +14,15 @@ To install copy `wp-login-bad-request.inc.php` beside your `wp-config.php` and p
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 ```
 
-Or - in a worse case - install it as an mu-plugin, or in the **worst case** as a normal plugin.
+Or – in a worse case – install it as an mu-plugin, or in the **worst case** as a normal plugin.
 
 ### mu-plugin
 
-Triggers fail2ban on common attack types. Login is only logged, use block-bad-requests for that.
+Triggers fail2ban on common attack types. Login is only logged, use
+[block-bad-requests](https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/wordpress-fail2ban#block-bad-requests) for that.
 
-To install copy `wp-fail2ban-mu.php` into `wp-content/mu-plugins/`. It activates automatically.
+To install copy `wp-fail2ban-mu.php` into your `wp-content/mu-plugins/` directory.
+You may have to create the `mu-plugins` directory. It activates automatically.
 
 ### non-wp-projects
 
