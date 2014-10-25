@@ -1,15 +1,23 @@
 <?php
 /*
 Plugin Name: WordPress Block Bad Requests (wp-config snippet or MU plugin)
-Description: Copy it in the top of your wp-config.php or make it an mu-plugin
+Description: Require it from the top of your wp-config.php or make it a Must Use plugin
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.8
+Version: 1.9
 Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_CDN_HEADER, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
 */
 
+/**
+ * WordPress Block Bad Requests.
+ * Require it in the top of your wp-config.php:
+ *
+ *     require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
+ *
+ * For options/defines see attached readme file.
+ */
 class O1_Bad_Request {
 
     private $prefix = 'File does not exist: ';
@@ -338,12 +346,10 @@ class O1_Bad_Request {
 new O1_Bad_Request();
 
 /*TODO
-check POST: no more, no less variables  a:5:{s:11:"redirect_to";s:28:"http://drprezi.com/wp-admin/";s:10:"testcookie";s:1:"1";s:3:"log";s:5:"admin";s:3:"pwd";s:6:"123456";s:9:"wp-submit";s:6:"Log In";}
-readme: snippet, require_once(), mu-plugin, plugin
 php-doc
-require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
+check POST: no more, no less variables  a:5:{s:11:"redirect_to";s:28:"http://drprezi.com/wp-admin/";s:10:"testcookie";s:1:"1";s:3:"log";s:5:"admin";s:3:"pwd";s:6:"123456";s:9:"wp-submit";s:6:"Log In";}
 POST: login, postpass, resetpass, lostpassword, register
 GET: logout, rp, lostpassword
-non-WP POSTs
+non-login POSTs
 comment POST etc.
 */

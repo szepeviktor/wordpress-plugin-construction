@@ -2,7 +2,7 @@
 /*
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Description: Reports 404s and various attacks in error.log for fail2ban. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
+Description: Triggers fail2ban on 404s and various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
 Version: 2.9
 License: The MIT License (MIT)
 Author: Viktor Szépe
@@ -185,7 +185,7 @@ class O1_WP_Fail2ban_MU {
     }
 
     /**
-     * Non-frontend requests from robots.
+     * Non-frontend (not through /index.php) requests from robots.
      */
     public function robot_403() {
 
@@ -198,14 +198,13 @@ class O1_WP_Fail2ban_MU {
         $cache = basename( WP_CONTENT_DIR ) . '/cache';
 
         if ( ! is_user_logged_in()
-            // a robot or < IE8
+            // robot or < IE7
             && $this->is_robot( $ua )
 
-            // robots may only enter on the frontend (index.php)
-            // trigger only in WP dirs: wp-admin, wp-includes, wp-content
+            // trigger only in wp-* directories
             && 1 === preg_match( '/\/(' . $wp_dirs . ')\//i', $request_path )
 
-            // exclude missing media files and cache dirs but not '.php'
+            // exclude missing media files and stale cache items but not '.php'
             && ( ( false === strstr( $request_path, $uploads )
                     && false === strstr( $request_path, $cache )
                 )
@@ -340,7 +339,7 @@ new O1_WP_Fail2ban_MU();
 - new: invalid user/email during registration
 - new: invalid user during lost password
 - new: invalid "lost password" token
-- (as wp-config.inc) robots&errors in /wp-comments-post.php
+- robots&errors in /wp-comments-post.php (as block-bad-requests.inc)
 - log xmlrpc? add_action( 'xmlrpc_call', function( $call ) { if ( 'pingback.ping' == $call ) {} } );
 - log proxy IP: HTTP_X_FORWARDED_FOR, HTTP_INCAP_CLIENT_IP, HTTP_CF_CONNECTING_IP (could be faked)
 - scores system:
