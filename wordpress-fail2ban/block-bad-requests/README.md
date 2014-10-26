@@ -11,10 +11,10 @@ require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 ```
 
 Or – in a worse case – install it as an mu-plugin, or in the **worst case** as a normal plugin.
-It [executes very early](https://wordpress.org/plugins/whats-running/) when require()-d,
-as an mu-plugin WordPress loads before it executes,
-as a normal plugin the theme and some (any plugin before this one) active plugins are executed before it executes.
-You can find out plugin execution order ba a simple wp-cli command
+It [executes very early](https://wordpress.org/plugins/whats-running/) when require()-d from `wp-config.php`.
+As an mu-plugin WordPress loads before it executes. As a normal plugin the theme and some
+(all before this one) active plugins are executed before it executes.
+You can find out plugin execution order by this simple wp-cli command:
 
 ```
 wp option get "active_plugins"
