@@ -56,7 +56,7 @@ define( 'O1_BAD_REQUEST_CDN_HEADERS', 'HTTP_X_AMZ_CF_ID:HTTP_VIA:HTTP_X_FORWARDE
 ```
 
 - (integer) `O1_BAD_REQUEST_COUNT` fail2ban trigger limit, `maxretry`
-- (string) `O1_BAD_REQUEST_CDN_HEADERS` a colon separated list of HTTP headers your CDN is recognized by **can be faked**
+- (string) `O1_BAD_REQUEST_CDN_HEADERS` a colon separated list of HTTP headers your CDN is recognized by
 - (boolean) `O1_BAD_REQUEST_ALLOW_REG` allow WP registration, disabled referer and test cookie checks
 - (boolean) `O1_BAD_REQUEST_ALLOW_IE8` allow login with IE8 too (IE8 is not a `Mozilla/5.0` browser)
 - (boolean) `O1_BAD_REQUEST_ALLOW_OLD_PROXIES` allow `HTTP/1.0` login requests

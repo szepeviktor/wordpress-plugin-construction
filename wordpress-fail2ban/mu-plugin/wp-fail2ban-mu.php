@@ -355,4 +355,8 @@ add_filter( 'login_errors', function ($em) {
     error_log( 'em:' . $em );
     return $em;
 }, 0 );
+- general
+    - bad queries https://github.com/wp-plugins/block-bad-queries/
+    - bad UAs
+    - strlen( $_SERVER['REQUEST_URI'] ) > 255
 */
