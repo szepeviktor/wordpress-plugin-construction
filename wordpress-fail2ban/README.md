@@ -2,7 +2,7 @@
 
 Trigger banning on malicious requests by the fail2ban daemon running on a server.
 Shared hosting has no server-wide banning (because of security reasons)
-but you can use it without fail2ban to stop attack temprarily by setting trigger count to 1.
+but you can use it without fail2ban to stop attack temporarily by setting trigger count to 1.
 
 ### block-bad-requests
 

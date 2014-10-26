@@ -7,7 +7,7 @@ License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 Version: 1.9
-Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_CDN_HEADER, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
+Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_CDN_HEADERS, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
 */
 
 /**
@@ -53,7 +53,7 @@ class O1_Bad_Request {
         'username',
         'webmaster'
     );
-    private $cdn_header;
+    private $cdn_headers;
     private $allow_registration = false;
     private $allow_ie8_login = false;
     private $allow_old_proxies = false;
@@ -67,8 +67,8 @@ class O1_Bad_Request {
         if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
             $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
 
-        if ( defined( 'O1_BAD_REQUEST_CDN_HEADER' ) )
-            $this->cdn_header = O1_BAD_REQUEST_CDN_HEADER;
+        if ( defined( 'O1_BAD_REQUEST_CDN_HEADERS' ) )
+            $this->cdn_headers = explode( ':', O1_BAD_REQUEST_CDN_HEADERS );
 
         if ( defined( 'O1_BAD_REQUEST_ALLOW_REG' ) && O1_BAD_REQUEST_ALLOW_REG )
             $this->allow_registration = true;
@@ -108,10 +108,15 @@ class O1_Bad_Request {
         $server_name = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
 
         // block non-static requests from CDN
-        if ( ! empty( $this->cdn_header ) && isset( $_SERVER[$this->cdn_header] ) ) {
-            // workaround to prevent edge server banning
-            $this->prefix = 'Attack from CDN: ';
-            return 'bad_request_cdn_attack';
+        if ( ! empty( $this->cdn_headers ) ) {
+            $commons = array_intersect( $this->cdn_headers, array_keys( $_SERVER ) );
+            if ( $commons === $this->cdn_headers ) {
+                // workaround to prevent edge server banning
+                //TODO block these from .htaccess
+                $this->prefix = 'Attack from CDN: ';
+                $this->trigger_count = 1;
+                return 'bad_request_cdn_attack';
+            }
         }
 
         // author sniffing
