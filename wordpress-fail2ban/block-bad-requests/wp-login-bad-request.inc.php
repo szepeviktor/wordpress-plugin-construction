@@ -302,13 +302,15 @@ class O1_Bad_Request {
             error_log( $error_msg );
         }
 
-        // help learning attack internals
+        // helps learning attack internals
+        /* too verbose
         $headers = array();
         foreach ( $_SERVER as $header => $value ) {
             if ( 'HTTP_' === substr( $header, 0, 5 ) )
                 $headers[$header] = addslashes( $value );
         }
-        //error_log( 'HTTP HEADERS: ' . serialize( $headers ) );
+        error_log( 'HTTP HEADERS: ' . serialize( $headers ) );
+        */
         error_log( 'HTTP REQUEST: ' . serialize( $_REQUEST ) );
 
         ob_get_level() && ob_end_clean();
