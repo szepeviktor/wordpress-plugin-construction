@@ -28,3 +28,6 @@
 [submodule "shared-hosting-aid/yoast-debug"]
 	path = shared-hosting-aid/yoast-debug
 	url = https://github.com/Yoast/yoast-debug
+[submodule "shared-hosting-aid/gauntlet-security"]
+	path = shared-hosting-aid/gauntlet-security
+	url = https://github.com/wp-plugins/gauntlet-security.git
