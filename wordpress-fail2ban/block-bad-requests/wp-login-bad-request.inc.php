@@ -303,13 +303,13 @@ class O1_Bad_Request {
         }
 
         // help learning attack internals
-        $server = array();
+        $headers = array();
         foreach ( $_SERVER as $header => $value ) {
             if ( 'HTTP_' === substr( $header, 0, 5 ) )
-                $server[$header] = addslashes( $value );
+                $headers[$header] = addslashes( $value );
         }
-        error_log( 'HTTP headers: ' . serialize( $server ) );
-        error_log( 'HTTP request: ' . serialize( $_REQUEST ) );
+        //error_log( 'HTTP HEADERS: ' . serialize( $headers ) );
+        error_log( 'HTTP REQUEST: ' . serialize( $_REQUEST ) );
 
         ob_get_level() && ob_end_clean();
         header( 'Status: 403 Forbidden' );
