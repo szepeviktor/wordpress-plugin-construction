@@ -109,13 +109,13 @@ class O1_Bad_Request {
 
         // block non-static requests from CDN
         // but allow robots.txt
-        if ( ! empty( $this->cdn_headers ) && 'robots.txt' !== $request_path ) {
+        if ( ! empty( $this->cdn_headers ) && '/robots.txt' !== $request_path ) {
             $commons = array_intersect( $this->cdn_headers, array_keys( $_SERVER ) );
             if ( $commons === $this->cdn_headers ) {
                 // workaround to prevent edge server banning
-                //TODO block these from .htaccess
-                $this->prefix = 'Attack from CDN: ';
+                //TODO block these by another method
                 $this->trigger_count = 1;
+                $this->prefix = 'Attack through CDN: ';
                 return 'bad_request_cdn_attack';
             }
         }
