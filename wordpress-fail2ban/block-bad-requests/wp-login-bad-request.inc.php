@@ -108,7 +108,8 @@ class O1_Bad_Request {
         $server_name = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
 
         // block non-static requests from CDN
-        if ( ! empty( $this->cdn_headers ) ) {
+        // but allow robots.txt
+        if ( ! empty( $this->cdn_headers ) && 'robots.txt' !== $request_path ) {
             $commons = array_intersect( $this->cdn_headers, array_keys( $_SERVER ) );
             if ( $commons === $this->cdn_headers ) {
                 // workaround to prevent edge server banning
