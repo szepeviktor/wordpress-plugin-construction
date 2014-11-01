@@ -41,7 +41,7 @@ function GHL_plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
     if ( 'search' === $context )
         return $actions;
 
-    $link_template = '<a href="%s" target="_blank"><img src="%s" style="vertical-align:-3px" height="16" width="16" alt="%s" />%s</a>';
+    $link_template = '<a href="%s" title="%s" target="_blank"><img src="%s" style="vertical-align:-3px" height="16" width="16" alt="%s" />%s</a>';
 
     $on_wporg = false;
     _maybe_update_plugins();
@@ -63,6 +63,7 @@ function GHL_plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
         $new_action = array ('github' => sprintf(
             $link_template,
             $plugin_data["GitHub Plugin URI"],
+            "Visit GitHub repository",
             plugins_url( $icon, __FILE__ ),
             "GitHub",
             $branch
@@ -84,6 +85,7 @@ function GHL_plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
 
         $new_action = array('bitbucket' => sprintf(
             $link_template,
+            "Visit Bitbucket repository",
             $plugin_data["Bitbucket URI"],
             plugins_url( $icon, __FILE__ ),
             "Bitbucket",
