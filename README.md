@@ -17,5 +17,10 @@ Please select a folder in the list above to see your plugin's development.
     + lenghten Menu taxonomy selector
     + Post navigator subm
     + Keep category tree
+1. feature
+    + Advanced Image Styles
+    + media URL column
+    + post ID column
 1. integration
 1. UI cleaning
+    + strip-dashboard

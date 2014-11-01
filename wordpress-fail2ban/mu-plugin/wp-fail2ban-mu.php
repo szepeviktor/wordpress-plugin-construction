@@ -87,11 +87,13 @@ class O1_WP_Fail2ban_MU {
         // logins
         if ( defined( 'O1_WP_FAIL2BAN_DISABLE_LOGIN' ) && O1_WP_FAIL2BAN_DISABLE_LOGIN ) {
             add_action( 'login_head', array( $this, 'disable_user_login_js' ) );
-            add_filter( 'authenticate', array( $this, 'authentication_disabled' ),  1000, 3 );
+            add_filter( 'authenticate', array( $this, 'authentication_disabled' ),  0, 3 );
         } else {
             // wp-login + xmlrpc login (any authentication)
             add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
-            add_filter( 'authenticate', array( $this, 'login' ),  1000, 3 );
+            add_filter( 'authenticate', array( $this, 'before_login' ), 0, 3 );
+            //TODO: no filter for successful XMLRPC login in wp_authenticate()
+            add_action( 'wp_login', array( $this, 'after_login' ), 99999, 2 );
         }
         add_action( 'wp_logout', array( $this, 'logout' ) );
         add_action( 'retrieve_password', array( $this, 'lostpass' ) );
@@ -216,7 +218,7 @@ class O1_WP_Fail2ban_MU {
         $this->trigger( 'wpf2b_auth_failed', $username );
     }
 
-    public function login( $user, $username, $password ) {
+    public function before_login( $user, $username, $password ) {
 
         if ( in_array( strtolower( $username ), $this->names2ban ) ) {
             for ( $i = 0; $i < $this->trigger_count; $i++ )
@@ -229,11 +231,16 @@ class O1_WP_Fail2ban_MU {
             header( 'Status: 403 Forbidden' );
             header( 'HTTP/1.0 403 Forbidden' );
             exit();
-        } elseif ( ! empty( $username ) ) {
-            $this->trigger( 'authenticated', $username, 'info', 'Wordpress auth: ' );
         }
 
         return $user;
+    }
+
+    public function after_login( $username, $user ) {
+
+        if ( is_a( $user, 'WP_User' ) ) {
+            $this->trigger( 'authenticated', $username, 'info', 'Wordpress auth: ' );
+        }
     }
 
     public function logout() {
