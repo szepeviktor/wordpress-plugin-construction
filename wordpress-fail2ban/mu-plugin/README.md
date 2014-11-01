@@ -11,6 +11,7 @@ The code is commented, so you may understand it by looking at the code only.
 
 ## Parts
 
+- prevent anyone logging in (this is not enbled by default)
 - prevent redirection to admin (log in at `/wp-admin`)
 - stop brute force attacks (multiple login probes and password reminders from one IP address)
 - stop robots scanning non-existent URLs (404s, redirects, simple URL hacks, misinterpreted relative protocols)
@@ -20,6 +21,14 @@ The code is commented, so you may understand it by looking at the code only.
 - ban on invalid AJAX, XMLRPC and other `wp_die()`-handled requests
 - stop spammers in cooperation with the [Contact Form 7 Robot Trap](https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/contact-form-7-robot-trap) plugin
 - log WordPress logins and logouts
+
+### Preventing login on unmaintained sites
+
+To deny user login totally put this in your wp-config.php:
+
+```php
+define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );
+```
 
 ### Disabling parts
 
