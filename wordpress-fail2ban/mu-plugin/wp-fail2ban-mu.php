@@ -3,16 +3,22 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Triggers fail2ban on 404s and various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 2.9
+Version: 3.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/wordpress-fail2ban/mu-plugin
+Options: O1_WP_FAIL2BAN_DISABLE_LOGIN
+*/
+
+/*
+To disable login put this in your wp-config.php:
+    define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
     error_log( 'Malicious sign detected by WPf2b: wpf2b_direct_access '
-        . addslashes( $_SERVER['REQUEST_URI'] )
+        . addslashes( @$_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
@@ -22,12 +28,44 @@ if ( ! function_exists( 'add_filter' ) ) {
 
 class O1_WP_Fail2ban_MU {
 
+    private $trigger_count = 6;
     //private $prefix = 'Malicious sign detected by WPf2b: ';
     private $prefix = 'File does not exist: ';
     private $wp_die_ajax_handler;
     private $wp_die_xmlrpc_handler;
     private $wp_die_handler;
     private $is_redirect = false;
+    private $names2ban = array(
+        'access',
+        'admin',
+        'administrator',
+        'backup',
+        'blog',
+        'business',
+        'contact',
+        'data',
+        'demo',
+        'doctor',
+        'guest',
+        'info',
+        'information',
+        'internet',
+        'master',
+        'number',
+        'office',
+        'pass',
+        'password',
+        'postmaster',
+        'public',
+        'root',
+        'sales',
+        'server',
+        'service',
+        'test',
+        'user',
+        'username',
+        'webmaster'
+    );
 
     public function __construct() {
 
@@ -47,8 +85,14 @@ class O1_WP_Fail2ban_MU {
         remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
 
         // logins
-        add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
-        add_action( 'wp_login', array( $this, 'login' ) );
+        if ( defined( 'O1_WP_FAIL2BAN_DISABLE_LOGIN' ) && O1_WP_FAIL2BAN_DISABLE_LOGIN ) {
+            add_action( 'login_head', array( $this, 'disable_user_login_js' ) );
+            add_filter( 'authenticate', array( $this, 'authentication_disabled' ),  1000, 3 );
+        } else {
+            // wp-login + xmlrpc login (any authentication)
+            add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
+            add_filter( 'authenticate', array( $this, 'login' ),  1000, 3 );
+        }
         add_action( 'wp_logout', array( $this, 'logout' ) );
         add_action( 'retrieve_password', array( $this, 'lostpass' ) );
 
@@ -153,14 +197,43 @@ class O1_WP_Fail2ban_MU {
         return $redirect_url;
     }
 
-    public function login_failed( $username ) {
+    public function authentication_disabled( $user, $username, $password ) {
 
-        $this->trigger( 'wpf2b_login_failed', $username );
+        $user = new WP_Error( 'invalidcombo', __( '<strong>NOTICE</strong>: Login is disabled for now.' ) );
+        $this->trigger( 'wpf2b_login_disabled', $username );
+
+        return $user;
     }
 
-    public function login( $username ) {
+    public function disable_user_login_js() {
 
-        $this->trigger( 'logged in', $username, 'info', 'Wordpress auth: ' );
+        print '<script type="text/javascript">setTimeout(function(){
+            try{document.getElementById("wp-submit").setAttribute("disabled", "disabled");} catch(e){}}, 0);</script>';
+    }
+
+    public function login_failed( $username ) {
+
+        $this->trigger( 'wpf2b_auth_failed', $username );
+    }
+
+    public function login( $user, $username, $password ) {
+
+        if ( in_array( strtolower( $username ), $this->names2ban ) ) {
+            for ( $i = 0; $i < $this->trigger_count; $i++ )
+                $this->trigger( 'wpf2b_banned_username', $username );
+
+            // helps learning attack internals
+            error_log( 'HTTP REQUEST: ' . serialize( $_REQUEST ) );
+
+            ob_get_level() && ob_end_clean();
+            header( 'Status: 403 Forbidden' );
+            header( 'HTTP/1.0 403 Forbidden' );
+            exit();
+        } else {
+            $this->trigger( 'authenticated', $username, 'info', 'Wordpress auth: ' );
+        }
+
+        return $user;
     }
 
     public function logout() {
@@ -172,16 +245,16 @@ class O1_WP_Fail2ban_MU {
             $user = '""';
         }
 
-        $this->trigger( 'logout', $user, 'info', 'Wordpress auth: ' );
+        $this->trigger( 'logged_out', $user, 'info', 'Wordpress auth: ' );
     }
 
     public function lostpass( $username ) {
 
-        if ( empty( $username ) ) {
+        /*if ( empty( $username ) ) {
             //FIXME higher score !!!
-        }
+        }*/
 
-        $this->trigger( 'lost password', $username, 'warn', 'Wordpress auth: ' );
+        $this->trigger( 'lost_pass', $username, 'warn', 'Wordpress auth: ' );
     }
 
     /**
