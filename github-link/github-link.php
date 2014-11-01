@@ -85,8 +85,8 @@ function GHL_plugin_link( $actions, $plugin_file, $plugin_data, $context ) {
 
         $new_action = array('bitbucket' => sprintf(
             $link_template,
-            "Visit Bitbucket repository",
             $plugin_data["Bitbucket URI"],
+            "Visit Bitbucket repository",
             plugins_url( $icon, __FILE__ ),
             "Bitbucket",
             $branch
