@@ -229,7 +229,7 @@ class O1_WP_Fail2ban_MU {
             header( 'Status: 403 Forbidden' );
             header( 'HTTP/1.0 403 Forbidden' );
             exit();
-        } else {
+        } elseif ( ! empty( $username ) ) {
             $this->trigger( 'authenticated', $username, 'info', 'Wordpress auth: ' );
         }
 
