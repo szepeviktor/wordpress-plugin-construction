@@ -134,6 +134,7 @@ class O1_WP_Fail2ban_MU {
             error_log( $prefix
                 . $slug
                 . $this->esc_log( $message )
+                . ' <' . reset( get_included_files() )
             );
 
         } else {
@@ -149,6 +150,7 @@ class O1_WP_Fail2ban_MU {
                 . $prefix
                 . $slug
                 . $this->esc_log( $message )
+                . ' <' . reset( get_included_files() )
                 // space after "referer:" comes from esc_log()
                 . ( $referer ? ', referer:' . $referer : '' )
             );
@@ -220,7 +222,11 @@ class O1_WP_Fail2ban_MU {
 
     public function before_login( $user, $username, $password ) {
 
-        if ( in_array( strtolower( $username ), $this->names2ban ) ) {
+        // ban authentication through XMLRPC
+        // ban certain usernames
+        if ( ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
+            || in_array( strtolower( $username ), $this->names2ban )
+        ) {
             for ( $i = 0; $i < $this->trigger_count; $i++ )
                 $this->trigger( 'wpf2b_banned_username', $username );
 
