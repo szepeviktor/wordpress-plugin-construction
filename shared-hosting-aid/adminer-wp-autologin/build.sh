@@ -9,7 +9,7 @@ cat plugin.php php-close \
     adminer-wp-login.php php-close \
     wp-autologin-index.php php-close \
     adminer.php \
-    > index.php
+    > wp-adminer.php || exit 1
 
-# optionally remove build files
-#rm adminer.php plugin.php
+# remove build files on success
+rm adminer.php plugin.php
