@@ -45,7 +45,7 @@ but symlink the must use (mu-plugin) version. That way it activates automaticall
 
 ```bash
 cd wp-content/
-ln -s ../plugins/wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php mu-plugins/
+ln -s plugins/wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php mu-plugins/
 ```
 
 ### Support and feature requests

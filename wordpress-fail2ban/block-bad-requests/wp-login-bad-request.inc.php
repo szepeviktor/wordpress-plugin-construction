@@ -37,6 +37,7 @@ class O1_Bad_Request {
         'info',
         'information',
         'internet',
+        'login',
         'master',
         'number',
         'office',
@@ -48,8 +49,11 @@ class O1_Bad_Request {
         'sales',
         'server',
         'service',
+        'support',
         'test',
+        'tester',
         'user',
+        'user2',
         'username',
         'webmaster'
     );

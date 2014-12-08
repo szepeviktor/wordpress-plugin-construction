@@ -1,0 +1,15 @@
+#!lftp -f
+
+open -u <USER>,<PASS>
+lcd <LOCAL-WEBROOT>
+cd <REMOTE_WEBROOT>
+mirror -v
+
+find | wc -l
+!find | wc -l
+
+find | grep "?"
+# set ftp:charset ISO-8859-2
+# mirror -v
+# apt-get install -y convmv
+# convmv -r -f latin2 -t utf8 .

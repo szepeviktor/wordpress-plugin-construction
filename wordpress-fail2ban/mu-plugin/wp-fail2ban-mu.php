@@ -50,6 +50,7 @@ class O1_WP_Fail2ban_MU {
         'info',
         'information',
         'internet',
+        'login',
         'master',
         'number',
         'office',
@@ -61,8 +62,11 @@ class O1_WP_Fail2ban_MU {
         'sales',
         'server',
         'service',
+        'support',
         'test',
+        'tester',
         'user',
+        'user2',
         'username',
         'webmaster'
     );
@@ -157,6 +161,20 @@ class O1_WP_Fail2ban_MU {
         }
     }
 
+    private function trigger_hard( $slug, $message, $level = 'error', $prefix = '' ) {
+
+        for ( $i = 0; $i < $this->trigger_count; $i++ )
+            $this->trigger( $slug, $message, $level, $prefix );
+
+        // helps learning attack internals
+        error_log( 'HTTP REQUEST: ' . serialize( $_REQUEST ) );
+
+        ob_get_level() && ob_end_clean();
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.0 403 Forbidden' );
+        exit();
+    }
+
     public function wp_404() {
 
         if ( ! is_404() )
@@ -203,6 +221,9 @@ class O1_WP_Fail2ban_MU {
 
     public function authentication_disabled( $user, $username, $password ) {
 
+        if ( in_array( strtolower( $username ), $this->names2ban ) )
+            $this->trigger_hard( 'wpf2b_login_disabled_banned_username', $username );
+
         $user = new WP_Error( 'invalidcombo', __( '<strong>NOTICE</strong>: Login is disabled for now.' ) );
         $this->trigger( 'wpf2b_login_disabled', $username );
 
@@ -226,18 +247,8 @@ class O1_WP_Fail2ban_MU {
         // ban certain usernames
         if ( ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
             || in_array( strtolower( $username ), $this->names2ban )
-        ) {
-            for ( $i = 0; $i < $this->trigger_count; $i++ )
-                $this->trigger( 'wpf2b_banned_username', $username );
-
-            // helps learning attack internals
-            error_log( 'HTTP REQUEST: ' . serialize( $_REQUEST ) );
-
-            ob_get_level() && ob_end_clean();
-            header( 'Status: 403 Forbidden' );
-            header( 'HTTP/1.0 403 Forbidden' );
-            exit();
-        }
+        )
+            $this->trigger_hard( 'wpf2b_banned_username', $username );
 
         return $user;
     }

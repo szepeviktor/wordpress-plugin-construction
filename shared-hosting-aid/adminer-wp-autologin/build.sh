@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# latest plugin.php
+# latest Adminer (mysql-only, english-only)
 wget -O adminer.php "http://www.adminer.org/latest-mysql-en.php"
-# latest Adminer
+# latest plugin.php
 wget -O plugin.php "https://github.com/vrana/adminer/raw/master/plugins/plugin.php"
+
 # concatenate everything
 cat plugin.php php-close \
     adminer-wp-login.php php-close \

@@ -42,6 +42,7 @@ class O1_Protect_Plugins {
 	 */
 	public function __construct() {
 
+        //FIXME Is it faster this way? add_filter( 'pre_option_active_plugins', array( $this, 'fix_protected' ) );
 		foreach ( $this->protected_plugins as $protected ) {
 			// reactivate on deactivation
 			add_action( 'deactivate_' . $protected,
