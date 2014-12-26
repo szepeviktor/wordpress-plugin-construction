@@ -24,7 +24,7 @@ The code is commented, so you may understand it by looking at the code only.
 
 ### Preventing login on unmaintained sites
 
-To deny user login totally put this in your wp-config.php:
+To deny user login totally copy this in your `wp-config.php` before `require`:
 
 ```php
 define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );

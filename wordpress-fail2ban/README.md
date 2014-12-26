@@ -8,7 +8,7 @@ but you can use it without fail2ban to stop attacks temporarily by setting trigg
 
 Examines every HTTP header in a login requests and triggers fail2ban accordingly.
 
-To install copy `wp-login-bad-request.inc.php` beside your `wp-config.php` and put this line in top of `wp-config.php`:
+To install copy `wp-login-bad-request.inc.php` beside your `wp-config.php` and copy this line in top of `wp-config.php`:
 
 ```php
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );

@@ -1,0 +1,22 @@
+--- jamss_orig.php	2014-12-20 01:16:41.297725324 +0100
++++ jamss.php	2014-12-20 01:17:18.625256049 +0100
+@@ -44,15 +44,15 @@
+ ini_set('max_execution_time', '0'); // supress problems with timeouts
+ ini_set('set_time_limit', '0'); // supress problems with timeouts
+ ini_set('display_errors', '0'); // show/hide errors
+-define('JOOMLA_SEARCH', TRUE); // should script verify valid Joomla! dir ?
++define('JOOMLA_SEARCH', false); // should script verify valid Joomla! dir ?
+                                // set to FALSE if you use it on non-Joomla site
+ 
+ /* WordPress */
+-/*
+-define('WPLOCALE', 'en_US');
++
++define('WPLOCALE', 'hu_HU');
+ // relative path
+ define('ABSPATH', './');
+-*/
++
+ /* * * * * * * * * * * * * *  END SETTINGS  * * * * * * * * * * * * * * */
+ 
+ // get Joomla version array, or NULL if no Joomla found

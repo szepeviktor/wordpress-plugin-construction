@@ -12,7 +12,7 @@ Options: O1_WP_FAIL2BAN_DISABLE_LOGIN
 */
 
 /*
-To disable login put this in your wp-config.php:
+To disable login copy this in your wp-config.php:
     define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );
 */
 
