@@ -142,6 +142,10 @@ class O1_Bad_Request {
             || false === stripos( $request_path, '/wp-login.php' ) )
             return false;
 
+        // experimental traffic analysis
+        if ( count( $_FILES ) )
+            error_log( 'wpf2b/upload: ' . serialize( $_FILES ) );
+
         // --------------------------- >8 ---------------------------
 
         if ( ! empty($_POST['log'] ) ) {
