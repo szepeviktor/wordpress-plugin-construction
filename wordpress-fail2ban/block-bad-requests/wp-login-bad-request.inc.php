@@ -6,8 +6,10 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.9
-Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_CDN_HEADERS, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
+Version: 1.10
+Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE, O1_BAD_REQUEST_CDN_HEADERS,
+Options: O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES,
+Options: O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
 */
 
 /**
@@ -22,6 +24,7 @@ class O1_Bad_Request {
 
     private $prefix = 'File does not exist: ';
     private $trigger_count = 6;
+    private $max_login_request_size = 2000;
     private $names2ban = array(
         'access',
         'admin',
@@ -70,6 +73,9 @@ class O1_Bad_Request {
         // options
         if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
             $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
+
+        if ( defined( 'O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE' ) )
+            $this->max_login_request_size = intval( O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE );
 
         if ( defined( 'O1_BAD_REQUEST_CDN_HEADERS' ) )
             $this->cdn_headers = explode( ':', O1_BAD_REQUEST_CDN_HEADERS );
@@ -152,6 +158,23 @@ class O1_Bad_Request {
                     return 'bad_request_username_pattern';
             }
         }
+
+        // maximum request size
+        if ( ! function_exists( 'apache_request_headers' ) ) {
+            function apache_request_headers() {
+               $headers = '';
+               foreach ( $_SERVER as $name => $value )
+                   if ( 'HTTP_' === substr( $name, 0, 5 ) )
+                       $headers[substr( $name, 5 )] = $value;
+               return $headers;
+            }
+        }
+        $request_size = strlen( http_build_query( apache_request_headers() ) )
+            + strlen( $_SERVER['REQUEST_URI'] )
+            + strlen( http_build_query( $_POST ) );
+        if ( $request_size > $this->max_login_request_size )
+            return 'bad_request_http_request_too_big';
+
 
         // accept header - IE9 sends only "*/*"
         //|| false === strpos( $_SERVER['HTTP_ACCEPT'], 'text/html' )

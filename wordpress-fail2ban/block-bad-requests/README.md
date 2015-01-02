@@ -22,6 +22,7 @@ wp option get "active_plugins"
 
 ### List of HTTP request parts checked
 
+- login POST request size `*`
 - custom CDN headers `*`
 - `author` query field
 - request method to identify POST requests
@@ -56,6 +57,7 @@ define( 'O1_BAD_REQUEST_CDN_HEADERS', 'HTTP_X_AMZ_CF_ID:HTTP_VIA:HTTP_X_FORWARDE
 ```
 
 - (integer) `O1_BAD_REQUEST_COUNT` fail2ban trigger limit, `maxretry`
+- (integer) `O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE` maxumim size of the login request
 - (string) `O1_BAD_REQUEST_CDN_HEADERS` a colon separated list of HTTP headers your CDN is recognized by
 - (boolean) `O1_BAD_REQUEST_ALLOW_REG` allow WP registration, disabled referer and test cookie checks
 - (boolean) `O1_BAD_REQUEST_ALLOW_IE8` allow login with IE8 too (IE8 is not a `Mozilla/5.0` browser)

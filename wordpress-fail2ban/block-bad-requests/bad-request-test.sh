@@ -2,7 +2,7 @@
 #
 # Test all fail2ban triggers in O1_Bad_Request.
 # Set all variables below. Stop the webserver and use `nc -l -p 80` to grab values.
-# Test then COMMENT out "local access" check in O1_Bad_Request.
+# Test then COMMENT out "local access" check in O1_Bad_Request class.
 #
 # VERSION       :0.1
 # DATE          :2014-08-16
@@ -85,7 +85,8 @@ wp_login() {
 
     #( sleep $RESPONSE_WAIT; killall -9 nc &> /dev/null; ) &
 
-    nc -w $RESPONSE_WAIT $HOST $PORT > "$FILE"
+    # fir Ipv6 use `nc6`
+    nc.traditional -w $RESPONSE_WAIT $HOST $PORT > "$FILE"
 
     if check_response "$FILE" "$HTTP_STATUS"; then
         echo "OK: $NAME"
@@ -122,11 +123,29 @@ Host: $HOST
 User-Agent: $UA
 Accept: $ACCEPT
 Accept-Language: $ACCEPT_LANG
-Accept-DEncoding: $ACCENT_ENC
+Accept-Encoding: $ACCENT_ENC
 Referer: $REFERER
 Cookie: $COOKIE
 Connection: $CONNECTION
 
+LOGIN
+
+
+cat <<LOGIN | wp_login "too big login request" "403 Forbidden"
+POST $REQUEST $PROTOCOL
+Host: $HOST
+User-Agent: $UA
+Accept: $ACCEPT
+Accept-Language: $ACCEPT_LANG
+Accept-Encoding: $ACCENT_ENC
+Referer: $REFERER
+Cookie: $COOKIE
+Connection: $CONNECTION
+Content-Type: $CONTENT_TYPE
+Content-Length: $CONTENT_LENGTH
+Too-Big: oShi6OxaeYiadie0euroo3biesheec8vod1kai1uV7Ohgh4cheegh1see2weiTeidaiFeehah8wie8oocohPaibaepha6Aen0Iegi1phu3oulii6tookieZ0chah1chias6tinginieBieziphahquie1AegoHoh9Zeeshi8ohquae1loGhoshie5cooje3aeju3toj6ieshaosoo2shahmaJieci1ieyuj6borohwooyei2yei5loeFivai5eirieGhu5shie1kee0aela0eifoa5ao3uux8OedoojiTeev8joh5ith7eesh9theiNgohlo8Shu1peetoh5eer9aDe3xeiKu1Zeis4thu3eiChah1aa7vah6oeng9mighio0veviecheiseebooJahn1pu6phoGhoLeedahb0pie8Ju1aoy1choquaishiepaichohch2hobugheel5caegh1IeY3Tee5moaweaCaozeeghieweez7eufu0phee8soosei7Zuquofahnoh4suzae1nitogh3kai7Yohah0theiraideeth2uthiek1shaikaHee5uiXu8aexa9fei7Eecai4EeJail3oV6eingae5oid5phaiph7pooBadoorea8che5peeYughiel0wooC1gochee7beeCejo5iucie3afohLohd8thaaPhae1Caisaeji8vaib3uone6ri3ieFei2yeem5uzoi5fuThee4ahbeejie3phoor1Ahb2Logh1Ragh7aechiew9UghoopakaeR5xoh1ievah1uaphaqueeSae4nacahbae0Eemeex2irohdaxe4pheil3mah7kah5eiPh3aethai1Jae8Iowee6iGoshai1ootaviecheesh7Etai2meu4uodohxae9UTahMouLoor1iegicaebeequei5viutathohXo9olooghie1ooCaph4ca9Aiseephiecah2cohfeiPheequeoG0daezoh4moo3eeMie0AiDai3iok0to5quae3ahZ0kaireg6yaesh4aequ2OhVoo5Hoo1shie8eeNgaeH8Oogh3Ohwoomakee1hoo8eeshaiqu6ua6oL3mex1yi0Ohn0ohl6loujeiFuo1Leb5Kie2eeY9kah5veehaen0Eex1Yie2jeip9moo0vou1yei8ej0Gapheib7oow4meatieGh2oozeitaSahb0vupei8eil2heikup6ahfiph6eitiethohp6eiJeiwoadu2iebaicoopae2yie9wa4eeth8ahr9taFee0upio8ye5ooZ1bohgohfe5ia9Cietoh2chexi5eip8aoPievacoongai2goochieweihoa0lie4IoX7Toowiw8APhaing1eep5aing4ool6aireeNg4Iezaepoh8UcauJu9hoi7Chahhah9qui6ohw5uul6ooWie2Ogho9veingae1tae8aig4ahGo4zaothaL1OBah3os3ohxaephaoma9chaequie6ameephokoh5EiQu0ut9aiCahh3mohb3queeniTohn5iesareek5xaemairoh2aew2Ui6Aechei5ohhahsap6yohjai2Matithe7ing0thitoh6moomaib9haeNgaithokeikiw8Aitogeegoiz9hieShighopheeriedeira8eiraing2pahyuphie3oaD4shae7aiphohpahseid0aeh6aW2ieziic4eiphu2Xiw6aisaing6Foo5mai2Ooqu3Mu9buuc7ohcai3cei2ig9iejie4ohDohshoh8oopien1asheet9shes8ungiequahfungaija1poof4shaihohchaa3IarieghaithiphinaiChai1shie9kaihoequ4aig1doofai1eePaetaeD9oCheiJ4DaethaiGhaiPh5joeHa7laizi1peiPh0iekei2eev8eeG2Vohqueivee
+
+$CONTENT
 LOGIN
 
 
@@ -136,7 +155,7 @@ Host: $HOST
 User-Agent: $UA
 Accept: $ACCEPT
 Accept-Language: $ACCEPT_LANG
-Accept-DEncoding: $ACCENT_ENC
+Accept-Encoding: $ACCENT_ENC
 Referer: $REFERER
 Cookie: $COOKIE
 Connection: $CONNECTION
