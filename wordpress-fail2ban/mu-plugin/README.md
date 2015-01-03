@@ -18,6 +18,7 @@ The code is commented, so you may understand it by looking at the code only.
 - reply with HTTP/403 Forbidden to robots on non-frontend requests
 - stop showing 404 pages to robots but send HTTP/404
 - ban sequential 404 requests (from the same IP address)
+- ban on any XMLRPC-based authentication (even on successful ones)
 - ban on invalid AJAX, XMLRPC and other `wp_die()`-handled requests
 - stop spammers in cooperation with the [Contact Form 7 Robot Trap](https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/contact-form-7-robot-trap) plugin
 - log WordPress logins and logouts

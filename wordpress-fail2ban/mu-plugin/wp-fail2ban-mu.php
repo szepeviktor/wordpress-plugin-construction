@@ -93,7 +93,7 @@ class O1_WP_Fail2ban_MU {
             add_action( 'login_head', array( $this, 'disable_user_login_js' ) );
             add_filter( 'authenticate', array( $this, 'authentication_disabled' ),  0, 3 );
         } else {
-            // wp-login + xmlrpc login (any authentication)
+            // wp-login + XMLRPC login (any authentication)
             add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
             add_filter( 'authenticate', array( $this, 'before_login' ), 0, 3 );
             //TODO: no filter for successful XMLRPC login in wp_authenticate()
@@ -118,7 +118,6 @@ class O1_WP_Fail2ban_MU {
         // ban spammers (Contact Form 7 Robot Trap)
         add_action( 'robottrap_hiddenfield', array( $this, 'wpcf7_spam' ) );
         add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
-
     }
 
     private function trigger( $slug, $message, $level = 'error', $prefix = '' ) {
@@ -243,12 +242,13 @@ class O1_WP_Fail2ban_MU {
 
     public function before_login( $user, $username, $password ) {
 
-        // ban authentication through XMLRPC
         // ban certain usernames
-        if ( ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
-            || in_array( strtolower( $username ), $this->names2ban )
-        )
+        if ( in_array( strtolower( $username ), $this->names2ban ) )
             $this->trigger_hard( 'wpf2b_banned_username', $username );
+
+        // ban authentication through XMLRPC
+        if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
+            $this->trigger_hard( 'wpf2b_xmlrpc_login', $username );
 
         return $user;
     }
