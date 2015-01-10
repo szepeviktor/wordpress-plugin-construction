@@ -31,3 +31,6 @@
 [submodule "shared-hosting-aid/gauntlet-security"]
 	path = shared-hosting-aid/gauntlet-security
 	url = https://github.com/wp-plugins/gauntlet-security.git
+[submodule "wordpress-fail2ban/non-wp-projects/joomla-plugin-system-fail2ban"]
+	path = wordpress-fail2ban/non-wp-projects/joomla-plugin-system-fail2ban
+	url = https://szepeviktor@bitbucket.org/mediahof/joomla-plugin-system-fail2ban.git
