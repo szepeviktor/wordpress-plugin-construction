@@ -10,6 +10,9 @@ Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-disable-updates
 */
 
+//FIXME: https://core.trac.wordpress.org/ticket/30855#ticket
+// wp_get_update_data() calls are not pluggable (wp-admin/menu.php ×2)
+
 /**
  * Disable Updates and Update HTTP Requests.
  * This is a one-class mu-plugin
@@ -142,7 +145,7 @@ class Disable_Version_Check_MU {
     private function disable_browser_nag() {
 
         if ( empty( $_SERVER['HTTP_USER_AGENT'] ) )
-            return false;
+            return;
 
         add_action( 'admin_init', array( $this, 'updated_browser' ) );
     }
@@ -176,7 +179,7 @@ class Disable_Version_Check_MU {
         $current = array();
         $installed_themes = wp_get_themes();
         foreach ( $installed_themes as $theme )
-            $current[$theme->get_stylesheet()] = $theme->get('Version');
+            $current[$theme->get_stylesheet()] = $theme->get( 'Version' );
 
         return (object) array(
             'last_checked'    => time(),
