@@ -12,7 +12,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'File does not exist: errorlog_direct_access '
+    error_log( 'Malicious traffic detected by wpf2b: wpf2b_direct_access '
                . esc_url( $_SERVER['REQUEST_URI'] ) );
     ob_end_clean();
     header( 'Status: 403 Forbidden' );
@@ -22,7 +22,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 
 class O1_ErrorLog404 {
 
-    private $prefix = 'File does not exist: ';
+    private $prefix = 'Malicious traffic detected by wpf2b: ';
     private $wp_die_ajax_handler;
     private $wp_die_xmlrpc_handler;
     private $wp_die_handler;

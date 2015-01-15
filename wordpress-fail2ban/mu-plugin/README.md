@@ -48,7 +48,7 @@ In that case don't activate the normal plugin.
 For fail2ban 0.8.x
 
 ```
-failregex = [[]client <HOST>[]] (File does not exist|script not found or unable to stat): /\S*(, referer: \S+)?\s*$
+failregex = [[]client <HOST>[]] (Malicious traffic detected by wpf2b|script not found or unable to stat): /\S*(, referer: \S+)?\s*$
             [[]client <HOST>[]] script '.*' not found or unable to stat/\S*(, referer: \S+)?\s*$
 ```
 

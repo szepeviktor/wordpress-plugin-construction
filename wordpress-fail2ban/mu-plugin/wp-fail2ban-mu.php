@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Triggers fail2ban on 404s and various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 3.0
+Version: 3.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -17,7 +17,7 @@ To disable login copy this in your wp-config.php:
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Malicious sign detected by WPf2b: wpf2b_direct_access '
+    error_log( 'Malicious traffic detected by wpf2b: wpf2bmu_direct_access '
         . addslashes( @$_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
@@ -29,8 +29,8 @@ if ( ! function_exists( 'add_filter' ) ) {
 class O1_WP_Fail2ban_MU {
 
     private $trigger_count = 6;
-    //private $prefix = 'Malicious sign detected by WPf2b: ';
-    private $prefix = 'File does not exist: ';
+    private $prefix = 'Malicious traffic detected by wpf2b: ';
+    //OLD private $prefix = 'File does not exist: ';
     private $wp_die_ajax_handler;
     private $wp_die_xmlrpc_handler;
     private $wp_die_handler;
@@ -134,11 +134,13 @@ class O1_WP_Fail2ban_MU {
         //if ( ! $log_enabled || empty( $log_destination ) ) {
         if ( empty( $log_destination ) ) {
             // SAPI should add client data
-            error_log( $prefix
+            $error_msg = $prefix
                 . $slug
                 . $this->esc_log( $message )
-                . ' <' . reset( get_included_files() )
-            );
+                . ' <' . reset( get_included_files() );
+            // solve fastcgi stderr logging (mainly on nginx)
+            if ( 'apache2handler' !== php_sapi_name() )
+                $error_msg .= "\n";
 
         } else {
             // add client data to log message
@@ -148,16 +150,17 @@ class O1_WP_Fail2ban_MU {
                 $referer = false;
             }
 
-            error_log( '[' . $level . '] '
-                . '[client ' . @$_SERVER['REMOTE_ADDR'] . '] '
+            $error_msg = '[' . $level . '] '
+                . '[client ' . @$_SERVER['REMOTE_ADDR'] . ':' . @$_SERVER['REMOTE_PORT'] . '] '
                 . $prefix
                 . $slug
                 . $this->esc_log( $message )
                 . ' <' . reset( get_included_files() )
                 // space after "referer:" comes from esc_log()
-                . ( $referer ? ', referer:' . $referer : '' )
-            );
+                . ( $referer ? ', referer:' . $referer : '' );
         }
+
+        error_log( $error_msg );
     }
 
     private function trigger_hard( $slug, $message, $level = 'error', $prefix = '' ) {

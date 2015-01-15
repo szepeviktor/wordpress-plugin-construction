@@ -10,7 +10,7 @@ Author URI: http://www.online1.hu/webdesign/
 */
 
 for ( $i = 1; $i <= 6; $i++ ) {
-    error_log( 'File does not exist: ' . 'errorlog_no_wp_here' );
+    error_log( 'Malicious traffic detected by wpf2b: ' . 'xmlrpc_no_wp_here' );
 }
 
 ob_get_level() && ob_end_clean();

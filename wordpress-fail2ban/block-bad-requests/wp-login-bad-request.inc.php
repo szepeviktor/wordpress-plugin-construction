@@ -6,7 +6,7 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.10
+Version: 1.11
 Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE, O1_BAD_REQUEST_CDN_HEADERS,
 Options: O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES,
 Options: O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
@@ -22,7 +22,7 @@ Options: O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
  */
 class O1_Bad_Request {
 
-    private $prefix = 'File does not exist: ';
+    private $prefix = 'Malicious traffic detected by wpf2b: ';
     private $trigger_count = 6;
     private $max_login_request_size = 2000;
     private $names2ban = array(
@@ -312,6 +312,9 @@ class O1_Bad_Request {
         if ( empty( $log_destination ) ) {
             // SAPI should add client data
             $error_msg = $this->prefix . $this->result;
+            // solve fastcgi stderr logging (mainly on nginx)
+            if ( 'apache2handler' !== php_sapi_name() )
+                $error_msg .= "\n";
 
         } else {
             // add client data to log message
@@ -322,7 +325,7 @@ class O1_Bad_Request {
             }
 
             $error_msg = '[' . $level . '] '
-                . '[client ' . @$_SERVER['REMOTE_ADDR'] . '] '
+                . '[client ' . @$_SERVER['REMOTE_ADDR'] . ':' . @$_SERVER['REMOTE_PORT'] . '] '
                 . $this->prefix
                 . $this->result
                 // space after "referer:" comes from esc_log()
