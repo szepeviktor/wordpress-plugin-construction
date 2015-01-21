@@ -127,23 +127,21 @@ class O1_WP_Fail2ban_MU {
 
         // when error messages are sent to a file (aka. PHP error log)
         // IP address and referer are not logged
-        $log_enabled = '1' === ini_get( 'log_errors' );
+        //$log_enabled = '1' === ini_get( 'log_errors' );
         $log_destination = ini_get( 'error_log' );
+
+        // SAPI should add client data
+        $error_msg = $prefix
+            . $slug
+            . $this->esc_log( $message )
+            . ' <' . reset( get_included_files() );
+
+        //FIXME solve fastcgi "multiline-message" stderr logging (mainly on nginx)
 
         // log_errors option does not disable logging
         //if ( ! $log_enabled || empty( $log_destination ) ) {
-        if ( empty( $log_destination ) ) {
-            // SAPI should add client data
-            $error_msg = $prefix
-                . $slug
-                . $this->esc_log( $message )
-                . ' <' . reset( get_included_files() );
-            // solve fastcgi stderr logging (mainly on nginx)
-            if ( 'apache2handler' !== php_sapi_name() )
-                $error_msg .= "\n";
-
-        } else {
-            // add client data to log message
+        // add client data to log message
+        if ( ! empty( $log_destination ) ) {
             if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
                 $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );
             } else {
@@ -152,10 +150,7 @@ class O1_WP_Fail2ban_MU {
 
             $error_msg = '[' . $level . '] '
                 . '[client ' . @$_SERVER['REMOTE_ADDR'] . ':' . @$_SERVER['REMOTE_PORT'] . '] '
-                . $prefix
-                . $slug
-                . $this->esc_log( $message )
-                . ' <' . reset( get_included_files() )
+                . $error_msg
                 // space after "referer:" comes from esc_log()
                 . ( $referer ? ', referer:' . $referer : '' );
         }
