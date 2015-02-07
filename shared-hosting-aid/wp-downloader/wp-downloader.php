@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Theme and Plugin Downloader
-Version: 2.0
+Version: 2.1
 Plugin URI: http://wordpress.org/plugins/wp-downloader/
 Description: Download themes and plugins installed on your site as a ZIP archive, ready to install on another site.
 Author: Viktor Szépe, Wojtek Szałkiewicz
@@ -19,17 +19,18 @@ class WP_Downloader {
                     var url = $(e).prop("href");
 
                     $(e).removeClass("load-customize");
-                    $(e).text("Download");
+                    $(e).text("%s");
                     $(e).prop("href", "%s" + url.replace(/.*theme=(.*)(&|$)/, "$1") );
                 });
             });
 </script>
     ';
+    private $verb = 'Download';
 
     public function __construct() {
 
         add_action('plugins_loaded', array( $this, 'load' ) );
-        add_filter('plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
+        add_filter('plugin_action_links', array( $this, 'plugin_action_links' ), 10, 4 );
         add_action('admin_footer-themes.php', array( $this, 'theme_script' ), 99 );
     }
 
@@ -42,11 +43,21 @@ class WP_Downloader {
         }
     }
 
-    public function plugin_action_links( $links, $file ) {
+    public function plugin_action_links( $links, $file, $plugin_data, $context ) {
 
+        if ( 'dropins' === $context )
+            return $links;
+
+        if ( 'mustuse' === $context ) {
+            $what = 'mustuse';
+        } else {
+            $what = 'plugin';
+        }
+
+        $dowload_query = build_query( array( 'wpd' => $what, 'object' => $file ) );
         $download_link = sprintf( '<a href="%s">%s</a>',
-            wp_nonce_url( admin_url( '?wpd=plugin&object=' . $file ), 'wpd-download' ),
-            __('Download')
+            wp_nonce_url( admin_url( '?' . $dowload_query ), 'wpd-download' ),
+            $this->verb
         );
         array_push( $links, $download_link );
 
@@ -57,7 +68,7 @@ class WP_Downloader {
 
         // scripts don't need HTML encoding
         $url = admin_url( '?wpd=theme&_wpnonce='. wp_create_nonce( 'wpd-download' ) . '&object=' );
-        printf( $this->script_template, $url );
+        printf( $this->script_template, $this->verb, $url );
     }
 
     private function download() {
@@ -69,23 +80,31 @@ class WP_Downloader {
         $what = $_GET['wpd'];
         $object = $_GET['object'];
 
-        switch ($what) {
+        switch ( $what ) {
             case 'plugin':
                 // plugin in a subdir
-                if ( strpos( $object, '/' ) ) {
+                if ( strpos( $object, '/' ) )
                     $object = dirname( $object );
-                }
                 $root = WP_PLUGIN_DIR;
+                break;
+            case 'mustuse':
+                $root = WPMU_PLUGIN_DIR;
                 break;
             case 'theme':
                 $root = get_theme_root( $object );
                 break;
+            default:
+                // bad URL
+                wp_die( 'Cheatin&#8217; uh?' );
         }
 
         $object = sanitize_file_name( $object );
+        if ( empty( $object ) )
+                wp_die( 'Cheatin&#8217; uh?' );
+
         $path = $root . '/' . $object;
 
-        // create zip in the uploads directory
+        // create ZIP file in the uploads directory
         $upload_dir = wp_upload_dir();
         $zip = trailingslashit( $upload_dir['path'] ) . $object . '.zip';
 
@@ -100,6 +119,7 @@ class WP_Downloader {
         // remove temporary ZIP file
         unlink( $zip );
 
+        // no wp_die(), it produces HTML
         exit;
     }
 }

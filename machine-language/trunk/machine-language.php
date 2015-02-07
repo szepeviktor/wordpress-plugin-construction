@@ -155,7 +155,7 @@ class Machine_Language {
                     ajaxurl,
                     postdata,
                     function (result) {
-                        if (result=="1") {
+                        if (result === "1") {
                             disableDesc.prop("disabled", false);
                             spinner.css("display", "none");
                         }
