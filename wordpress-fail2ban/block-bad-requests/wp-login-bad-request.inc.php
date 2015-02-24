@@ -324,7 +324,7 @@ class O1_Bad_Request {
                 $referer = false;
             }
 
-            $error_msg = '[' . $level . '] '
+            $error_msg = '[error] '
                 . '[client ' . @$_SERVER['REMOTE_ADDR'] . ':' . @$_SERVER['REMOTE_PORT'] . '] '
                 . $this->prefix
                 . $this->result

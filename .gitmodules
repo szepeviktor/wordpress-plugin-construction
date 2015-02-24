@@ -34,3 +34,6 @@
 [submodule "wordpress-fail2ban/non-wp-projects/joomla-plugin-system-fail2ban"]
 	path = wordpress-fail2ban/non-wp-projects/joomla-plugin-system-fail2ban
 	url = https://szepeviktor@bitbucket.org/mediahof/joomla-plugin-system-fail2ban.git
+[submodule "shared-hosting-aid/tripwire"]
+	path = shared-hosting-aid/tripwire
+	url = git@github.com:szepeviktor/Tripwire.git
