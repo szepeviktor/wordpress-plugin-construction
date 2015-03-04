@@ -50,7 +50,7 @@ function o1_autouser( $userdata ) {
         return 'wp-load not found: ' . $wpload_path;
 
     define( 'WP_USE_THEMES', false );
-    require_once( dirname( __FILE__ ) . '/wp-load.php' );
+    require_once( $wpload_path );
 
     $userid = wp_insert_user( $userdata );
 
@@ -64,7 +64,7 @@ function o1_autouser( $userdata ) {
         // redirect to Dashboard
         return 'New user ID = ' . $userid
         . '<script type="text/javascript">setTimeout(function () {window.location.href="'
-        . admin_url() . '";}, 3000);</script>';
+        . admin_url( 'profile.php#pass1' ) . '";}, 3000);</script>';
     }
 }
 

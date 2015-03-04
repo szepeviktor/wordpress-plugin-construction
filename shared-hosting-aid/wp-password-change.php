@@ -16,10 +16,10 @@ Version: 1.0
  * 3. reload it to set password
  */
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-// if it's annoying uncommant this
-//error_reporting(E_ALL ^ E_STRICT);
+ini_set( 'display_errors', 1 );
+error_reporting( E_ALL );
+// if it's annoying uncomment the next line
+//error_reporting( E_ALL ^ E_STRICT );
 
 define( 'WP_USE_THEMES', false );
 require_once( dirname( __FILE__ ) . '/wp-load.php' );
@@ -33,8 +33,8 @@ die;
 
 /***------EDIT HERE----------***/
 
-$user = '<LOGIN-NAME-TO-CHANGE>';
-$plain_pass = '<NEW PASSWORD>';
+$user = 'viktor';
+$plain_pass = '12345';
 
 /***------EDIT HERE----------***/
 
@@ -45,4 +45,3 @@ $wp_hasher = new PasswordHash( 8, true );
 $pass = $wp_hasher->HashPassword( $plain_pass );
 
 var_dump( $wpdb->update( $wpdb->users, array( 'user_pass' => $pass ), array( 'user_login' => $user ) ) );
-
