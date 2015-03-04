@@ -3,7 +3,7 @@
 Plugin Name: Disable Updates and Update HTTP Requests
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Disable core, theme and plugin updates plus the browser nag
-Version: 0.4
+Version: 0.5
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -16,6 +16,11 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 /**
  * Disable Updates and Update HTTP Requests.
  * This is a one-class mu-plugin
+ *
+ * Enable force-check updates by adding a define to wp-config:
+ * <code>
+ * define( 'ENABLE_FORCE_CHECK_UPDATE', true );
+ * </code>
  *
  * @package disable-updates
  * @version v0.4
@@ -36,11 +41,6 @@ if ( ! function_exists( 'add_filter' ) ) {
 
 /**
  * Disable core, theme and plugin updates plus the browser nag.
- *
- * Enable force-check updates by adding a define to wp-config:
- * <code>
- * define( 'ENABLE_FORCE_CHECK_UPDATE', true );
- * </code>
  *
  * @link https://github.com/Websiteguy/disable-updates-manager/
  * @link http://wordpress.org/plugins/no-browser-nag/
@@ -63,12 +63,6 @@ class Disable_Version_Check_MU {
      */
     public function __construct() {
 
-        // don't block updates on the frontend
-        // block updates during WP-Cron
-        $doing_cron = ( defined( 'DOING_CRON' ) && DOING_CRON );
-        if ( ! ( is_admin() || $doing_cron ) )
-            return;
-
         // don't block updates when "Check again" is pressed
         if ( defined( 'ENABLE_FORCE_CHECK_UPDATE' ) && ENABLE_FORCE_CHECK_UPDATE ) {
 
@@ -79,15 +73,24 @@ class Disable_Version_Check_MU {
             if ( $is_update_core && ! empty( $_GET['force-check'] ) )
                 return;
 
+            // allow actual updates
             $this->disable_update_core_action = ( ! $is_update_core || empty( $_GET['action'] ) );
             $this->disable_update_action = ( ! $is_update || empty( $_GET['action'] ) );
         }
+
+        // would show up on the frontend
+        add_action( 'add_admin_bar_menus', array( $this, 'disable_admin_bar_updates_menu' ) );
+
+        // don't block updates on the frontend
+        // block updates during WP-Cron
+        $doing_cron = ( defined( 'DOING_CRON' ) && DOING_CRON );
+        if ( ! ( is_admin() || $doing_cron ) )
+            return;
 
         $this->disable_core_updates();
         $this->disable_theme_updates();
         $this->disable_plugin_updates();
         $this->disable_browser_nag();
-        add_action( 'add_admin_bar_menus', array( $this, 'disable_admin_bar_updates_menu' ) );
     }
 
     /**
@@ -97,8 +100,12 @@ class Disable_Version_Check_MU {
     private function disable_core_updates() {
 
         // wp-includes/update.php:156
-        if ( $this->disable_update_core_action )
+        if ( $this->disable_update_core_action ) {
+            // prevent HTTP request too
+            if ( isset( $_GET['force-check'] ) )
+                unset( $_GET['force-check'] );
             add_filter( 'pre_site_transient_update_core', array( $this, 'last_checked_core' ) );
+        }
         // wp-includes/update.php:677-678
         remove_action( 'admin_init', '_maybe_update_core' );
         remove_action( 'wp_version_check', 'wp_version_check' );
@@ -156,7 +163,8 @@ class Disable_Version_Check_MU {
     public function disable_admin_bar_updates_menu() {
 
         // wp-includes/class-wp-admin-bar.php:499
-        remove_action( 'admin_bar_menu', 'wp_admin_bar_updates_menu', 40 );
+        if ( $this->disable_update_core_action )
+            remove_action( 'admin_bar_menu', 'wp_admin_bar_updates_menu', 40 );
     }
 
     /**
