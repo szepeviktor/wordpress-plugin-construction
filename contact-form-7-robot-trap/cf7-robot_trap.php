@@ -111,8 +111,10 @@ function wpcf7_robottrap_validation_filter( $result, $tag ) {
 
     $name = $tag->name;
 
-    // no sanitization !
-    if ( isset( $_POST[$name] ) ) {
+    /**
+     * Should be submitted empty, no $name sanitization.
+     */
+    if ( ! empty( $_POST[$name] ) ) {
         /**
          * Counteraction for filled-out hidden field.
          *
