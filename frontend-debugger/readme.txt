@@ -4,7 +4,7 @@ Donate link: https://szepe.net/wp-donate/
 Tags: debug, debugging, developer, development, HTML, source, frontend
 Requires at least: 3.0.1
 Tested up to: 4.1.1
-Stable tag: 0.2
+Stable tag: 0.3
 License: GPLv2 or later
 
 Display page source prettified.
@@ -21,7 +21,7 @@ Displays:
 * Footer
 * Included template files
 
-Only administrators can use this plugin.
+If you are not an administrators, add `?view-source` to the URL.
 
 Notice: uses regular expressions and `eval()` to get the current template apart.
 

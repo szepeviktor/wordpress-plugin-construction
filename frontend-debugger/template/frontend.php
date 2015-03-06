@@ -2,7 +2,7 @@
 /*
 Template Name: Frontend Debugger Template
 Version: 1.0
-Description: Pseudo tempalte for Frontend Debugger plugin
+Description: Pseudo template for Frontend Debugger
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
@@ -207,7 +207,7 @@ print $fd->part['footer'];;
 ?>
 </pre>
 
-<h1>Includes</h1>
+<h1>Included files</h1>
 <pre id="includes" class="prettyprint lang-php">
 <?php
 
@@ -217,13 +217,13 @@ var_export( $fd->part['includes'] );
 </pre>
 
 <div id="control-panel">
-    <a href="#header-html" class="part">H</a>
-    <a href="#thumbnail-html" class="part">T</a>
-    <a href="#loop-html" class="part">L</a>
-    <a href="#footer-html" class="part">F</a>
-    <button id="toggle-linenums">Line #</button>
-    <button id="toggle-wrap">Wrap</button>
-    <button id="toggle-lineends">Line ends</button>
+    <a href="#header-html" class="part" title="Header">H</a>
+    <a href="#thumbnail-html" class="part" title="Thumbnails">T</a>
+    <a href="#loop-html" class="part" title="The Loop">L</a>
+    <a href="#footer-html" class="part" title="Footer">F</a>
+    <button id="toggle-linenums" title="Toogle line numbers">Line #</button>
+    <button id="toggle-wrap" title="Toggle long line wrapping">Wrap</button>
+    <button id="toggle-lineends" title="Toggle visible line ends">Line ends</button>
 </div>
 </body>
 </html>
