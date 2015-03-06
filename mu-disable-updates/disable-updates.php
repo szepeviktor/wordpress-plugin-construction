@@ -15,15 +15,14 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 
 /**
  * Disable Updates and Update HTTP Requests.
- * This is a one-class mu-plugin
  *
+ * This is a one-class mu-plugin.
  * Enable force-check updates by adding a define to wp-config:
- * <code>
- * define( 'ENABLE_FORCE_CHECK_UPDATE', true );
- * </code>
+ *
+ *     define( 'ENABLE_FORCE_CHECK_UPDATE', true );
  *
  * @package disable-updates
- * @version v0.4
+ * @version v0.5
  * @author Viktor Szépe <viktor@szepe.net>
  * @link https://github.com/szepeviktor/wordpress-plugin-construction
  */
@@ -31,7 +30,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 if ( ! function_exists( 'add_filter' ) ) {
     // for fail2ban
     error_log( 'File does not exist: errorlog_direct_access '
-        . esc_url( $_SERVER['REQUEST_URI'] ) );
+        . serialize( $_SERVER['REQUEST_URI'] ) );
 
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
@@ -81,8 +80,7 @@ class Disable_Version_Check_MU {
         // would show up on the frontend
         add_action( 'add_admin_bar_menus', array( $this, 'disable_admin_bar_updates_menu' ) );
 
-        // don't block updates on the frontend
-        // block updates during WP-Cron
+        // don't block updates on the frontend, block updates during WP-Cron
         $doing_cron = ( defined( 'DOING_CRON' ) && DOING_CRON );
         if ( ! ( is_admin() || $doing_cron ) )
             return;
@@ -95,6 +93,7 @@ class Disable_Version_Check_MU {
 
     /**
      * Prevent core updates.
+     *
      * @see last_checked_core() for the returned value
      */
     private function disable_core_updates() {
@@ -113,6 +112,7 @@ class Disable_Version_Check_MU {
 
     /**
      * Prevent theme updates.
+     *
      * @see last_checked_themes() for the returned value
      */
     private function disable_theme_updates() {
@@ -130,6 +130,7 @@ class Disable_Version_Check_MU {
 
     /**
      * Prevent plugin updates.
+     *
      * @see last_checked_plugins() for the returned value
      */
     private function disable_plugin_updates() {
@@ -147,6 +148,7 @@ class Disable_Version_Check_MU {
 
     /**
      * Prevent browser check.
+     *
      * @see updated_browser() for the site_transient hook
      */
     private function disable_browser_nag() {
