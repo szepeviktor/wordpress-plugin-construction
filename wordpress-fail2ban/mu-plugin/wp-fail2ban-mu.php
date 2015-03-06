@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Triggers fail2ban on 404s and various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 3.1
+Version: 3.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -11,11 +11,16 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 Options: O1_WP_FAIL2BAN_DISABLE_LOGIN
 */
 
-/*
-To disable login copy this in your wp-config.php:
-    define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );
-*/
-
+/**
+ * WordPress fail2ban Must-Use version.
+ *
+ * To disable login completely copy this in your wp-config.php:
+ *
+ *     define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );
+ *
+ * @package wordpress-fail2ban
+ * @see: README.md
+ */
 if ( ! function_exists( 'add_filter' ) ) {
     error_log( 'Malicious traffic detected by wpf2b: wpf2bmu_direct_access '
         . addslashes( @$_SERVER['REQUEST_URI'] )
@@ -120,27 +125,49 @@ class O1_WP_Fail2ban_MU {
         add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
     }
 
+    private function trigger_hard( $slug, $message, $level = 'error', $prefix = '' ) {
+
+        //FIXME solve fastcgi "multiline-message" stderr logging on nginx
+        for ( $i = 0; $i < $this->trigger_count; $i++ )
+            $this->trigger( $slug, $message, $level, $prefix );
+
+        // helps learning attack internals
+        error_log( 'HTTP REQUEST: ' . $this->esc_log( $_REQUEST ) );
+
+        ob_get_level() && ob_end_clean();
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.0 403 Forbidden' );
+        exit();
+    }
+
     private function trigger( $slug, $message, $level = 'error', $prefix = '' ) {
 
         if ( empty( $prefix ) )
             $prefix = $this->prefix;
 
-        // when error messages are sent to a file (aka. PHP error log)
-        // IP address and referer are not logged
-        //$log_enabled = '1' === ini_get( 'log_errors' );
-        $log_destination = ini_get( 'error_log' );
-
-        // SAPI should add client data
         $error_msg = $prefix
             . $slug
-            . $this->esc_log( $message )
+            . $this->esc_log( $message );
+
+        $this->enhanced_error_log( $error_msg, $level );
+    }
+
+    private function enhanced_error_log( $message = '', $level = 'error' ) {
+
+        // NOTE: `log_errors` option does not disable logging
+        //$log_enabled = ( '1' === ini_get( 'log_errors' ) );
+        //if ( ! $log_enabled || empty( $log_destination ) ) {
+
+        // add entry point, true when `auto_prepend_file` is empty
+        $error_msg = (string)$message
             . ' <' . reset( get_included_files() );
 
-        //FIXME solve fastcgi "multiline-message" stderr logging (mainly on nginx)
-
-        // log_errors option does not disable logging
-        //if ( ! $log_enabled || empty( $log_destination ) ) {
-        // add client data to log message
+        /**
+         * Add log data to log message if SAPI does not add client data.
+         *
+         * level, IP address, port, referer
+         */
+        $log_destination = ini_get( 'error_log' );
         if ( ! empty( $log_destination ) ) {
             if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
                 $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );
@@ -151,25 +178,10 @@ class O1_WP_Fail2ban_MU {
             $error_msg = '[' . $level . '] '
                 . '[client ' . @$_SERVER['REMOTE_ADDR'] . ':' . @$_SERVER['REMOTE_PORT'] . '] '
                 . $error_msg
-                // space after "referer:" comes from esc_log()
                 . ( $referer ? ', referer:' . $referer : '' );
         }
 
         error_log( $error_msg );
-    }
-
-    private function trigger_hard( $slug, $message, $level = 'error', $prefix = '' ) {
-
-        for ( $i = 0; $i < $this->trigger_count; $i++ )
-            $this->trigger( $slug, $message, $level, $prefix );
-
-        // helps learning attack internals
-        error_log( 'HTTP REQUEST: ' . serialize( $_REQUEST ) );
-
-        ob_get_level() && ob_end_clean();
-        header( 'Status: 403 Forbidden' );
-        header( 'HTTP/1.0 403 Forbidden' );
-        exit();
     }
 
     public function wp_404() {
@@ -238,13 +250,14 @@ class O1_WP_Fail2ban_MU {
         $this->trigger( 'wpf2b_auth_failed', $username );
     }
 
+    /**
+     * Ban blacklisted usernames and authentication through XMLRPC.
+     */
     public function before_login( $user, $username, $password ) {
 
-        // ban certain usernames
         if ( in_array( strtolower( $username ), $this->names2ban ) )
             $this->trigger_hard( 'wpf2b_banned_username', $username );
 
-        // ban authentication through XMLRPC
         if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
             $this->trigger_hard( 'wpf2b_xmlrpc_login', $username );
 
@@ -272,15 +285,14 @@ class O1_WP_Fail2ban_MU {
 
     public function lostpass( $username ) {
 
-        /*if ( empty( $username ) ) {
-            //FIXME higher score !!!
-        }*/
+        if ( empty( $username ) )
+            $this->trigger( 'lost_pass', $username, 'warn' );
 
         $this->trigger( 'lost_pass', $username, 'warn', 'Wordpress auth: ' );
     }
 
     /**
-     * Non-frontend (not through /index.php) requests from robots.
+     * Non-frontend (not through `/index.php`) requests from robots.
      */
     public function robot_403() {
 
@@ -384,10 +396,15 @@ class O1_WP_Fail2ban_MU {
         $this->trigger( 'wpf2b_wpcf7_spam_mx', $domain, 'warn' );
     }
 
+    /**
+     * Test user agent string for robots.
+     *
+     * Robots are everyone except modern browsers.
+     *
+     * @see: http://www.useragentstring.com/pages/Browserlist/
+     */
     private function is_robot( $ua ) {
 
-        // test user agent string (robot = not modern browser)
-        // based on: http://www.useragentstring.com/pages/Browserlist/
         return ( ( 'Mozilla/5.0' !== substr( $ua, 0, 11 ) )
             && ( 'Mozilla/4.0 (compatible; MSIE 8.0;' !== substr( $ua, 0, 34 ) )
             && ( 'Mozilla/4.0 (compatible; MSIE 7.0;' !== substr( $ua, 0, 34 ) )
@@ -430,7 +447,7 @@ new O1_WP_Fail2ban_MU();
 - write test.sh
 - append: http://plugins.svn.wordpress.org/block-bad-queries/trunk/block-bad-queries.php
 - option to immediately ban on non-WP scripts (\.php$ \.aspx?$)
-- update non-mu plugin
+- update non-mu plugin's code
 - new: invalid user/email during registration
 - new: invalid user during lost password
 - new: invalid "lost password" token
@@ -445,11 +462,12 @@ new O1_WP_Fail2ban_MU();
     rob/hum score-pair templates in <select>
     fake Googlebot, Referer: http://www.google.com ???
 
-// registration errors: dirty way
-add_filter( 'login_errors', function ($em) {
+- registration errors: the dirty way
+add_filter( 'login_errors', function ( $em ) {
     error_log( 'em:' . $em );
     return $em;
 }, 0 );
+
 - general
     - bad queries https://github.com/wp-plugins/block-bad-queries/
     - bad UAs

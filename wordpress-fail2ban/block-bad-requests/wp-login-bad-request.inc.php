@@ -6,19 +6,23 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.11
-Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE, O1_BAD_REQUEST_CDN_HEADERS,
-Options: O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8, O1_BAD_REQUEST_ALLOW_OLD_PROXIES,
-Options: O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE, O1_BAD_REQUEST_ALLOW_TWO_CAPS
+Version: 1.12
+Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE,
+Options: O1_BAD_REQUEST_CDN_HEADERS, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8,
+Options: O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE,
+Options: O1_BAD_REQUEST_ALLOW_TWO_CAPS, O1_BAD_REQUEST_POST_LOGGING
 */
 
 /**
  * WordPress Block Bad Requests.
- * Require it in the top of your wp-config.php:
+ * Require it from the top of your wp-config.php.
  *
- *     require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
+ * <code>
+ * require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
+ * </code>
  *
- * For options/defines see attached readme file.
+ * @package wordpress-fail2ban
+ * @see: README.md
  */
 class O1_Bad_Request {
 
@@ -71,6 +75,11 @@ class O1_Bad_Request {
     public function __construct() {
 
         // options
+        if ( defined( 'O1_BAD_REQUEST_POST_LOGGING' ) && O1_BAD_REQUEST_POST_LOGGING ) {
+            if ( ! empty( $_POST ) )
+                error_log( 'HTTP/POST: ' . serialize( $_POST ) );
+        }
+
         if ( defined( 'O1_BAD_REQUEST_COUNT' ) )
             $this->trigger_count = intval( O1_BAD_REQUEST_COUNT );
 
@@ -300,41 +309,10 @@ class O1_Bad_Request {
 
     private function trigger() {
 
-        $error_msg = '';
-
-        // when error messages are sent to a file (aka. PHP error log)
-        // IP address and referer are not logged
-        $log_enabled = '1' === ini_get( 'log_errors' );
-        $log_destination = ini_get( 'error_log' );
-
-        // log_errors option does not disable logging
-        //if ( ! $log_enabled || empty( $log_destination ) ) {
-        if ( empty( $log_destination ) ) {
-            // SAPI should add client data
-            $error_msg = $this->prefix . $this->result;
-            // solve fastcgi stderr logging (mainly on nginx)
-            if ( 'apache2handler' !== php_sapi_name() )
-                $error_msg .= "\n";
-
-        } else {
-            // add client data to log message
-            if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-                $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );
-            } else {
-                $referer = false;
-            }
-
-            $error_msg = '[error] '
-                . '[client ' . @$_SERVER['REMOTE_ADDR'] . ':' . @$_SERVER['REMOTE_PORT'] . '] '
-                . $this->prefix
-                . $this->result
-                // space after "referer:" comes from esc_log()
-                . ( $referer ? ', referer:' . $referer : '' );
-        }
-
         // trigger fail2ban
+        //FIXME nginx will log all lines into one error message
         for ( $i = 0; $i < $this->trigger_count; $i++ ) {
-            error_log( $error_msg );
+            $this->enhanced_error_log( $this->prefix . $this->result );
         }
 
         // helps learning attack internals
@@ -344,14 +322,46 @@ class O1_Bad_Request {
             if ( 'HTTP_' === substr( $header, 0, 5 ) )
                 $headers[$header] = addslashes( $value );
         }
-        error_log( 'HTTP HEADERS: ' . serialize( $headers ) );
+        error_log( 'HTTP HEADERS: ' . $this->esc_log( $headers ) );
         */
-        error_log( 'HTTP REQUEST: ' . serialize( $_REQUEST ) );
+        error_log( 'HTTP REQUEST: ' . $this->esc_log( $_REQUEST ) );
 
         ob_get_level() && ob_end_clean();
         header( 'Status: 403 Forbidden' );
         header( 'HTTP/1.0 403 Forbidden' );
         exit();
+    }
+
+    private function enhanced_error_log( $message = '', $level = 'error' ) {
+
+        // NOTE: `log_errors` option does not disable logging
+        //$log_enabled = ( '1' === ini_get( 'log_errors' ) );
+        //if ( ! $log_enabled || empty( $log_destination ) ) {
+
+        // add entry point, true when `auto_prepend_file` is empty
+        $error_msg = (string)$message
+            . ' <' . reset( get_included_files() );
+
+        /**
+         * Add log data to log message if SAPI does not add client data.
+         *
+         * level, IP address, port, referer
+         */
+        $log_destination = ini_get( 'error_log' );
+        if ( ! empty( $log_destination ) ) {
+            if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+                $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );
+            } else {
+                $referer = false;
+            }
+
+            $error_msg = '[' . $level . '] '
+                . '[client ' . @$_SERVER['REMOTE_ADDR'] . ':' . @$_SERVER['REMOTE_PORT'] . '] '
+                . $error_msg
+                . ( $referer ? ', referer:' . $referer : '' );
+        }
+
+        error_log( $error_msg );
     }
 
     private function parse_query( $query_string ) {

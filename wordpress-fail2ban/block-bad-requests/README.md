@@ -56,6 +56,7 @@ To blocks non-static requests from Amazon CloudFront use this:
 define( 'O1_BAD_REQUEST_CDN_HEADERS', 'HTTP_X_AMZ_CF_ID:HTTP_VIA:HTTP_X_FORWARDED_FOR' );
 ```
 
+- (boolean) `O1_BAD_REQUEST_POST_LOGGING` enable logging of all POST requests, even normal ones
 - (integer) `O1_BAD_REQUEST_COUNT` fail2ban trigger limit, `maxretry`
 - (integer) `O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE` maxumim size of the login request
 - (string) `O1_BAD_REQUEST_CDN_HEADERS` a colon separated list of HTTP headers your CDN is recognized by
