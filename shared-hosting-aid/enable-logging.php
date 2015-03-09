@@ -1,3 +1,22 @@
+<?php
+/*
+Snippet Name: Enable PHP error logging.
+Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
+Description: 
+Version: 0.2
+License: The MIT License (MIT)
+Author: Viktor Szépe
+Author URI: http://www.online1.hu/webdesign/
+*/
+
+/**
+ * 1. Upload this file to the document root.
+ * 2. Uncomment "above document root" to place error log above your public folder.
+ * 3. Load it in your browser.
+ * 4. Copy the code to your application's config file.
+ */
+
+?>
 <!DOCTYPE html>
 <html>
 <title>Enable PHP error logging</title>
@@ -43,6 +62,9 @@ if ( ! file_put_contents( $errorlog_dir . "/.htaccess", $htaccess ) )
 print "// Copy this into your wp-config or settings file:" . PHP_EOL;
 printf( "ini_set( 'error_log', '%s' );" . PHP_EOL, $errorlog_path );
 print "ini_set( 'log_errors', 1 );";
+
+// delete self
+unlink( __FILE__ );
 
 ?></body>
 </html>

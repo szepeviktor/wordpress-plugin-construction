@@ -37,3 +37,6 @@
 [submodule "shared-hosting-aid/tripwire"]
 	path = shared-hosting-aid/tripwire
 	url = git@github.com:szepeviktor/Tripwire.git
+[submodule "prevent-concurrent-logins"]
+	path = prevent-concurrent-logins
+	url = https://github.com/fjarrett/prevent-concurrent-logins.git
