@@ -40,3 +40,6 @@
 [submodule "prevent-concurrent-logins"]
 	path = prevent-concurrent-logins
 	url = https://github.com/fjarrett/prevent-concurrent-logins.git
+[submodule "multipart-robotstxt-editor"]
+	path = multipart-robotstxt-editor
+	url = git@github.com:szepeviktor/multipart-robotstxt-editor.git
