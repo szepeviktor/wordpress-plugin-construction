@@ -15,11 +15,10 @@ Options: O1_BAD_REQUEST_ALLOW_TWO_CAPS, O1_BAD_REQUEST_POST_LOGGING
 
 /**
  * WordPress Block Bad Requests.
+ *
  * Require it from the top of your wp-config.php.
  *
- * <code>
- * require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
- * </code>
+ *     require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
  *
  * @package wordpress-fail2ban
  * @see: README.md

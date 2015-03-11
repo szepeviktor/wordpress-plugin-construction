@@ -59,9 +59,15 @@ if ( ! file_put_contents( $errorlog_dir . "/.htaccess", $htaccess ) )
     die( "Couldn't create .htaccess!" );
 
 // OK
-print "// Copy this into your wp-config or settings file:" . PHP_EOL;
-printf( "ini_set( 'error_log', '%s' );" . PHP_EOL, $errorlog_path );
-print "ini_set( 'log_errors', 1 );";
+$current_errorlog = ini_get( 'error_log' );
+print "
+/*
+ Current error.log path = ({$current_errorlog})
+ Copy this into your wp-config or settings file:
+*/
+ini_set( 'error_log', '{$errorlog_path}' );
+ini_set( 'log_errors', 1 );
+";
 
 // delete self
 unlink( __FILE__ );

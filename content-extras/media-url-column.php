@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Media URL Column
-Plugin Description: Adds URL column to the Media list page with autoselect.
+Plugin Description: Add URL column to the Media list page with autoselect.
 */
 
 
@@ -15,8 +15,8 @@ function muc_column( $cols ) {
 
 function muc_value( $column_name, $id ) {
     if ( 'media_url' === $column_name )
-        printf( '<input class="media-url-input nameless-input" style="width:100%%" type="text" readonly="" onclick="%s" value="%s" />',
-            'jQuery(this).select();',
+        printf( '<input class="media-url-input nameless-input" style="width:100%%" type="text" readonly onclick="%s" value="%s" />',
+            "jQuery(this).select();",
             wp_get_attachment_url( $id )
         );
 }

@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Triggers fail2ban on 404s and various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 3.2
+Version: 3.3
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -159,8 +159,9 @@ class O1_WP_Fail2ban_MU {
         //if ( ! $log_enabled || empty( $log_destination ) ) {
 
         // add entry point, true when `auto_prepend_file` is empty
+        $included_files = get_included_files();
         $error_msg = (string)$message
-            . ' <' . reset( get_included_files() );
+            . ' <' . reset( $included_files );
 
         /**
          * Add log data to log message if SAPI does not add client data.

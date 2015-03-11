@@ -16,14 +16,13 @@ https://github.com/szepeviktor/hosting-check
 https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/wordpress-fail2ban/block-bad-requests/wp-login-bad-request.inc.php
 
 ```php
+define( 'O1_BAD_REQUEST_COUNT', 1 );
+//define( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE', true );
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 ```
 
 ```php
 // see: shared-hosting-aid/enable-logging.php
-// https://github.com/szepeviktor/hosting-check/blob/master/hc-query.php
-ini_set( 'error_log', '<HOME/SECRETDIR>/error.log' );
-ini_set( 'log_errors', 1 );
 
 //define( 'WP_DEBUG', true );
 define( 'WP_DEBUG', false );
@@ -35,7 +34,8 @@ define( 'WP_USE_EXT_MYSQL', false );
 
 //define( 'WP_CACHE', true);
 
-// cron:  wget -q -O- http://<DOMAIN-TLD>/wp-cron.php||echo "<WEBSITE>: $?"
+// web cron:  wget -q -O- http://<DOMAIN-TLD>/wp-cron.php||echo "<WEBSITE>: $?"
+// CLI cron:  /usr/bin/php <ABSPATH>/wp-cron.php  # stdout, stderr -> cron email
 define( 'DISABLE_WP_CRON', true );
 define( 'AUTOMATIC_UPDATER_DISABLED', true );
 define( 'DISALLOW_FILE_EDIT', true );
@@ -46,7 +46,7 @@ define( 'ITSEC_BACKUP_CRON', true );
 define( 'ENABLE_FORCE_CHECK_UPDATE', true );
 
 /*
-// upload and session directory
+// Upload and session directory.
 ini_set( 'upload_tmp_dir', '%s/tmp' );
 ini_set( 'session.save_path', '%s/session' );
 // comment out after first use
@@ -55,7 +55,7 @@ mkdir( '%s/session', 0700 );
 */
 
 /*
-// for different FTP/PHP UID
+// For different FTP/PHP UID.
 define( 'FS_METHOD', 'direct' );
 define( 'FS_CHMOD_DIR', (0775 & ~ umask()) );
 define( 'FS_CHMOD_FILE', (0664 & ~ umask()) );
@@ -78,7 +78,7 @@ define( 'FS_CHMOD_FILE', (0664 & ~ umask()) );
 - crossdomain.xml
 - labels.rdf
 
-https://github.com/h5bp/mobile-boilerplate/blob/master/index.html
+https://github.com/h5bp/mobile-boilerplate/blob/master/index.html 
 http://realfavicongenerator.net/
 
 ```apache
@@ -95,15 +95,14 @@ http://realfavicongenerator.net/
 - content-compression
 - content-cache
 
-https://github.com/h5bp/html5-boilerplate/blob/master/.htaccess
+https://github.com/h5bp/html5-boilerplate/blob/master/.htaccess 
 https://redbot.org/
 
-`l.php`
+`php-vars.php`
 
 ```php
 <?php
 phpinfo();
-echo '<pre style="white-space: pre-wrap;">';
 $php_configs = array(
     'expose_php',
     'max_execution_time',
@@ -120,27 +119,33 @@ $php_configs = array(
     'display_errors',
     'error_log'
 );
+print '<div class="center"><h2>Important variables</h2><table width="600" border="0" cellpadding="3">';
 foreach ( $php_configs as $ini ) {
-    echo "{$ini} = " . ini_get( $ini ) . PHP_EOL . PHP_EOL;
+    printf( '<tr><td class="e">%s</td><td class="v">%s</td></tr>',
+        $ini,
+        ini_get( $ini )
+    );
 }
-echo '<hr/>';
-var_dump( $_SERVER );
+print '</table><br/></div>';
 ```
 
 Default `mail-sender.php`?
 
 ```php
 <pre><?php
+ini_set( 'display_errors', 1 );
+error_reporting( E_ALL );
 $to      = "viktor@szepe.net";
 $subject = "[Default mail sender] First mail from {$_SERVER['SERVER_NAME']}";
+//FIXME minimum email size: user id, user name, current dir, php version, webserver version
 $message = var_export( $_ENV, true );
 $headers = "X-Mailer: PHP/" . phpversion();
 $mail = mail( $to, $subject, $message, $headers );
 echo "mail() returned: " . var_export( $mail, true );
 ```
 
-Set or redirect as necessary.
-Set usual mail accounts: info, postmaster, webmaster, abuse
+Set sender or forward as necessary.
+Set usual mail accounts: info@, postmaster@, webmaster@, abuse@.
 
 ### PHP security check
 
@@ -161,12 +166,24 @@ git submodule init && git submodule update
 cp tripwire_config.sample.ini tripwire_config.ini
 ```
 
+Tripwire access protection `.htaccess`.
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  #TODO: only allow from management server
+  RewriteCond %{REQUEST_URI} !=/<SECRET_DIR>/tripwire.php
+  RewriteRule ^ - [F]
+</IfModule>
+```
+
 ### Block access to a directory
 
 `.htaccess`
 
 ```apache
 Deny from all
+# Apache 2.4
 #Require all denied
 ```
 
@@ -181,22 +198,9 @@ Deny from all
 - https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-disable-updates/disable-updates.php
 - https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
 
-### File change notification
-
-- https://github.com/szepeviktor/Tripwire
-- tripwire access protection `.htaccess`
-
-```apache
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{REQUEST_URI} !=/<SECRET_DIR>/tripwire.php
-  RewriteRule ^ - [F]
-</IfModule>
-```
-
 ### SMTP
 
-Use reliable smart host with STARTTLS.
+Use reliable smart host with STARTTLS for email sending.
 
 ### Monitoring
 
@@ -224,42 +228,55 @@ $pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
 exit( md5( $pong ) );
 ```
 
-- front page|grep "<h1>string check" , |grep -Ei "mysql|php|error|notice|warning"
+- front page|grep "\<h1>string check" , |grep -Ei "mysql|php|error|notice|warning"
 - pingdom  https://www.pingdom.com/free/
 - RBL blacklists  https://www.rblmon.com/
-- can-send-email/day: use smarthost, whitelist on smarthost, get can-send-email.php, wait 5 minutes, check mailbox for subject:
+- can-send-email @daily  use smarthost, whitelist on the smarthost, wget can-send-email.php,
+wait 5 minutes, check mailbox for message with this subject:
 
 `Subject: [admin] can-send-email from <HOSTNAME>`
 
 ```php
 <?php
-$to      = "viktor@szepe.net";
-$subject = "[admin] can-send-email from {$_SERVER['SERVER_NAME']}";
 $headers = "X-Mailer: PHP/" . phpversion();
+$subject = "[admin] can-send-email from {$_SERVER['SERVER_NAME']}";
+$to      = "viktor@szepe.net";
 // http://www.randomtext.me/download/txt/gibberish/p-5/20-35
 $message = '
-Much bowed when mammoth for lusciously lost a dear whooped some ouch insufferably one indefatigably contemplated manifestly therefore much mongoose and llama far feeble a cocky.
+Much bowed when mammoth for lusciously lost a dear whooped some ouch
+insufferably one indefatigably contemplated manifestly therefore much
+mongoose and llama far feeble a cocky.
 
-Robin the whistled scorpion mongoose fleetly past together toucan compulsively coarsely inadvertent far hence within when up prissily amicable one and since gawked jollily rude.
+Robin the whistled scorpion mongoose fleetly past together toucan compulsively
+coarsely inadvertent far hence within when up prissily amicable one and since
+gawked jollily rude.
 
-Met patiently excluding because and far sleazily sufficiently hyena enormously that goodness much hawk mastodon walking this this whale ouch shed kookaburra sleekly that one the affably.
+Met patiently excluding because and far sleazily sufficiently hyena enormously
+that goodness much hawk mastodon walking this this whale ouch shed kookaburra
+sleekly that one the affably.
 
-Alarmingly much this the inoffensive in more much sobbed aboard reined that labrador ordered much less jeez gibbered checked a wove selflessly goodness this adjusted honey flustered a that turtle unavoidable hello messily.
+Alarmingly much this the inoffensive in more much sobbed aboard reined that
+labrador ordered much less jeez gibbered checked a wove selflessly goodness
+this adjusted honey flustered a that turtle unavoidable hello messily.
 
-Cringed apart complete bat knitted impulsively domestic behind jokingly a far jeepers folded blubbered wildebeest lighthearted much exultingly yikes yawned well winced swept far slowly decorously.
+Cringed apart complete bat knitted impulsively domestic behind jokingly a far
+jeepers folded blubbered wildebeest lighthearted much exultingly yikes yawned
+well winced swept far slowly decorously.
 ';
+// @TODO SMTP STARTTLS by PHPMailer in WordPress `$mail->SMTPSecure = 'tls';`
 $mail = mail( $to, $subject, $message, $headers );
 if ( true !== $mail )
-    echo "mail() returned: " . var_export( $mail, true );
+    print "mail() returned: " . var_export( $mail, true );
 exit;
 ```
 
-- monitor error-log/30 minutes ???munin-plugin: log size in lines
-- rotate error.log ???
-- opcache, apc, memcache/week
-- domain name expiry
-- Safebrowsing check
-- SEO Panel/week
-- Analytics/week
-- WMT/week
-- PageSpeed, webpagetest/week
+- see: shared-hosting-aid/remote-log-watch.sh @*/30
+- FIXME munin-plugin: log size in lines
+- FIXME remote-rotate error.log
+- opcache/apc/memcache control panels @weekly
+- domain name expiry @monthly
+- Safebrowsing, Sucuri, Virustotal check @daily
+- SEO Panel @weekly
+- Analytics @weekly
+- Google WMT @weekly
+- PageSpeed, webpagetest.org @weekly

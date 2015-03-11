@@ -3,7 +3,7 @@
 Plugin Name:       Protect normal plugins MU
 Plugin URI:        https://github.com/szepeviktor/wordpress-plugin-construction
 Description:       Prevent deletion of normal plugins
-Version:           1.0.1
+Version:           1.1.0
 Author:            Viktor Szépe
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,7 +36,7 @@ class O1_Protect_Plugins {
 	/**
 	 * Constructor.
 	 *
-	 * Registers filters, actions.
+	 * Registers filters, actions for protected plugins.
 	 *
 	 * @access public
 	 */
@@ -45,11 +45,7 @@ class O1_Protect_Plugins {
         //FIXME Is it faster this way? add_filter( 'pre_option_active_plugins', array( $this, 'fix_protected' ) );
 		foreach ( $this->protected_plugins as $protected ) {
 			// reactivate on deactivation
-			add_action( 'deactivate_' . $protected,
-				function ( $network_wide ) use ( $protected ) {
-					$this->reactivate( $protected, $network_wide );
-				}
-			);
+			add_action( 'deactivate_' . $protected, array( $this, 'reactivate' ) );
 			// remove Deactivate and Delete actions
 			add_filter( 'network_admin_plugin_action_links_' . $protected, array( $this, 'remove_actions' ) );
 			add_filter( 'plugin_action_links_' . $protected, array( $this, 'remove_actions' ) );
@@ -60,11 +56,8 @@ class O1_Protect_Plugins {
 	 * Activate a plugin when it is deactivated.
 	 *
 	 * @access public
-	 * @param string $plugin Base plugin path from plugins directory.
-	 * @param bool $network_wide Whether to enable the plugin for all sites in the network
-	 *                           or just the current site.
 	 */
-	public function reactivate( $plugin, $network_wide ) {
+	public function reactivate() {
 
 		add_filter( 'pre_update_option_' . 'active_plugins',
 			array( $this, 'revert_values' ), 10, 2 );
@@ -78,6 +71,7 @@ class O1_Protect_Plugins {
 	 * @access public
 	 * @param string $value The new value.
 	 * @param bool $old_value The previous value.
+	 * @return string The previous value.
 	 */
 	public function revert_values( $value, $old_value ) {
 
