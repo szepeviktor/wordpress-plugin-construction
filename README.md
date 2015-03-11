@@ -9,7 +9,7 @@ Please select a folder in the list above to see your plugin's development.
 - assets/banner-772x250.png
 - assets/icon-128x128.png
 - assets/icon-256x256.png
-- assets/screenshot-1.jpg
+- assets/screenshot-1.jpg (532x)
 
 ### Content plugin categories
 
