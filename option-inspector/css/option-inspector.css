@@ -1,0 +1,27 @@
+/*
+Option Inspector stylesheet
+*/
+#all-options .form-table .inspector {
+    padding: 4px 20px 4px 0;
+}
+#all-options .form-table .inspector:hover {
+    padding-right: 0;
+}
+#all-options .form-table .inspector .dashicons {
+    display: none;
+    color: #333;
+    font-size: 1.5em;
+    margin-left: -2px;
+    line-height: 0.8em;
+    vertical-align: middle;
+    cursor: pointer;
+}
+#all-options .form-table .inspector:hover .dashicons {
+    display: inline;
+}
+#all-options .form-table .inspector:hover input[type="text"] {
+    color: #333;
+}
+.dBug_array {
+    margin: 0 auto;
+}
