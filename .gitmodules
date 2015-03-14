@@ -46,3 +46,6 @@
 [submodule "frontend-debugger"]
 	path = frontend-debugger
 	url = git@github.com:szepeviktor/frontend-debugger.git
+[submodule "option-inspector"]
+	path = option-inspector
+	url = git@github.com:szepeviktor/option-inspector.git
