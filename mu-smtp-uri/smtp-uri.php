@@ -77,11 +77,11 @@ function o1_smtp_options( $mail ) {
     $mail->isSMTP();
     $mail->SMTPAuth = true;
 
-    /*
+    /**
      * Bcc someone.
      */
     //$mail->addBCC( '<BCC-ADDRESS', '<BCC-NAME>' );
-    /*
+    /**
      * Turn on debugging.
      */
     //$mail->SMTPDebug = 4;

@@ -3,8 +3,8 @@
 ```bash
 SSLOFF="set ftp:ssl-allow off;"
 
-# lftp -e "$SSLOFF" -u 'FTP-USER,FTP_PASS' FTP_HOST.
-lftp -e "cd ~" -u 'FTP-USER,FTP_PASS' FTP_HOST.
+# lftp -e "$SSLOFF cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
+lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
 ```
 
 ### Check hosting
@@ -280,3 +280,34 @@ exit;
 - Analytics @weekly
 - Google WMT @weekly
 - PageSpeed, webpagetest.org @weekly
+
+### List WordPress plugin names and paths
+
+```js
+plugin_names=jQuery('#wpbody .plugins .plugin-title strong').each(function (){console.log(jQuery(this).text());});
+
+plugin_slugs=jQuery('#wpbody .plugins #the-list tr').each(function (){console.log(jQuery(this).attr('id'));});
+```
+
+### Move/clone site
+
+```bash
+# lftp
+mkdir sr; cd sr
+!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
+!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
+put index.php; put srdb.class.php
+#mrm *; rmdir sr
+```
+
+#### Things to replace
+
+1. http://domain.tld (no trailing slash)
+2. /var/www/path/to/site (no trailing slash)
+3. email@address.es
+4. domain.tld
+
+#### Change salt
+
+Sucuri plugin
+

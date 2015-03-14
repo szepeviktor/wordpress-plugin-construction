@@ -43,3 +43,6 @@
 [submodule "multipart-robotstxt-editor"]
 	path = multipart-robotstxt-editor
 	url = git@github.com:szepeviktor/multipart-robotstxt-editor.git
+[submodule "frontend-debugger"]
+	path = frontend-debugger
+	url = git@github.com:szepeviktor/frontend-debugger.git

@@ -24,7 +24,10 @@ class O1_Protect_Plugins {
 
 	/**
 	 * List of protected plugins.
-	 * Add your plugins here!
+	 *
+	 * Add your plugins here! jQuery one-liner to list plugin paths.
+	 *
+	 *     var parser=document.createElement('a');jQuery('#wpbody .plugins .plugin-title .deactivate a').each(function(){parser.href=jQuery(this).attr('href');console.log(decodeURIComponent(parser.search.split('&')[1].split('=')[1]));});
 	 *
 	 * @var array
 	 * @access private
