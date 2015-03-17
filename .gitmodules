@@ -49,3 +49,9 @@
 [submodule "option-inspector"]
 	path = option-inspector
 	url = git@github.com:szepeviktor/option-inspector.git
+[submodule "plugin-install-cleanup"]
+	path = plugin-install-speedup
+	url = git@github.com:szepeviktor/plugin-install-cleanup.git
+[submodule "sucuri-cleanup"]
+	path = sucuri-cleanup
+	url = git@github.com:szepeviktor/sucuri-cleanup.git
