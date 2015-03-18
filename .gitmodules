@@ -58,3 +58,6 @@
 [submodule "what-the-file"]
 	path = what-the-file
 	url = https://github.com/barrykooij/what-the-file.git
+[submodule "github-link"]
+	path = github-link
+	url = git@github.com:szepeviktor/github-link.git
