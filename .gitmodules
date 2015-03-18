@@ -55,3 +55,6 @@
 [submodule "plugin-installer-speedup"]
 	path = plugin-installer-speedup
 	url = git@github.com:szepeviktor/plugin-installer-speedup.git
+[submodule "what-the-file"]
+	path = what-the-file
+	url = https://github.com/barrykooij/what-the-file.git

@@ -13,7 +13,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 /**
  * Set PHPMailer SMTP options from the SMTP_URI named constant.
  *
- * smtp:// smtps:// smtpstarttls:// smtptls://
+ * smtp://  smtps://  smtpstarttls://  smtptls://
  *
  *     define( 'SMTP_URI', 'smtps://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<FROM-NAME>#<FROM-ADDRESS>' );
  *
