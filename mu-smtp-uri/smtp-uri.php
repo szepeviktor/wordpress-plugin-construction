@@ -3,31 +3,38 @@
 Plugin Name: SMTP URI
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Set SMTP options from the SMTP_URI named constant.
-Version: 0.1
+Version: 0.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-smtp-uri
 */
 
+// @TODO set DKIM header
+
 /**
  * Set PHPMailer SMTP options from the SMTP_URI named constant.
  *
- * smtp://  smtps://  smtpstarttls://  smtptls://
+ * Protocols: smtp://  smtps://  smtpstarttls://  smtptls://
  *
- *     define( 'SMTP_URI', 'smtps://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<FROM-NAME>#<FROM-ADDRESS>' );
+ *     define( 'SMTP_URI', 'smtps://[<USERNAME>:<PASSWORD>@]<HOST>:<PORT>' );
  *
+ * To set From name and From address use WP Mail From II plugin.
+ *
+ * @see: https://wordpress.org/plugins/wp-mailfrom-ii/
  * @param: object $mail PHPMailer instance.
  * @return void
  */
 function o1_smtp_options( $mail ) {
     if ( ! ( defined( 'SMTP_URI' ) && SMTP_URI ) ) {
-        return false;
+        return;
     }
 
     $uri = parse_url( SMTP_URI );
-    $smtp_options = array();
 
+    /**
+     * Check protocol.
+     */
     switch ( $uri['scheme'] ) {
         case 'smtp':
             $mail->SMTPSecure = '';
@@ -43,48 +50,40 @@ function o1_smtp_options( $mail ) {
             $mail->Port = 25;
             break;
         default:
-            return false;
+            return;
     }
 
+    /**
+     * Check host name.
+     */
     if ( empty( $uri['host'] ) ) {
-        return false;
+        return;
+    } else {
+        $mail->Host = $uri['host'];
     }
-    $mail->Host = $uri['host'];
 
     if ( is_int( $uri['host'] ) ) {
         $mail->Port = $uri['port'];
     }
 
-    if ( empty( $uri['user'] ) ) {
-        return false;
+    if ( ! empty( $uri['user'] ) && ! empty( $uri['pass'] ) ) {
+        $mail->SMTPAuth = true;
+        $mail->Username = $uri['user'];
+        $mail->Password = $uri['pass'];
     }
-    $mail->Username = $uri['user'];
 
-    if ( empty( $uri['pass'] ) ) {
-        return false;
-    }
-    $mail->Password = $uri['pass'];
-
-    if ( empty( $uri['path'] ) || '/' === $uri['path'] || empty( $uri['fragment'] ) ) {
-        return false;
-    }
-    // true = set "MAIL FROM"
-    $mail->setFrom( $uri['fragment'], ltrim( $uri['path'], '/' ), true );
-
-    // @TODO  add DKIM + DNS
-
-    // All OK
     $mail->isSMTP();
-    $mail->SMTPAuth = true;
+
+    /**
+     * Turn on SMTP debugging.
+     */
+    //$mail->SMTPDebug = 4;
+    //$mail->Debugoutput = 'error_log';
 
     /**
      * Bcc someone.
      */
     //$mail->addBCC( '<BCC-ADDRESS', '<BCC-NAME>' );
-    /**
-     * Turn on debugging.
-     */
-    //$mail->SMTPDebug = 4;
-    //$mail->Debugoutput = 'error_log';
 }
+
 add_action( 'phpmailer_init', 'o1_smtp_options' );
