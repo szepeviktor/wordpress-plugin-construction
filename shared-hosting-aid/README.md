@@ -34,7 +34,7 @@ define( 'WP_USE_EXT_MYSQL', false );
 
 //define( 'WP_CACHE', true);
 
-// web cron:  wget -q -O- http://<DOMAIN-TLD>/wp-cron.php||echo "<WEBSITE>: $?"
+// web cron:  /usr/bin/wget -q -O- http://<DOMAIN-TLD>/wp-cron.php||echo "<WEBSITE>: $?"
 // CLI cron:  /usr/bin/php <ABSPATH>/wp-cron.php  # stdout, stderr -> cron email
 define( 'DISABLE_WP_CRON', true );
 define( 'AUTOMATIC_UPDATER_DISABLED', true );
@@ -204,14 +204,26 @@ Use reliable smart host with STARTTLS for email sending.
 
 ### Monitoring
 
+üzemeltetés
+-----------
+
+1. ügyfeleknek szolg leírása en/hu
+2. áttekintés/ütemezés magamnak
+3. setup with snippets and links
+4. pseudo script for copy&pasting
+
+
 - DNS: NS, A, MX
-- <DOMAIN.TLD>/ping.txt|grep -F "file content"
-- <DOMAIN.TLD>/ping.php|grep -F "PHP version + MySQL version MD5"
+- # <SITE-NAME> - "PHP version|MySQL version"
+- 1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/license.txt|grep -qF "GNU GENERAL PUBLIC LICENSE"
+- 1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/ping.php|grep -qF "<MD5-SUM>"
 
 ```php
 <?php
-if ( '<MANAGEMENT_SERVER_IP>' !== @$_SERVER['REMOTE_ADDR'] ) {
-    error_log( 'Malicious traffic detected by wpf2b: ping_direct_access '
+$management_server_ip = '<MANAGEMENT_SERVER_IP>';
+
+if ( $management_server_ip !== @$_SERVER['REMOTE_ADDR'] ) {
+    error_log( 'Malicious traffic detected by wpf2b: ping_access '
         . addslashes( @$_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
@@ -225,6 +237,7 @@ require_once( $wpload_path );
 global $wpdb;
 $mysql_version_query = "SHOW VARIABLES LIKE 'version'";
 $pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
+//exit( $pong );
 exit( md5( $pong ) );
 ```
 
@@ -263,7 +276,7 @@ Cringed apart complete bat knitted impulsively domestic behind jokingly a far
 jeepers folded blubbered wildebeest lighthearted much exultingly yikes yawned
 well winced swept far slowly decorously.
 ';
-// @TODO SMTP STARTTLS by PHPMailer in WordPress `$mail->SMTPSecure = 'tls';`
+// @TODO SMTP-URI
 $mail = mail( $to, $subject, $message, $headers );
 if ( true !== $mail )
     print "mail() returned: " . var_export( $mail, true );

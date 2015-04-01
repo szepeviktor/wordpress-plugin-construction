@@ -1,7 +1,7 @@
 <?php
 /*
-Snippet Name: WordPress Debugger
-Version: 0.1
+Snippet Name: WordPress Live Debugger
+Version: 0.2
 Description: Enhance information available for debugging.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Source: https://gist.github.com/jrfnl/5925642
@@ -26,6 +26,7 @@ if ( isset( $_SERVER['REMOTE_ADDR'] )
     && in_array( $_SERVER['REMOTE_ADDR'], $debugger_ip_addresses )
     && isset( $_COOKIE['WP_DEBUG'] )
     ) {
+    define( 'DISABLE_WP_CRON', true );
     define( 'WP_DEBUG', true );
     //define( 'SCRIPT_DEBUG', true );
     //define( 'SAVEQUERIES', true );

@@ -61,3 +61,6 @@
 [submodule "github-link"]
 	path = github-link
 	url = git@github.com:szepeviktor/github-link.git
+[submodule "wp-solarized"]
+	path = wp-solarized
+	url = git@github.com:szepeviktor/wp-solarized.git
