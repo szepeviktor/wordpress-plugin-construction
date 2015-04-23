@@ -6,7 +6,7 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.12
+Version: 1.13
 Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE,
 Options: O1_BAD_REQUEST_CDN_HEADERS, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8,
 Options: O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE,
@@ -142,17 +142,19 @@ class O1_Bad_Request {
         // don't ban on post listing by author
         if ( false === strpos( $request_path, '/wp-admin/' )
             && isset( $_GET['author'] )
-            && is_numeric( $_GET['author'] ) )
+            && is_numeric( $_GET['author'] )
+        )
             return 'bad_request_author_sniffing';
-
-        // check only POST requests to wp-login
-        if ( false === stripos( $_SERVER['REQUEST_METHOD'], 'POST' )
-            || false === stripos( $request_path, '/wp-login.php' ) )
-            return false;
 
         // experimental traffic analysis
         if ( count( $_FILES ) )
             error_log( 'wpf2b/upload: ' . serialize( $_FILES ) );
+
+        // check only POST requests to wp-login
+        if ( false === stripos( $_SERVER['REQUEST_METHOD'], 'POST' )
+            || false === stripos( $request_path, '/wp-login.php' )
+        )
+            return false;
 
         // --------------------------- >8 ---------------------------
 
@@ -165,7 +167,6 @@ class O1_Bad_Request {
 
             // attackers try usernames with "TwoCapitals"
             if ( ! $this->allow_two_capitals ) {
-
                 if ( 1 === preg_match( '/^[A-Z][a-z]+[A-Z][a-z]+$/', $username ) )
                     return 'bad_request_username_pattern';
             }
@@ -221,7 +222,6 @@ class O1_Bad_Request {
 
         // referer header (host only)
         if ( ! $this->allow_registration ) {
-
             if ( $server_name !== parse_url( $referer, PHP_URL_HOST ) )
                 return 'bad_request_http_post_referer_host';
         }
@@ -240,7 +240,6 @@ class O1_Bad_Request {
 
         // referer header (path)
         if ( ! $this->allow_registration ) {
-
             if ( false === strpos( parse_url( $referer, PHP_URL_PATH ), '/wp-login.php' ) )
                 return 'bad_request_http_post_referer_path';
         }
@@ -250,7 +249,6 @@ class O1_Bad_Request {
                 return 'bad_request_http_post_protocol_empty';
 
         if ( ! $this->allow_old_proxies ) {
-
             if ( false === strpos( $_SERVER['SERVER_PROTOCOL'], 'HTTP/1.1' ) )
                 return 'bad_request_http_post_1_1';
         }
@@ -289,7 +287,6 @@ class O1_Bad_Request {
 
         // IE8 logins
         if ( $this->allow_ie8_login ) {
-
             if ( 1 === preg_match( '/^Mozilla\/4\.0 \(compatible; MSIE 8\.0;/', $user_agent ) )
                 return false;
         }

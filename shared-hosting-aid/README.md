@@ -7,6 +7,30 @@ SSLOFF="set ftp:ssl-allow off;"
 lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
 ```
 
+### Move/clone site
+
+```bash
+# lftp
+mkdir sr; cd sr
+!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
+!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
+put index.php; put srdb.class.php
+#mrm *; rmdir sr
+```
+
+#### Search & replace items
+
+1. http://domain.tld (no trailing slash)
+1. /var/www/path/to/site (no trailing slash)
+1. email@address.es
+1. domain.tld
+
+#### Change salt
+
+Sucuri plugin
+
+https://api.wordpress.org/secret-key/1.1/salt/
+
 ### Check hosting
 
 https://github.com/szepeviktor/hosting-check
@@ -49,7 +73,8 @@ define( 'ENABLE_FORCE_CHECK_UPDATE', true );
 // Upload and session directory.
 ini_set( 'upload_tmp_dir', '%s/tmp' );
 ini_set( 'session.save_path', '%s/session' );
-// comment out after first use
+
+// Comment out after first use!
 mkdir( '%s/tmp', 0700 );
 mkdir( '%s/session', 0700 );
 */
@@ -117,16 +142,19 @@ $php_configs = array(
     'session.save_path',
     'upload_tmp_dir',
     'display_errors',
+    'log_errors',
     'error_log'
 );
-print '<div class="center"><h2>Important variables</h2><table width="600" border="0" cellpadding="3">';
+print '<div class="center"><h2 id="impvar">*Important variables</h2><table width="600" border="0" cellpadding="3">';
 foreach ( $php_configs as $ini ) {
+    $value = ini_get( $ini );
     printf( '<tr><td class="e">%s</td><td class="v">%s</td></tr>',
         $ini,
-        ini_get( $ini )
+        in_array( $value, array( null, false, '' ) ) ? '<i>no value</i>' : $value
     );
 }
-print '</table><br/></div>';
+print "<tr><td class='e'>_SERVER['DOCUMENT_ROOT']</td><td class='v'>{$_SERVER['DOCUMENT_ROOT']}</td></tr>";
+print '</table><br/></div><script>window.location.hash="impvar";</script>';
 ```
 
 Default `mail-sender.php`?
@@ -145,7 +173,8 @@ echo "mail() returned: " . var_export( $mail, true );
 ```
 
 Set sender or forward as necessary.
-Set usual mail accounts: info@, postmaster@, webmaster@, abuse@.
+Set usual addresses: info@, postmaster@, abuse@
+Set up your account: webmaster@<DOMAIN>
 
 ### PHP security check
 
@@ -192,6 +221,14 @@ Deny from all
 - ALTER table engine
 - //TODO
 
+### List WordPress plugin names and paths
+
+```js
+plugin_names=jQuery('#wpbody .plugins .plugin-title strong').each(function (){console.log(jQuery(this).text());});
+
+plugin_slugs=jQuery('#wpbody .plugins #the-list tr').each(function (){console.log(jQuery(this).attr('id'));});
+```
+
 ### MU plugins
 
 - https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php
@@ -202,21 +239,26 @@ Deny from all
 
 Use reliable smart host with STARTTLS for email sending.
 
+https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-uri/smtp-uri.php
+
 ### Monitoring
 
-üzemeltetés
------------
+....... üzemeltetés
+....... -----------
+....... 
+....... 1. ügyfeleknek szolg leírása en/hu
+....... 2. áttekintés/ütemezés magamnak
+....... 3. setup with snippets and links
+....... 4. pseudo script for copy&pasting
 
-1. ügyfeleknek szolg leírása en/hu
-2. áttekintés/ütemezés magamnak
-3. setup with snippets and links
-4. pseudo script for copy&pasting
+DNS checks: NS, A, MX, TXT(spf)
 
-
-- DNS: NS, A, MX
-- # <SITE-NAME> - "PHP version|MySQL version"
-- 1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/license.txt|grep -qF "GNU GENERAL PUBLIC LICENSE"
-- 1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/ping.php|grep -qF "<MD5-SUM>"
+```
+# <SITE-NAME> - Static file check
+1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/license.txt|grep -qF "GNU GENERAL PUBLIC LICENSE"
+# <SITE-NAME> - PHP version and MySQL version check
+1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/ping.php|grep -qF "<MD5-SUM>"
+```
 
 ```php
 <?php
@@ -241,7 +283,8 @@ $pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
 exit( md5( $pong ) );
 ```
 
-- front page|grep "\<h1>string check" , |grep -Ei "mysql|php|error|notice|warning"
+- wget -qO- <FRONT-PAGE>|grep -q '<h1>Title string'
+- wget -qO- <FRONT-PAGE>|grep -qEi 'mysql|php|error|notice|warning'  @FIXME one request only
 - pingdom  https://www.pingdom.com/free/
 - RBL blacklists  https://www.rblmon.com/
 - can-send-email @daily  use smarthost, whitelist on the smarthost, wget can-send-email.php,
@@ -276,7 +319,7 @@ Cringed apart complete bat knitted impulsively domestic behind jokingly a far
 jeepers folded blubbered wildebeest lighthearted much exultingly yikes yawned
 well winced swept far slowly decorously.
 ';
-// @TODO SMTP-URI
+// @TODO rewrite mu-smtp-uri/smtp-uri.php for phpmailer
 $mail = mail( $to, $subject, $message, $headers );
 if ( true !== $mail )
     print "mail() returned: " . var_export( $mail, true );
@@ -293,34 +336,4 @@ exit;
 - Analytics @weekly
 - Google WMT @weekly
 - PageSpeed, webpagetest.org @weekly
-
-### List WordPress plugin names and paths
-
-```js
-plugin_names=jQuery('#wpbody .plugins .plugin-title strong').each(function (){console.log(jQuery(this).text());});
-
-plugin_slugs=jQuery('#wpbody .plugins #the-list tr').each(function (){console.log(jQuery(this).attr('id'));});
-```
-
-### Move/clone site
-
-```bash
-# lftp
-mkdir sr; cd sr
-!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
-!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
-put index.php; put srdb.class.php
-#mrm *; rmdir sr
-```
-
-#### Things to replace
-
-1. http://domain.tld (no trailing slash)
-2. /var/www/path/to/site (no trailing slash)
-3. email@address.es
-4. domain.tld
-
-#### Change salt
-
-Sucuri plugin
 

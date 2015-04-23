@@ -2,17 +2,20 @@
 /*
 Snippet Name: Enable PHP error logging.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Description: 
-Version: 0.2
+Description: Sets up PHP error logging in a protected directory.
+Version: 0.3
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 */
 
 /**
+ * USAGE
+ *
  * 1. Upload this file to the document root.
- * 2. Uncomment "above document root" to place error log above your public folder.
  * 3. Load it in your browser.
+ *     Add `?above` to place error log above your public folder.
+ *     Add `?above=<DIR-NAME>` to name the directory other than "log".
  * 4. Copy the code to your application's config file.
  */
 
@@ -20,14 +23,31 @@ Author URI: http://www.online1.hu/webdesign/
 <!DOCTYPE html>
 <html>
 <title>Enable PHP error logging</title>
+<style rel="stylesheet">
+    /* http://flatuicolors.com/ */
+    pre {
+        color: #34495e;
+        background: white;
+    }
+    #iniset {
+        color: black;
+    }
+    ::selection {
+        background: #2ecc71;
+    }
+    ::-moz-selection {
+        background: #2ecc71;
+    }
+</style>
 <body>
-<pre style="background:white; color:blue;"><?php
+<pre><?php
 
 ini_set( 'display_errors', '1' );
+ini_set( 'display_startup_errors', '1' );
 
 $this_dir = dirname( __FILE__ );
 $errorlog_file = "error.log";
-$htaccess = "
+$htaccess_content = "
 # Apache < 2.3
 <IfModule !mod_authz_core.c>
   Order allow,deny
@@ -40,37 +60,68 @@ $htaccess = "
 </IfModule>
 ";
 
-// under document root, htaccess will block access to it
-$secret_dir = md5( time() );
-$errorlog_dir = $this_dir . "/" . $secret_dir;
-
-// above document root
-//$errorlog_dir = dirname( $this_dir ) . "/log";
+if ( isset( $_GET['above'] ) ) {
+    // Place log directory above document root.
+    $dir_name = empty( $_GET['above'] ) ? "log" : $_GET['above'];
+    $errorlog_dir = dirname( $this_dir ) . "/" . $dir_name;
+} else {
+    // Place log directory under document root.
+    // .htaccess will block access to it.
+    $secret_dir = md5( time() );
+    $errorlog_dir = $this_dir . "/" . $secret_dir;
+}
 
 $errorlog_path = $errorlog_dir . "/" . $errorlog_file;
 
-if (! mkdir( $errorlog_dir, 0700 ) )
-    die( "Couldn't create log dir!" );
+// Check error_log
+$old_errorlog = ini_set( 'error_log', $errorlog_path );
+$new_errorlog = ini_get( 'error_log' );
+if ( false !== $old_errorlog && $new_errorlog === $errorlog_path ) {
+    if ( ! mkdir( $errorlog_dir, 0700 ) )
+        die( "Couldn't create log dir!" );
 
-if ( ! touch( $errorlog_path ) )
-    die( "Couldn't touch error.log!" );
+    if ( isset( $_GET['above'] )
+        && ! file_put_contents( $errorlog_dir . "/.htaccess", $htaccess_content ) )
+        die( "Couldn't create .htaccess!" );
+}
 
-if ( ! file_put_contents( $errorlog_dir . "/.htaccess", $htaccess ) )
-    die( "Couldn't create .htaccess!" );
+if ( ! touch( $new_errorlog ) )
+    die( "Couldn't touch error log!" );
 
-// OK
-$current_errorlog = ini_get( 'error_log' );
 print "
 /*
- Current error.log path = ({$current_errorlog})
+ This script has deleted itself.
+
+ Current error.log path: '{$new_errorlog}'
  Copy this into your wp-config or settings file:
 */
-ini_set( 'error_log', '{$errorlog_path}' );
-ini_set( 'log_errors', 1 );
+<p id='iniset'>ini_set( 'error_log', '{$new_errorlog}' );
+ini_set( 'log_errors', 1 );</p>
 ";
 
 // delete self
 unlink( __FILE__ );
 
-?></body>
+?>
+</pre></body>
+<script>
+(function () {
+    var range, selection,
+        doc = document,
+        text = doc.getElementById('iniset');
+
+    // MSIE
+    if (doc.body.createTextRange) {
+        range = doc.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    } else if (window.getSelection) {
+        selection = window.getSelection();
+        range = doc.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}())
+</script>
 </html>
