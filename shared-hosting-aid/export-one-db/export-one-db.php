@@ -1,7 +1,7 @@
 <?php
 /*
 Snippet Name: Export a database to stdout.
-Version: 0.3
+Version: 0.4
 Description: Sends the compressed (gzip) and encrypted (aes-128-cbc) database dump to stdout.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Usage: wget -q -S --content-disposition --user-agent="<UA>" --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php"
@@ -139,7 +139,7 @@ header( 'X-Password: ' . base64_encode( $encrypted ) );
 // Compress and encrypt the dump
 $cdump = gzencode( $dump, 9 );
 unset( $dump );
-//                                                       true = OPENSSL_RAW_DATA in PHP 5.4
 header( 'X-Memory-Peak: ' . memory_get_peak_usage( true ) );
+//                                                       true = OPENSSL_RAW_DATA in PHP 5.4
 print openssl_encrypt( $cdump, 'aes-128-cbc', $password, true, EXP_O_IV );
 unset( $password );

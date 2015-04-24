@@ -1,3 +1,7 @@
+### Use utility
+
+`exp-o-util.sh`
+
 ### Download phpMyAdmin
 
 See: package/phpmyadmin-get-sf.sh
@@ -51,4 +55,4 @@ Change IP address in `.htaccess`.
 ## Decryption
 
 - `./exp-o-decrypt.php <PASSWORD-FROM-HTTP-RESPONSE> <IV> <PRIVATE-KEY-FILE>`
-- Execute the provided command line `openssl enc ...`
+- Execute the provided command line `openssl enc ...` plus `<ENCRYPTED-DUMP> | gzip -d > <ORIGINAL-DUMP>`
