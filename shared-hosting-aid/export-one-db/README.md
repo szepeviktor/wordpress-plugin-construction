@@ -14,7 +14,7 @@ Results are in `exp-o-pma-includes.txt`.
 
 ### Copy included files
 
-`cat ../exp-o-pma-includes.txt|xargs -I {} cp -a --parents {} /var/www/server/exp-o/`
+`cat ../exp-o-pma-includes.txt|xargs -I {} cp -a --parents {} ../`
 
 ### Generate 2048 bit RSA encryption key
 
@@ -22,15 +22,20 @@ Private key: `openssl genpkey -algorithm rsa -pkeyopt rsa_keygen_bits:2048 -out 
 
 Public key: `openssl rsa -in exp-o-private.key -pubout -out exp-o-public.pem`
 
-### Setup configuration file in `exp-o-config.php`
+### Setup configuration file
 
 - Initialization Vector `pwgen 16 1`
 - Public key location
 - HTTP secret key `pwgen 30 1`
 - wp-config location
 
+### Remote access
+
+Change IP address in `.htaccess`.
+
 ### What files to upload
 
+- .htaccess / (set nginx config)
 - pma files (from exp-o-pma-includes.txt)
 - config.inc.php
 - exp-o-config.php
@@ -41,7 +46,7 @@ Public key: `openssl rsa -in exp-o-private.key -pubout -out exp-o-public.pem`
 
 - Save Initialization Vector
 - Save HTTP headers `wget -q -S --content-disposition --user-agent="<UA>" --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php" 2> http-headers.log`
-- Keep private key file **separate** and secure
+- Keep private key file **apart** and secure
 
 ## Decryption
 
