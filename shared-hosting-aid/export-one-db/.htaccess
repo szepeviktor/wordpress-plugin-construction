@@ -1,0 +1,7 @@
+# Allow access from a list of IP addresses
+Order Deny,Allow
+Deny from all
+# server name
+Allow from 1.2.3.4
+# server name
+#Allow from 1.2.3.5

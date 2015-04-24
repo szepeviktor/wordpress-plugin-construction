@@ -4,7 +4,7 @@ Snippet Name: Export a database to stdout.
 Version: 0.3
 Description: Sends the compressed (gzip) and encrypted (aes-128-cbc) database dump to stdout.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Usage: wget -q -S --content-disposition --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php"
+Usage: wget -q -S --content-disposition --user-agent="<UA>" --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php"
 */
 
 // from wp-cli

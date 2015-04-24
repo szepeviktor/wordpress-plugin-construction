@@ -18,7 +18,7 @@ Source: https://gist.github.com/jrfnl/5925642
  * Enable debugging mode based on IP address and a cookie.
  *
  * 1. !wget -qO- http://www.szepe.net/ip/
- * 2. set WP_DEBUG cookie with path of WordPress root
+ * 2. set WP_DEBUG cookie with path of WordPress root (in Javascript: `document.cookie="WP_DEBUG=1;path=/"`)
  */
 /*
 $debugger_ip_addresses = array( '<ADD-YOUR-IP-ADDRESS-HERE>' );

@@ -33,7 +33,7 @@ class O1_Protect_Plugins {
 	 * @access private
 	 */
 	private $protected_plugins = array(
-		'wp-solarized/wp-solarized.php'
+		'sucuri-scanner/sucuri.php'
 	);
 
 	/**

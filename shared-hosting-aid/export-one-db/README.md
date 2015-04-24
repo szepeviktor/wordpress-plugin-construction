@@ -1,6 +1,6 @@
 ### Download phpMyAdmin
 
-see: package/phpmyadmin-get-sf.sh
+See: package/phpmyadmin-get-sf.sh
 
 ### Preparations
 
@@ -8,7 +8,7 @@ pma server export simulation: prepend to export.php `echo '<pre>'; var_export($_
 
 Results are in `export-one-db.php`.
 
-included files: append code to export.php `file_put_contents('./exp-o-pma-includes.txt', implode("\n", get_included_files()));`
+Included files: append code to export.php `file_put_contents('./exp-o-pma-includes.txt', implode("\n", get_included_files()));`
 
 Results are in `exp-o-pma-includes.txt`.
 
@@ -18,9 +18,9 @@ Results are in `exp-o-pma-includes.txt`.
 
 ### Generate 2048 bit RSA encryption key
 
-private key: `openssl genpkey -algorithm rsa -pkeyopt rsa_keygen_bits:2048 -out exp-o-private.key`
+Private key: `openssl genpkey -algorithm rsa -pkeyopt rsa_keygen_bits:2048 -out exp-o-private.key`
 
-public key: `openssl rsa -in exp-o-private.key -pubout -out exp-o-public.pem`
+Public key: `openssl rsa -in exp-o-private.key -pubout -out exp-o-public.pem`
 
 ### Setup configuration file in `exp-o-config.php`
 
@@ -29,10 +29,18 @@ public key: `openssl rsa -in exp-o-private.key -pubout -out exp-o-public.pem`
 - HTTP secret key `pwgen 30 1`
 - wp-config location
 
+### What files to upload
+
+- pma files (from exp-o-pma-includes.txt)
+- config.inc.php
+- exp-o-config.php
+- exp-o-public.pem
+- export-one-db.php
+
 ## How to backup
 
 - Save Initialization Vector
-- Save HTTP headers `wget -q -S --content-disposition --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php" 2> http-headers.log`
+- Save HTTP headers `wget -q -S --content-disposition --user-agent="<UA>" --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php" 2> http-headers.log`
 - Keep private key file **separate** and secure
 
 ## Decryption
