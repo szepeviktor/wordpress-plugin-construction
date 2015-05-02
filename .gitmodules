@@ -64,3 +64,6 @@
 [submodule "wp-solarized"]
 	path = wp-solarized
 	url = git@github.com:szepeviktor/wp-solarized.git
+[submodule "shared-hosting-aid/unified-post-types"]
+	path = shared-hosting-aid/unified-post-types
+	url = https://github.com/fusioneng/Unified-Post-Types.git

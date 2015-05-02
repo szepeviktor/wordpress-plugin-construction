@@ -22,7 +22,7 @@ function exp_o_replace_path_consts( $source, $path ) {
 
 // from wp-cli
 function exp_o_get_wp_config_code() {
-    $wp_config_path = dirname( dirname( __FILE__ ) ) . EXP_O_ABSPATH;
+    $wp_config_path = dirname( dirname( __FILE__ ) ) . EXP_O_REL_WPCONFIG;
 
     $wp_config_code = explode( "\n", file_get_contents( $wp_config_path ) );
 

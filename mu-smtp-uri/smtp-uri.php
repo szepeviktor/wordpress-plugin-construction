@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: SMTP URI
+Plugin Name: SMTP URI MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Set SMTP options from the SMTP_URI named constant.
 Version: 0.2

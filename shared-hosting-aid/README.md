@@ -7,23 +7,31 @@ SSLOFF="set ftp:ssl-allow off;"
 lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
 ```
 
-### Move/clone site
+
+### Move/clone site with lftp
 
 ```bash
-# lftp
+#!/usr/bin/lftp -f
+#open ftp://...
+#cd html/
 mkdir sr; cd sr
-!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
-!wget -qN https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
+!wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
+!wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
 put index.php; put srdb.class.php
+#
 #mrm *; rmdir sr
 ```
 
 #### Search & replace items
 
-1. http://domain.tld (no trailing slash)
+`wp search-replace --precise --recurse-objects --all-tables-with-prefix`
+
+1. http://domain.tld or https (no trailing slash)
 1. /var/www/path/to/site (no trailing slash)
 1. email@address.es
 1. domain.tld
+
+Constants in wp-config.php.
 
 #### Change salt
 
@@ -31,24 +39,30 @@ Sucuri plugin
 
 https://api.wordpress.org/secret-key/1.1/salt/
 
+
 ### Check hosting
 
 https://github.com/szepeviktor/hosting-check
 
 ### wp-config.php
 
+Live debugging, see: /wp-config-live-debugger/
+
 https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/wordpress-fail2ban/block-bad-requests/wp-login-bad-request.inc.php
+
+https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
 
 ```php
 define( 'O1_BAD_REQUEST_COUNT', 1 );
 //define( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE', true );
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
-```
 
-```php
 // see: shared-hosting-aid/enable-logging.php
 
-//define( 'WP_DEBUG', true );
+//define( 'WP_CONTENT_DIR', '<DOC-ROOT>/site' );
+//define( 'WP_CONTENT_URL', '<DOMAIN>/static' );
+// siteurl .= /site , search-replace: /wp-includes/ -> /site/wp-includes/ , /wp-content/ -> /static/
+
 define( 'WP_DEBUG', false );
 
 define( 'WP_MAX_MEMORY_LIMIT', '96M' );
@@ -58,25 +72,26 @@ define( 'WP_USE_EXT_MYSQL', false );
 
 //define( 'WP_CACHE', true);
 
-// web cron:  /usr/bin/wget -q -O- http://<DOMAIN-TLD>/wp-cron.php||echo "<WEBSITE>: $?"
-// CLI cron:  /usr/bin/php <ABSPATH>/wp-cron.php  # stdout, stderr -> cron email
+// web cron, see: shared-hosting-aid/wp-cron-http.sh
+// CLI cron, see: shared-hosting-aid/wp-cron-cli.sh
+// simple CLI cron:  /usr/bin/php <ABSPATH>/wp-cron.php  # stdout, stderr -> cron email
 define( 'DISABLE_WP_CRON', true );
 define( 'AUTOMATIC_UPDATER_DISABLED', true );
 define( 'DISALLOW_FILE_EDIT', true );
 
-define( 'ITSEC_FILE_CHECK_CRON', true );
-define( 'ITSEC_BACKUP_CRON', true );
-
 define( 'ENABLE_FORCE_CHECK_UPDATE', true );
+
+//define( 'ITSEC_FILE_CHECK_CRON', true );
+//define( 'ITSEC_BACKUP_CRON', true );
 
 /*
 // Upload and session directory.
-ini_set( 'upload_tmp_dir', '%s/tmp' );
-ini_set( 'session.save_path', '%s/session' );
+ini_set( 'upload_tmp_dir', '<HOME>/tmp' );
+ini_set( 'session.save_path', '<HOME>/session' );
 
 // Comment out after first use!
-mkdir( '%s/tmp', 0700 );
-mkdir( '%s/session', 0700 );
+mkdir( '<HOME>/tmp', 0700 );
+mkdir( '<HOME>/session', 0700 );
 */
 
 /*
@@ -97,6 +112,7 @@ define( 'FS_CHMOD_FILE', (0664 & ~ umask()) );
 - robots.txt
 - apple-touch-icon.png
 - apple-touch-icon-precomposed.png
+- apple-touch-icon*.png
 - sitemap.xml
 - sitemap.xml.gz
 - browserconfig.xml
@@ -105,6 +121,8 @@ define( 'FS_CHMOD_FILE', (0664 & ~ umask()) );
 
 https://github.com/h5bp/mobile-boilerplate/blob/master/index.html 
 http://realfavicongenerator.net/
+
+#security @TODO: convert apache-wordpress.conf to .htaccess
 
 ```apache
 # NO index files for robots
@@ -150,7 +168,7 @@ foreach ( $php_configs as $ini ) {
     $value = ini_get( $ini );
     printf( '<tr><td class="e">%s</td><td class="v">%s</td></tr>',
         $ini,
-        in_array( $value, array( null, false, '' ) ) ? '<i>no value</i>' : $value
+        var_export( $value, true )
     );
 }
 print "<tr><td class='e'>_SERVER['DOCUMENT_ROOT']</td><td class='v'>{$_SERVER['DOCUMENT_ROOT']}</td></tr>";
@@ -166,7 +184,13 @@ error_reporting( E_ALL );
 $to      = "viktor@szepe.net";
 $subject = "[Default mail sender] First mail from {$_SERVER['SERVER_NAME']}";
 //FIXME minimum email size: user id, user name, current dir, php version, webserver version
-$message = var_export( $_ENV, true );
+$message = sprintf( "real user: %s\neffective user: %s\ncurrent dir: %s\nPHP version: %s",
+    var_export( posix_getpwuid( posix_getuid() ), true ),
+    var_export( posix_getpwuid( posix_geteuid() ), true ),
+    var_export( posix_getcwd(), true ),
+    var_export( phpversion(), true )
+);
+
 $headers = "X-Mailer: PHP/" . phpversion();
 $mail = mail( $to, $subject, $message, $headers );
 echo "mail() returned: " . var_export( $mail, true );
@@ -249,7 +273,7 @@ https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-
 ....... 1. ügyfeleknek szolg leírása en/hu
 ....... 2. áttekintés/ütemezés magamnak
 ....... 3. setup with snippets and links
-....... 4. pseudo script for copy&pasting
+....... 4. routine: pseudo script for copy&pasting
 
 DNS checks: NS, A, MX, TXT(spf)
 

@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Disable Updates and Update HTTP Requests
+Plugin Name: Disable Updates and Update HTTP Requests MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Disable core, theme and plugin updates plus the browser nag
 Version: 0.5

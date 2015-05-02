@@ -8,10 +8,10 @@
 ### wp-cli example
 
 ```
-# wp plugin deactivate wp-solarized
-Warning: Could not deactivate the 'wp-solarized' plugin.
+# wp plugin deactivate sucuri-scanner
+Warning: Could not deactivate the 'sucuri-scanner' plugin.
 ```
 
 ### Notice
 
-`wp-solarized/wp-solarized.php` is in `$protected_plugins` for demo purposes.
+`sucuri-scanner/sucuri.php` is in `$protected_plugins` for demonstration purposes.

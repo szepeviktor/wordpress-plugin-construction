@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Plugin Upload From URL
+Plugin Name: Plugin Upload From URL MU
 Version: 0.1
 Description: Enables plugin installation from a URL.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-plugin-upload-from-url

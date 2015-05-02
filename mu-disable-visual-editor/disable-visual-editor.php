@@ -1,7 +1,6 @@
 <?php
-
 /*
-Plugin Name: Disable Visual Editor
+Plugin Name: Disable Visual Editor MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Disable the HTML editor for all users.
 Version: 0.1

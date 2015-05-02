@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Strip the Dashboard
+Plugin Name: Strip the Dashboard MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Remove things visually from the WordPress admin.
 Version: 0.3

@@ -5,6 +5,9 @@
 - Backup theme and plugins.
 - PageSpeed score screenshots.
 - Webpage test report link http://www.webpagetest.org/
+- HTTP headers https://redbot.org/
+- HTTP security https://sitecheck.sucuri.net/
+- Install WordPress Live Debugger, see: /wp-config-live-debugger/
 
 ## Detect problems
 

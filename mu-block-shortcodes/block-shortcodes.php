@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Block Shortcodes
+Plugin Name: Block Shortcodes MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Wrap any content in <code>div</code> elements thus enabling content styling with CSS
 Version: 0.1

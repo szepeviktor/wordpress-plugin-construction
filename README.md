@@ -14,13 +14,34 @@ Please select a folder in the list above to see your plugin's development.
 ### Content plugin categories
 
 1. bulk edit aid
-    + lenghten Menu taxonomy selector
-    + Post navigator subm
-    + Keep category tree
+    + Lenghten taxonomy selector boxes, see: content-extras/nav-menu-meta-box-length.php https://core.trac.wordpress.org/ticket/32237
+    + Keep category tree in post editor Category Checklist Tree `category-checklist-tree`
 1. feature
-    + Advanced Image Styles
-    + media URL column
-    + post ID column
+    + Advanced Image Styles `advanced-image-styles`
+    + media URL column, see: content-extras/media-url-column.php
+    + Admin Columns `codepress-admin-columns` e.g. post ID column
 1. integration
+    + Cloudinary
 1. UI cleaning
-    + strip-dashboard
+    + mu-strip-dashboard/
+
+### WordPress .gitignore
+
+```
+*.log
+wp-config.php
+wp-content/uploads
+wp-content/cache/
+wp-content/advanced-cache.php
+wp-content/upgrade/
+#
+wp-content/w3tc-config/
+wp-content/updraft/
+#
+#wp-content/some-other-cache/
+#wp-content/uploads/some-cache/
+#wp-content/themes/THEME/some-cache/
+#wp-content/plugins/PLUGIN/some-cache/
+#large-files-in-docroot/
+#!dont/exclude.this
+```

@@ -11,4 +11,4 @@ define( 'EXP_O_PUBLIC_KEY_FILE', dirname( __FILE__ ) . '/exp-o-public.pem' );
 define ( 'EXP_O_SECRET', '??????????????????????????????' );
 
 // wp-config location relative to the parent directory
-define ( 'EXP_O_ABSPATH', '/wp-config.php' );
+define ( 'EXP_O_REL_WPCONFIG', '/wp-config.php' );

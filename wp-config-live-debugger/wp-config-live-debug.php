@@ -1,7 +1,7 @@
 <?php
 /*
 Snippet Name: WordPress Live Debugger
-Version: 0.2
+Version: 0.3
 Description: Enhance information available for debugging.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Source: https://gist.github.com/jrfnl/5925642
@@ -30,7 +30,7 @@ if ( isset( $_SERVER['REMOTE_ADDR'] )
     define( 'WP_DEBUG', true );
     //define( 'SCRIPT_DEBUG', true );
     //define( 'SAVEQUERIES', true );
-    include_once( 'wp-config-debug.php' );
+    include_once( dirname(__FILE__) . '/wp-config-live-debug.php' );
 } else {
     define( 'WP_DEBUG', false );
     define( 'WP_CACHE', true );
@@ -85,7 +85,7 @@ if ( empty( $error_log ) || 'error_log' === $error_log ) {
 /**
  * Forgiving error reporting for old plugins and themes on modern PHP versions.
  */
-//error_reporting( E_ALL | E_STRICT | E_DEPRECATED );
+//error_reporting( E_ALL ^ E_STRICT ^ E_DEPRECATED );
 @ini_set( 'log_errors', true );
 @ini_set( 'log_errors_max_len', '0' );
 

@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WordPress Bug #14050 Hotfix
+Plugin Name: WordPress Bug #14050 Hotfix MU
 Plugin URI: http://core.trac.wordpress.org/ticket/14050
 Description: Improves the big monster shortcode_unautop() regular expression, which is causing all the ruckus
 Author: Leho Kraav

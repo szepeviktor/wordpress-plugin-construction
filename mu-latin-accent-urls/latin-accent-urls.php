@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Keep Latin accents
+Plugin Name: Keep Latin accents MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Enables latin accents in WordPress URLs
 Version: 4.0
@@ -42,6 +42,7 @@ function remove_nonlatin_accents( $string ) {
 
 // FIXME convert: AltGr + (0..Ó, Ő, Ű) -> ''
 /*
+
 §
 ˇ
 ˘
@@ -53,6 +54,7 @@ function remove_nonlatin_accents( $string ) {
 ¸
 ÷
 ¤
+
 */
 
         if (seems_utf8($string)) {

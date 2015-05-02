@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Triggers fail2ban on 404s and various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 3.3
+Version: 3.4
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -322,11 +322,12 @@ class O1_WP_Fail2ban_MU {
             // exclude XML RPC (xmlrpc.php)
             && ! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
 
-            // exclude trackback (wp-trackback.php)
-            && 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path )
+            // exclude trackback
+            //&& 1 !== preg_match( '/\/wp-trackback\.php$/i', $request_path )
+            && ! is_trackback()
         ) {
 
-            //FIXME wp-includes/ms-files.php:12
+            // wp-includes/ms-files.php:12 does SHORTINIT, no mu-plugins get loaded
             ob_get_level() && ob_end_clean();
             $this->trigger( 'wpf2b_robot403', $request_path );
             header( 'Status: 403 Forbidden' );

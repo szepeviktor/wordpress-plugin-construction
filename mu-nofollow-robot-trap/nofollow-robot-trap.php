@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Nofollow Robot Trap
+Plugin Name: Nofollow Robot Trap MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
 Version: 0.2
@@ -26,7 +26,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  *
  * 1. Add the following line to your style.css.
  *
- * .nfrt { display: none !important; }
+ *     .nfrt { display: none !important; }
  *
  * 2. Add the allow page and the nofollow page to your sitemap.
  *
