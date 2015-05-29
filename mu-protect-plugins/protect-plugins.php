@@ -3,7 +3,7 @@
 Plugin Name:       Protect normal plugins MU
 Plugin URI:        https://github.com/szepeviktor/wordpress-plugin-construction
 Description:       Prevent deletion of normal plugins
-Version:           1.1.0
+Version:           1.2.0
 Author:            Viktor Szépe
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
@@ -11,7 +11,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Malicious sign detected: wpf2b_direct_access '
+    error_log( 'Malicious traffic detected: protect_plugins_direct_access '
         . addslashes( $_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
@@ -27,7 +27,10 @@ class O1_Protect_Plugins {
 	 *
 	 * Add your plugins here! jQuery one-liner to list plugin paths.
 	 *
-	 *     var parser=document.createElement('a');jQuery('#wpbody .plugins .plugin-title .deactivate a').each(function(){parser.href=jQuery(this).attr('href');console.log(decodeURIComponent(parser.search.split('&')[1].split('=')[1]));});
+	 *     // jQuery
+	 *     //var parser=document.createElement('a');jQuery('#wpbody .plugins .plugin-title .deactivate a').each(function(){parser.href=jQuery(this).attr('href');console.log(decodeURIComponent(parser.search.split('&')[1].split('=')[1]));});
+	 *     // ECMAScript 5.1 (ECMA-262)
+	 *     var nodes=[].slice.call(document.querySelectorAll('#wpbody .plugins .plugin-title .deactivate a'));nodes.forEach(function(node){console.log(decodeURIComponent(node.search.split('&')[1].split('=')[1]));});
 	 *
 	 * @var array
 	 * @access private
@@ -90,11 +93,11 @@ class O1_Protect_Plugins {
 	 */
 	public function remove_actions( $actions ) {
 
-		if ( isset( $actions['deactivate'] ) ) {
-			unset( $actions['deactivate'] );
-		}
-		if ( isset( $actions['delete'] ) ) {
-			unset( $actions['delete'] );
+		$removed_actions = array( 'deactivate', 'delete', 'edit' );
+		foreach ( $removed_actions as $action ) {
+			if ( isset( $actions[ $action ] ) ) {
+				unset( $actions[ $action ] );
+			}
 		}
 
 		return $actions;

@@ -2,7 +2,7 @@
 #
 # Run WordPress cron via the webserver.
 #
-# VERSION       :0.1
+# VERSION       :0.2
 # DATE          :2015-05-01
 # AUTHOR        :Viktor Szépe <viktor@szepe.net>
 # LICENSE       :The MIT License (MIT)
@@ -14,6 +14,11 @@
 # Disable wp-cron in your wp-config.php
 #
 #     define( 'DISABLE_WP_CRON', true );
+#
+# Create cron job for existing user with email delivery
+#
+#     1,31 *  * * *  someuser  /usr/local/bin/wp-cron-www.sh http://site.url/subdir/wp-cron.php
+
 
 WPCRON_URL="$1"
 
@@ -45,16 +50,16 @@ fi
 HTTP_USER_AGENT="Wp-cron-http/$(Get_meta) (php-cli; Linux)"
 
 HEADERS_FIFO="$(mktemp -u)"
-trap "rm -f '$HEADERS_FIFO' &> /dev/null" EXIT
 mkfifo --mode=600 "$HEADERS_FIFO"
+trap "rm -f '$HEADERS_FIFO' &> /dev/null" EXIT
 
 # Background HTTP request
-wget -q -S -O- --tries=1 --timeout=5 --user-agent="$HTTP_USER_AGENT" \
+wget -q -S -O- --max-redirect=0 --tries=1 --timeout=5 --user-agent="$HTTP_USER_AGENT" \
     "$WPCRON_URL" 2> "$HEADERS_FIFO" &
 
 # Die on error or missing headers and report non-200 responses
 if head -n 1 "$HEADERS_FIFO" | grep "^  HTTP/" | grep -v "^  HTTP/1\.1 200 OK$" >&2; then
-    Die 2 "Non-200 HTTP status code during ${WPCRON_URL}"
+    Die 2 "Non-200 HTTP status code during ${WPCRON_URL}$(echo; cat "$HEADERS_FIFO")"
 fi
 
 wait $!

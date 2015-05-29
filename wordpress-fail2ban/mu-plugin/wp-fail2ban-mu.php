@@ -22,7 +22,7 @@ Options: O1_WP_FAIL2BAN_DISABLE_LOGIN
  * @see: README.md
  */
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Malicious traffic detected by wpf2b: wpf2bmu_direct_access '
+    error_log( 'Malicious traffic detected: wpf2b_mu_direct_access '
         . addslashes( @$_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();

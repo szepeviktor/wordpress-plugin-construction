@@ -12,9 +12,8 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 
 if ( ! function_exists( 'add_filter' ) ) {
     // for fail2ban
-    error_log( 'File does not exist: errorlog_direct_access '
-        . esc_url( $_SERVER['REQUEST_URI'] ) );
-
+    error_log( 'Malicious traffic detected: nofollow_robot_trap_direct_access '
+        . addslashes( $_SERVER['REQUEST_URI'] ) );
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.1 403 Forbidden' );

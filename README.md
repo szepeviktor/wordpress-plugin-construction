@@ -24,6 +24,14 @@ Please select a folder in the list above to see your plugin's development.
     + Cloudinary
 1. UI cleaning
     + mu-strip-dashboard/
+    + https://github.com/fusioneng/Unified-Post-Types
+    ```php
+    add_filter( 'unified_post_types', function ( $post_types ) {
+        $post_types[] = 'portfolio';
+        $post_types[] = 'news';
+        return $post_types;
+    });
+    ```
 
 ### WordPress .gitignore
 
@@ -32,8 +40,14 @@ Please select a folder in the list above to see your plugin's development.
 wp-config.php
 wp-content/uploads
 wp-content/cache/
-wp-content/advanced-cache.php
 wp-content/upgrade/
+# _get_dropins()
+wp-content/advanced-cache.php
+wp-content/db.php
+wp-content/db-error.php
+wp-content/install.php
+wp-content/maintenance.php
+wp-content/object-cache.php
 #
 wp-content/w3tc-config/
 wp-content/updraft/

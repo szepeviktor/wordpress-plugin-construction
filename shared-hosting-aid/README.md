@@ -7,19 +7,18 @@ SSLOFF="set ftp:ssl-allow off;"
 lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
 ```
 
-
 ### Move/clone site with lftp
 
 ```bash
 #!/usr/bin/lftp -f
-#open ftp://...
-#cd html/
+#open ftp://domain.tld
+#cd website/html/
 mkdir sr; cd sr
 !wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
 !wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
 put index.php; put srdb.class.php
 #
-#mrm *; rmdir sr
+# mrm *; cd ..; rmdir sr
 ```
 
 #### Search & replace items
@@ -31,26 +30,55 @@ put index.php; put srdb.class.php
 1. email@address.es
 1. domain.tld
 
-Constants in wp-config.php.
-
-#### Change salt
-
-Sucuri plugin
-
-https://api.wordpress.org/secret-key/1.1/salt/
+Manual replace: constants in wp-config.
 
 
-### Check hosting
+### Webserver settings
 
 https://github.com/szepeviktor/hosting-check
 
+- keep-alive
+- mime-type
+- content-compression
+- content-cache
+
+https://github.com/h5bp/html5-boilerplate/blob/master/.htaccess
+
+https://redbot.org/
+
+#### PHP settings
+
+see: shared-hosting-aid/php-vars.php
+
+#### Default email from address
+
+see: shared-hosting-aid/php-mail-sender.php
+
+- Set sender or forward as necessary.
+- Set usual addresses: info@, postmaster@, abuse@
+- Set up your account: webmaster@DOMAIN
+
+### Security plugin
+
+- Sucuri plugin + sucuri-cleanup
+- (iThemes Security plugin)
+
+### Plugins to protect
+
+https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
+
 ### wp-config.php
 
-Live debugging, see: /wp-config-live-debugger/
+#### Change salt
+
+- Sucuri plugin
+- https://api.wordpress.org/secret-key/1.1/salt/
+
+#### Block Bad Requests
 
 https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/wordpress-fail2ban/block-bad-requests/wp-login-bad-request.inc.php
 
-https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
+`wp-config.php`
 
 ```php
 define( 'O1_BAD_REQUEST_COUNT', 1 );
@@ -58,27 +86,30 @@ define( 'O1_BAD_REQUEST_COUNT', 1 );
 require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 
 // see: shared-hosting-aid/enable-logging.php
+//ini_set( 'error_log', '/path/to/error.log' );
+//ini_set( 'log_errors', 1 );
 
-//define( 'WP_CONTENT_DIR', '<DOC-ROOT>/site' );
+//define( 'WP_CONTENT_DIR', '<DOCUMENT-ROOT>/site' );
 //define( 'WP_CONTENT_URL', '<DOMAIN>/static' );
 // siteurl .= /site , search-replace: /wp-includes/ -> /site/wp-includes/ , /wp-content/ -> /static/
 
+// Live debugging
+// see: /wp-config-live-debugger/
 define( 'WP_DEBUG', false );
 
-define( 'WP_MAX_MEMORY_LIMIT', '96M' );
-//define( 'WP_MAX_MEMORY_LIMIT', '196M' );
+define( 'WP_MEMORY_LIMIT', '96M' );
+//define( 'WP_MAX_MEMORY_LIMIT', '384M' );
 define( 'WP_POST_REVISIONS', 10 );
 define( 'WP_USE_EXT_MYSQL', false );
+define( 'DISALLOW_FILE_EDIT', true );
 
 //define( 'WP_CACHE', true);
 
 // web cron, see: shared-hosting-aid/wp-cron-http.sh
-// CLI cron, see: shared-hosting-aid/wp-cron-cli.sh
-// simple CLI cron:  /usr/bin/php <ABSPATH>/wp-cron.php  # stdout, stderr -> cron email
+// CLI cron, see: debian-server-tools:/webserver/wp-cron-cli.sh
+// simple CLI cron:  /usr/bin/php <ABSPATH>/wp-cron.php  # stdout, stderr to cron email
 define( 'DISABLE_WP_CRON', true );
 define( 'AUTOMATIC_UPDATER_DISABLED', true );
-define( 'DISALLOW_FILE_EDIT', true );
-
 define( 'ENABLE_FORCE_CHECK_UPDATE', true );
 
 //define( 'ITSEC_FILE_CHECK_CRON', true );
@@ -89,7 +120,7 @@ define( 'ENABLE_FORCE_CHECK_UPDATE', true );
 ini_set( 'upload_tmp_dir', '<HOME>/tmp' );
 ini_set( 'session.save_path', '<HOME>/session' );
 
-// Comment out after first use!
+// Test - Comment out after first use!
 mkdir( '<HOME>/tmp', 0700 );
 mkdir( '<HOME>/session', 0700 );
 */
@@ -108,101 +139,35 @@ define( 'FS_CHMOD_FILE', (0664 & ~ umask()) );
 - *htaccess*
 - index.html
 - index.php
-- favicon.ico
 - robots.txt
-- apple-touch-icon.png
-- apple-touch-icon-precomposed.png
-- apple-touch-icon*.png
 - sitemap.xml
 - sitemap.xml.gz
-- browserconfig.xml
 - crossdomain.xml
 - labels.rdf
 
-https://github.com/h5bp/mobile-boilerplate/blob/master/index.html 
-http://realfavicongenerator.net/
+https://github.com/h5bp/mobile-boilerplate/blob/master/index.html
 
-#security @TODO: convert apache-wordpress.conf to .htaccess
+- favicon.ico
+- apple-touch-icon.png
+- apple-touch-icon-precomposed.png
+- apple-touch-icon*.png
+- browserconfig.xml
+
+http://realfavicongenerator.net/
+http://realfavicongenerator.net/favicon_checker
+
+Don't index files for robots `.htaccess`.
 
 ```apache
-# NO index files for robots
+# Don't index files for robots
 <FilesMatch "^(robots\.txt|sitemap\.xml|sitemap\.xml\.gz)$">
-  Header append X-Robots-Tag "noindex"
+    Header append X-Robots-Tag "noindex"
 </FilesMatch>
 ```
 
-### Webserver settings
-
-- keep-alive
-- mime-type
-- content-compression
-- content-cache
-
-https://github.com/h5bp/html5-boilerplate/blob/master/.htaccess 
-https://redbot.org/
-
-`php-vars.php`
-
-```php
-<?php
-phpinfo();
-$php_configs = array(
-    'expose_php',
-    'max_execution_time',
-    'memory_limit',
-    'upload_max_filesize',
-    'post_max_size',
-    'allow_url_fopen',
-    'default_charset',
-    'date.timezone',
-    'disable_functions',
-    'open_basedir',
-    'session.save_path',
-    'upload_tmp_dir',
-    'display_errors',
-    'log_errors',
-    'error_log'
-);
-print '<div class="center"><h2 id="impvar">*Important variables</h2><table width="600" border="0" cellpadding="3">';
-foreach ( $php_configs as $ini ) {
-    $value = ini_get( $ini );
-    printf( '<tr><td class="e">%s</td><td class="v">%s</td></tr>',
-        $ini,
-        var_export( $value, true )
-    );
-}
-print "<tr><td class='e'>_SERVER['DOCUMENT_ROOT']</td><td class='v'>{$_SERVER['DOCUMENT_ROOT']}</td></tr>";
-print '</table><br/></div><script>window.location.hash="impvar";</script>';
-```
-
-Default `mail-sender.php`?
-
-```php
-<pre><?php
-ini_set( 'display_errors', 1 );
-error_reporting( E_ALL );
-$to      = "viktor@szepe.net";
-$subject = "[Default mail sender] First mail from {$_SERVER['SERVER_NAME']}";
-//FIXME minimum email size: user id, user name, current dir, php version, webserver version
-$message = sprintf( "real user: %s\neffective user: %s\ncurrent dir: %s\nPHP version: %s",
-    var_export( posix_getpwuid( posix_getuid() ), true ),
-    var_export( posix_getpwuid( posix_geteuid() ), true ),
-    var_export( posix_getcwd(), true ),
-    var_export( phpversion(), true )
-);
-
-$headers = "X-Mailer: PHP/" . phpversion();
-$mail = mail( $to, $subject, $message, $headers );
-echo "mail() returned: " . var_export( $mail, true );
-```
-
-Set sender or forward as necessary.
-Set usual addresses: info@, postmaster@, abuse@
-Set up your account: webmaster@<DOMAIN>
-
 ### PHP security check
 
-`.htaccess`
+Enable access in `.htaccess`.
 
 ```apache
 SetEnv PCC_ALLOW_IP 1.2.3.4
@@ -210,13 +175,21 @@ SetEnv PCC_ALLOW_IP 1.2.3.4
 
 https://github.com/sektioneins/pcc/raw/master/phpconfigcheck.php
 
+### WordPress security check
+
+- Gauntlet Security plugin
+
 ### File change notification
 
+#### Sucuri plugin
+
+#### Tripwire
+
 ```bash
-git clone https://github.com/szepeviktor/Tripwire.git
-cd Tripwire
-git submodule init && git submodule update
+git clone --recursive https://github.com/szepeviktor/Tripwire.git
+cd Tripwire/
 cp tripwire_config.sample.ini tripwire_config.ini
+editor tripwire_config.ini
 ```
 
 Tripwire access protection `.htaccess`.
@@ -224,7 +197,7 @@ Tripwire access protection `.htaccess`.
 ```apache
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  #TODO: only allow from management server
+  RewriteCond %{REMOTE_ADDR} !=<MANAGEMENT-SERVER-IP-ADDRESS> [OR]
   RewriteCond %{REQUEST_URI} !=/<SECRET_DIR>/tripwire.php
   RewriteRule ^ - [F]
 </IfModule>
@@ -232,12 +205,19 @@ Tripwire access protection `.htaccess`.
 
 ### Block access to a directory
 
-`.htaccess`
+Deny all traffic `.htaccess`.
 
 ```apache
-Deny from all
-# Apache 2.4
-#Require all denied
+# Apache < 2.3
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+  Satisfy All
+</IfModule>
+# Apache ≥ 2.3
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
 ```
 
 ### MySQL
@@ -247,17 +227,22 @@ Deny from all
 
 ### List WordPress plugin names and paths
 
-```js
-plugin_names=jQuery('#wpbody .plugins .plugin-title strong').each(function (){console.log(jQuery(this).text());});
+Go to the Plugins page.
 
-plugin_slugs=jQuery('#wpbody .plugins #the-list tr').each(function (){console.log(jQuery(this).attr('id'));});
+```js
+// plugin_names
+jQuery('#wpbody .plugins .plugin-title strong').each(function (){console.log(jQuery(this).text());});
+
+// plugin_slugs from "Deactivate" links
+var plungins=[].slice.call(document.querySelectorAll('#wpbody .plugins .plugin-title .deactivate a'));
+plungins.forEach(function(p){console.log(decodeURIComponent(p.search.split('&')[1].split('=')[1]));});
 ```
 
 ### MU plugins
 
 - https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php
-- https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-disable-updates/disable-updates.php
 - https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
+- https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-disable-updates/disable-updates.php
 
 ### SMTP
 
@@ -267,9 +252,9 @@ https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-
 
 ### Monitoring
 
-....... üzemeltetés
+....... üzemeltetés TODO
 ....... -----------
-....... 
+.......
 ....... 1. ügyfeleknek szolg leírása en/hu
 ....... 2. áttekintés/ütemezés magamnak
 ....... 3. setup with snippets and links
@@ -281,15 +266,15 @@ DNS checks: NS, A, MX, TXT(spf)
 # <SITE-NAME> - Static file check
 1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/license.txt|grep -qF "GNU GENERAL PUBLIC LICENSE"
 # <SITE-NAME> - PHP version and MySQL version check
-1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/ping.php|grep -qF "<MD5-SUM>"
+1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/ping.php|grep -qFx "<MD5-SUM>"
 ```
 
 ```php
 <?php
-$management_server_ip = '<MANAGEMENT_SERVER_IP>';
+$management_server_ip = 'MANAGEMENT_SERVER_IP';
 
 if ( $management_server_ip !== @$_SERVER['REMOTE_ADDR'] ) {
-    error_log( 'Malicious traffic detected by wpf2b: ping_access '
+    error_log( 'Malicious traffic detected: ping_extraneous_access '
         . addslashes( @$_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
@@ -307,20 +292,22 @@ $pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
 exit( md5( $pong ) );
 ```
 
-- wget -qO- <FRONT-PAGE>|grep -q '<h1>Title string'
-- wget -qO- <FRONT-PAGE>|grep -qEi 'mysql|php|error|notice|warning'  @FIXME one request only
+- wget -qO- <FRONT-PAGE>|grep -q '<h1>Title string'                  @FIXME one request only
+- wget -qO- <FRONT-PAGE>|grep -qEi 'mysql|php|error|notice|warning|Account.*Suspend' @FIXME one request only
 - pingdom  https://www.pingdom.com/free/
 - RBL blacklists  https://www.rblmon.com/
 - can-send-email @daily  use smarthost, whitelist on the smarthost, wget can-send-email.php,
 wait 5 minutes, check mailbox for message with this subject:
 
-`Subject: [admin] can-send-email from <HOSTNAME>`
+"Subject: [admin] can-send-email from HOSTNAME"
 
 ```php
 <?php
+
+$to      = "viktor@szepe.net";
+
 $headers = "X-Mailer: PHP/" . phpversion();
 $subject = "[admin] can-send-email from {$_SERVER['SERVER_NAME']}";
-$to      = "viktor@szepe.net";
 // http://www.randomtext.me/download/txt/gibberish/p-5/20-35
 $message = '
 Much bowed when mammoth for lusciously lost a dear whooped some ouch
@@ -360,4 +347,3 @@ exit;
 - Analytics @weekly
 - Google WMT @weekly
 - PageSpeed, webpagetest.org @weekly
-

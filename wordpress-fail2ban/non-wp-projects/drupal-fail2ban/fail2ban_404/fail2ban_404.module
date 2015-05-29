@@ -12,7 +12,7 @@
  */
 function fail2ban_404_watchdog( $log_entry ) {
 
-    $prefix = 'Malicious traffic detected by df2b: ';
+    $prefix = 'Malicious traffic detected: ';
     $slug = '';
 
     switch ( $log_entry['type'] ) {

@@ -11,7 +11,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Malicious sign detected: wpf2b_direct_access '
+    error_log( 'Malicious traffic detected: plugin_changelog_direct_access '
         . addslashes( $_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();

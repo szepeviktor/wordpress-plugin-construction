@@ -30,3 +30,5 @@ lftp -e "${LFTP_SSL} set xfer:clobber on; mirror -i ${LOGFILE} ${REMOTE_LOGDIR} 
     || error 1 "FTP error during ${LOG_NAME}: $?."
 
 /usr/sbin/logtail -f "${LOCAL_LOGDIR}/${LOGFILE}" | mailx -E -s "[remote log watch] ${LOG_NAME}" viktor@szepe.net
+
+@TODO: Loggly upload, only collect locally for 404 email/day

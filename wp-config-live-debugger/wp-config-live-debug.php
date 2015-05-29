@@ -41,7 +41,7 @@ if ( isset( $_SERVER['REMOTE_ADDR'] )
  * Pay attention to require it AFTER defining DB_NAME.
  */
 if ( ! defined( 'DB_NAME' ) ) {
-    error_log( 'Malicious traffic detected by wpf2b: wpf2bmu_direct_access '
+    error_log( 'Malicious traffic detected: live_debugger_direct_access '
         . addslashes( @$_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();

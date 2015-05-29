@@ -10,7 +10,7 @@ Author URI: http://www.online1.hu/webdesign/
 */
 
 for ( $i = 1; $i <= 6; $i++ ) {
-    error_log( 'Malicious traffic detected by wpf2b: ' . 'wplogin_no_wp_here' );
+    error_log( 'Malicious traffic detected: ' . 'no_wp_here_wplogin' );
 }
 
 ob_get_level() && ob_end_clean();

@@ -12,8 +12,9 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Malicious traffic detected by wpf2b: wpf2b_direct_access '
-               . esc_url( $_SERVER['REQUEST_URI'] ) );
+    error_log( 'Malicious traffic detected: wpf2b_direct_access '
+               . addslashes( $_SERVER['REQUEST_URI'] )
+    );
     ob_end_clean();
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.0 403 Forbidden' );
