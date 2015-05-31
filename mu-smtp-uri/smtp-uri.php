@@ -3,7 +3,7 @@
 Plugin Name: SMTP URI MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Set SMTP options from the SMTP_URI named constant.
-Version: 0.2
+Version: 0.3
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -18,6 +18,12 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
  * Protocols: smtp://  smtps://  smtpstarttls://  smtptls://
  *
  *     define( 'SMTP_URI', 'smtps://[<USERNAME>:<PASSWORD>@]<HOST>:<PORT>' );
+ *
+ * Use URL-encoded strings!
+ *
+ * Mandrill example (%40 stands for the @ sign)
+ *
+ *     define( 'SMTP_URI', 'smtptls://REGISTERED%40EMAIL:API-KEY@smtp.mandrillapp.com:587' );
  *
  * To set From name and From address use WP Mail From II plugin.
  *
@@ -45,9 +51,9 @@ function o1_smtp_options( $mail ) {
             $mail->Port = 465;
             break;
         case 'smtptls':
-        case 'smtptls':
+        case 'smtpstarttls':
             $mail->SMTPSecure = 'tls';
-            $mail->Port = 25;
+            $mail->Port = 587;
             break;
         default:
             return;
@@ -59,17 +65,17 @@ function o1_smtp_options( $mail ) {
     if ( empty( $uri['host'] ) ) {
         return;
     } else {
-        $mail->Host = $uri['host'];
+        $mail->Host = urldecode( $uri['host'] );
     }
 
     if ( is_int( $uri['host'] ) ) {
-        $mail->Port = $uri['port'];
+        $mail->Port = urldecode( $uri['port'] );
     }
 
     if ( ! empty( $uri['user'] ) && ! empty( $uri['pass'] ) ) {
         $mail->SMTPAuth = true;
-        $mail->Username = $uri['user'];
-        $mail->Password = $uri['pass'];
+        $mail->Username = urldecode( $uri['user'] );
+        $mail->Password = urldecode( $uri['pass'] );
     }
 
     $mail->isSMTP();
