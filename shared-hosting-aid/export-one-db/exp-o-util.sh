@@ -28,7 +28,7 @@ read -p "Enter user agent sting: " UA || exit 11
 sed -i "s/<UA>/${UA//\//\\\/}/" .htaccess || exit 12
 IP="$(/sbin/ifconfig | grep -m1 -w -o 'inet addr:[0-9.]*' | cut -d':' -f2)"
 read -e -p "Enter management server IP: " -i "$IP" MGMNT || exit 13
-sed -i "s/<IP-REGEXP>/${MGMNT//./\\.}/" .htaccess || exit 14
+sed -i "s/<IP-REGEXP>/${MGMNT//./\\\\.}/" .htaccess || exit 14
 sed -i "s/<IP>/${MGMNT}/" .htaccess || exit 15
 
 echo '# Clean up'
@@ -42,7 +42,7 @@ cat exp-o-private.key
 echo
 
 echo '# Upload directory'
-echo "$RANDOM"|md5sum|cut -d" " -f1
+echo "$RANDOM" | md5sum | cut -d" " -f1
 
 echo '# How to backup'
 echo "wget -q -S --content-disposition --user-agent='${UA}' --header='X-Secret-Key: ${SECRET}' 'http://---/export-one-db.php'"

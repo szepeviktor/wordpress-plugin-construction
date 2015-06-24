@@ -48,7 +48,7 @@ wp-content/db-error.php
 wp-content/install.php
 wp-content/maintenance.php
 wp-content/object-cache.php
-#
+# Plugin data directories
 wp-content/w3tc-config/
 wp-content/updraft/
 #
@@ -58,4 +58,20 @@ wp-content/updraft/
 #wp-content/plugins/PLUGIN/some-cache/
 #large-files-in-docroot/
 #!dont/exclude.this
+```
+
+### Revolution Slider fix
+
+```php
+/*
+ * Trigger fail2ban on revslider upload attempt.
+ *
+ * @revslider/revslider_admin.php:389
+ *     case "update_plugin":
+ * Comment out
+ *     self::updatePlugin(self::DEFAULT_VIEW);
+ */
+for ( $fb = 0; $fb < 6; $fb++ ) {
+    error_log( 'Malicious traffic detected: ' . 'revslider/update_plugin' );
+}
 ```

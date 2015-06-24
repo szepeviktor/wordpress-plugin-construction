@@ -278,7 +278,7 @@ class O1_WP_Fail2ban_MU {
             $current_user = wp_get_current_user();
             $user = $current_user->user_login;
         } else {
-            $user = '""';
+            $user = '';
         }
 
         $this->trigger( 'logged_out', $user, 'info', 'Wordpress auth: ' );

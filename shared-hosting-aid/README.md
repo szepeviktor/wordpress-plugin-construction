@@ -131,6 +131,11 @@ define( 'FS_METHOD', 'direct' );
 define( 'FS_CHMOD_DIR', (0775 & ~ umask()) );
 define( 'FS_CHMOD_FILE', (0664 & ~ umask()) );
 */
+
+/*
+// Change ABSPATH if wp-config is above WordPress
+define( 'ABSPATH', dirname( __FILE__ ) . '/site' );
+*/
 ```
 
 ### Root files
@@ -294,6 +299,7 @@ exit( md5( $pong ) );
 
 - wget -qO- <FRONT-PAGE>|grep -q '<h1>Title string'                  @FIXME one request only
 - wget -qO- <FRONT-PAGE>|grep -qEi 'mysql|php|error|notice|warning|Account.*Suspend' @FIXME one request only
+- Visual changes: PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`
 - pingdom  https://www.pingdom.com/free/
 - RBL blacklists  https://www.rblmon.com/
 - can-send-email @daily  use smarthost, whitelist on the smarthost, wget can-send-email.php,

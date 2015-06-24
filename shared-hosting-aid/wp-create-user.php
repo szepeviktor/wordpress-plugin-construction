@@ -3,7 +3,7 @@
 Snippet Name: Create a user from hardcoded data and log in to WordPress.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Unzip WordPress instead of uploading it file-by-file
-Version: 0.1
+Version: 0.2.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -16,7 +16,7 @@ Author URI: http://www.online1.hu/webdesign/
  * 4. Load it in your browser:  <YOURSITE.NET/WP-DIR>/wp-create-user.php
  */
 
-$userdata = (object)array(
+$wcu_userdata = (object)array(
     'user_login'        => "viktor",
     'nickname'          => "v",
     'role'              => "administrator",
@@ -29,7 +29,7 @@ $userdata = (object)array(
     'user_pass'         => "12345"
 );
 
-$html = '
+$wcu_html = '
 <!DOCTYPE html>
 <html>
 <title>Create new WordPress user and log in</title>
@@ -42,31 +42,28 @@ $html = '
 @ini_set( 'display_errors', 1 );
 @error_reporting( E_ALL );
 
-function o1_autouser( $userdata ) {
+$wcu_wpload_path = dirname( __FILE__ ) . '/wp-load.php';
 
-    $wpload_path = dirname( __FILE__ ) . '/wp-load.php';
+if ( ! file_exists( $wcu_wpload_path ) )
+    return 'wp-load not found: ' . $wcu_wpload_path;
 
-    if ( ! file_exists( $wpload_path ) )
-        return 'wp-load not found: ' . $wpload_path;
+define( 'WP_USE_THEMES', false );
+require_once( $wcu_wpload_path );
 
-    define( 'WP_USE_THEMES', false );
-    require_once( $wpload_path );
+$wcu_userid = wp_insert_user( $wcu_userdata );
 
-    $userid = wp_insert_user( $userdata );
-
-    if ( is_wp_error( $userid ) ) {
-        return 'Insert user failed: ' . $userid->get_error_message();
-    } else {
-        // delete self
-        unlink( __FILE__ );
-        // log in
-        wp_set_auth_cookie( $userid );
-        // redirect to Dashboard
-        return 'New user ID = ' . $userid
+if ( is_wp_error( $wcu_userid ) ) {
+    printf( $wcu_html,  'Insert user failed: ' . $wcu_userid->get_error_message() );
+} else {
+    // Delete self
+    unlink( __FILE__ );
+    // Log in
+    wp_set_auth_cookie( $wcu_userid );
+    // Redirect to Dashboard
+    printf( $wcu_html,  'New user ID = ' . $wcu_userid
         . '<script type="text/javascript">setTimeout(function () {window.location.href="'
-        . admin_url( 'profile.php#pass1' ) . '";}, 3000);</script>';
-    }
+        . admin_url( 'profile.php#pass1' ) . '";}, 3000);</script>'
+    );
 }
 
-printf( $html, o1_autouser( $userdata ) );
 exit;

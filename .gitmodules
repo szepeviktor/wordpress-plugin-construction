@@ -73,3 +73,6 @@
 [submodule "shared-hosting-aid/stream-archive/archivestream-php"]
 	path = shared-hosting-aid/stream-archive/archivestream-php
 	url = https://github.com/barracudanetworks/ArchiveStream-php.git
+[submodule "emojis"]
+	path = emojis
+	url = https://github.com/wp-plugins/classic-smilies.git

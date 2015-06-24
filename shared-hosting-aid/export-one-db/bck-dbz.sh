@@ -1,32 +1,83 @@
 #!/bin/bash
 #
-# Backup database dumps.
+# Backup remote database dumps.
 #
+# VERSION       :1.4.0
+# DATE          :2015-06-12
+# AUTHOR        :Viktor Szépe <viktor@szepe.net>
+# URL           :https://github.com/szepeviktor/debian-server-tools
+# LICENSE       :The MIT License (MIT)
+# BASH-VERSION  :4.2+
+# DEPENDS       :https://github.com/puzzle1536/hubic-wrapper-to-swift
+# DEPENDS       :apt-get install openssl zpaq
+# LOCATION      :/home/bck/database/bck-dbz.sh
+# OWNER         :bck:bck
+# PERMISSION    :755
+# CRON.D        :3 3	* * *	bck	/home/bck/database/bck-dbz.sh
+# CONFIG        :/home/bck/database/.dbftp
 
-# site ID, swift container, export-one-db URL, secret key, user agent
-DBS=(
-
+# List files
 #
+#      hubic.py --swift -- list CONTAINER --long
 
-)
-WORKDIR="/home/bck/database/workdir"
-PRIVKEYS="/home/bck/database/privkeys"
-HUBIC="/usr/local/bin/hubic.py"
-EXP_O_DECRYPT="/usr/local/bin/exp-o-decrypt.php"
-ENCRYPT_PASS_FILE="/home/bck/database/.enc-pass"
-TODAY="$(date --rfc-3339=date)"
+source "$(dirname "$0")/.dbftp"
+# site ID,swift container,export-one-db URL,secret key,user agent
+#declare -a DBS=(
+#)
+#WORKDIR="/home/bck/database/workdir"
+#PRIVKEYS="/home/bck/database/privkeys"
+#HUBIC="/usr/local/bin/hubic.py --config=/home/bck/database/.hubic.cfg"
+#EXP_O_DECRYPT="/usr/local/bin/exp-o-decrypt.php"
+#ENCRYPT_PASS_FILE="/home/bck/database/.enc-pass"
 
-# Decryption
-#hubic.py --swift -- download <CONTAINER> <PATH/FILE>
-#aespipe -P "$ENCRYPT_PASS_FILE" -e AES128 -d < <PATH/FILE> > <PATH/FILE-DECRYPTED>
+# Local swift command
+PATH="${PATH}:/usr/local/bin"
 
+SWIFT_STDERR="$(mktemp)"
+trap "rm -f '$SWIFT_STDERR' &> /dev/null" EXIT
+
+# Get n-th field of a comma separated list
 E() {
     local ALL="$1"
     local FIELD="$2"
     cut -d "," -f "$FIELD" <<< "$ALL"
 }
 
-# Backup only to secure directoy
+# Communicate with object storage
+Swift() {
+    local -i RET="-1"
+    local -i TRIES="2"
+    local -i TRY="0"
+
+    while [ "$((TRY++))" -lt "$TRIES" ]; do
+        # Empty error message
+        echo -n "" > "$SWIFT_STDERR"
+
+        # Be verbose on console and on "swift stat"
+        if tty --quiet || [ "stat" == "$1" ]; then
+            ${HUBIC} -v --swift -- -v "$@" 2> "$SWIFT_STDERR"
+            RET="$?"
+        else
+            ${HUBIC} --swift -- -q "$@" > /dev/null 2> "$SWIFT_STDERR"
+            RET="$?"
+        fi
+
+        # OK
+        if [ "$RET" -eq 0 ] && ! grep -qv "^[A-Z_]\+=\S\+$" "$SWIFT_STDERR"; then
+            break
+        fi
+
+        echo -n "Swift ERROR ${RET} " >&2
+        cat "$SWIFT_STDERR" >&2
+        RET="255"
+        # Wait for object storage
+        sleep 60
+    done
+
+    return "$RET"
+}
+
+# Backup only to secure directory
 [ "$(stat --format=%a $(dirname "$WORKDIR"))" == 700 ] || exit 1
 
 # Interrupted backup
@@ -35,8 +86,9 @@ E() {
 cd "$WORKDIR" || exit 3
 
 # Check object storage access
-"$HUBIC" --swift -- stat > /dev/null || exit 4
-
+if ! Swift stat > /dev/null; then
+    exit 4
+fi
 
 for DB in "${DBS[@]}"; do
     ID="$(E "$DB" 1)"
@@ -48,10 +100,10 @@ for DB in "${DBS[@]}"; do
     if tty --quiet; then
         echo "${ID} ..."
     else
-        logger -t "bck-dbz[$$]" "Archiving ${ID}."
+        logger -t "bck-dbz[$$]" "Archiving ${ID}"
     fi
 
-    # Export database dump
+    # Download database dump
     if ! wget -q -S --content-disposition --user-agent="$UA" \
         --header="X-Secret-Key: ${SECRET}" -O "${ID}.sql.gz.enc" "$URL" 2> "${ID}.headers"; then
         echo "Error during database backup of ${ID}." >&2
@@ -82,24 +134,41 @@ for DB in "${DBS[@]}"; do
     fi
     rm "${ID}.sql.gz.enc"
 
+    # Download archive index
+    if ! Swift download --output "${ID}-00000.zpaq" "$CONTAINER" "${ID}/${ID}-00000.zpaq" \
+        || ! [ -s "${ID}-00000.zpaq" ]; then
+        echo "Archive index download failed ${ID}." >&2
+        continue
+    fi
+
     # Archive (compress and encrypt)
-    "$HUBIC" --swift -- -q download --output "${ID}-00000.zpaq" "$CONTAINER" "${ID}/${ID}-00000.zpaq" 2> /dev/null
     if ! zpaq add "${ID}-?????.zpaq" "${ID}.sql" "${ID}.headers" -method 5 -key "$(cat "$ENCRYPT_PASS_FILE")" &> /dev/null; then
         echo "Archiving failed ${ID}." >&2
         continue
     fi
     rm "${ID}.sql" "${ID}.headers"
 
-    # Upload archive
+    # Upload archive parts
     for ZPAQ in "$ID"-*.zpaq; do
-        if ! "$HUBIC" --swift -- -q upload --object-name "${ID}/${ZPAQ}" "$CONTAINER" "$ZPAQ"; then
+        if ! Swift upload --object-name "${ID}/${ZPAQ}" "$CONTAINER" "$ZPAQ"; then
             echo "Archive upload failed ${ID}/${ZPAQ}." >&2
+            continue
         fi
         rm "$ZPAQ"
     done
 done
 
-# swift full?
-[ $("$HUBIC" --swift -- stat | grep -m1 "Bytes:" | cut -d":" -f2) -gt 1000000000 ] && echo "swift FULL." >&2
+# Leftover files
+if ! [ -z "$(ls -A "$WORKDIR")" ]; then
+    echo "There was an error, files are left in /workdir." &>2
+fi
+
+# Check object storage usage
+BYTE_LIMIT="$(( 10 * 1000 * 1000 * 1000 ))"
+SWIFT_BYTES="$(Swift stat)"
+SWIFT_BYTES="$(echo "$SWIFT_BYTES" | grep -m1 "Bytes:" | cut -d":" -f2)"
+if [ -n "$SWIFT_BYTES" ] && [ ${SWIFT_BYTES} -gt "$BYTE_LIMIT" ]; then
+    echo "Swift usage > 10 GB." >&2
+fi
 
 exit 0

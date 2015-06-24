@@ -25,7 +25,7 @@ The code is commented, so you may understand it by looking at the code only.
 
 ### Preventing login on unmaintained sites
 
-To deny user login totally copy this in your `wp-config.php` before `require`:
+To deny user login totally copy this in your `wp-config.php`:
 
 ```php
 define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );
@@ -75,9 +75,9 @@ failregex = ^%(_apache_error_client)s ((AH001(28|30): )?File does not exist|(AH0
 
 ```
 
-Please examine the latest filter failregexp-s in the
+Please examine the latest filter `failregexp`-s in the
 [fail2ban GitHub repository](https://github.com/fail2ban/fail2ban/blob/master/config/filter.d).
 It worth to combine every webserver related regexp-s in one custom filter.
-You can customize the fail2ban trigger string in the `$prefix` property of the class.
+You can customize the fail2ban trigger string in the `$prefix` property of the `O1_WP_Fail2ban_MU` class.
 
 **All the best wishes to you!**
