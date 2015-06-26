@@ -29,6 +29,7 @@ define( 'DB_USER', 'sqlite' );
 define( 'DB_PASSWORD', 'sqlite' );
 define( 'DB_HOST', 'sqlite' );
 define( 'DB_COLLATE', '' );
+$table_prefix = 'sql3_';
 
 
 /*
@@ -38,8 +39,13 @@ define( 'DB_COLLATE', '' );
     wget -qO- https://api.wordpress.org/secret-key/1.1/salt/
 */
 
+/*
 
-$table_prefix = 'sql3_';
+    Webserver
+
+    apt-get install -y php5-cli
+
+*/
 
 
 /* That's all, stop editing! Happy blogging. */

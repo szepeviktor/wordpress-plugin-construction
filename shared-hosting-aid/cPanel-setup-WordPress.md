@@ -35,11 +35,12 @@ see: shared-hosting-aid/php-vars.php
 - Uninstall and update Themes, Plugins
 - Install Classic Smilies plugin
 - Copy wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php into wp-content/mu-plugins/ and set `$trigger_count = 1;`
-- .htaccess: root, wp-admin, wp-content/uploads
+- Apache configuration: ${D}/webserver/apache-conf-available/worpress-htaccess/
 
 ```php
 
 // Upload, run and copy output of shared-hosting-aid/enable-logging.php
+// /enable-logging.php?above
 
 /*
 // Enable email opens

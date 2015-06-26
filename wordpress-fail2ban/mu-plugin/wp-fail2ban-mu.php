@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Triggers fail2ban on 404s and various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 3.4
+Version: 3.5.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -14,7 +14,7 @@ Options: O1_WP_FAIL2BAN_DISABLE_LOGIN
 /**
  * WordPress fail2ban Must-Use version.
  *
- * To disable login completely copy this in your wp-config.php:
+ * To disable login completely copy this into your wp-config.php:
  *
  *     define( 'O1_WP_FAIL2BAN_DISABLE_LOGIN', true );
  *
@@ -34,8 +34,8 @@ if ( ! function_exists( 'add_filter' ) ) {
 class O1_WP_Fail2ban_MU {
 
     private $trigger_count = 6;
-    private $prefix = 'Malicious traffic detected by wpf2b: ';
-    //OLD private $prefix = 'File does not exist: ';
+    private $prefix = 'Malicious traffic detected: ';
+    // OLD private $prefix = 'File does not exist: ';
     private $wp_die_ajax_handler;
     private $wp_die_xmlrpc_handler;
     private $wp_die_handler;
@@ -78,22 +78,22 @@ class O1_WP_Fail2ban_MU {
 
     public function __construct() {
 
-        // exit on local access
-        // don't run on install / upgrade
+        // Exit on local access
+        // Don't run on install / upgrade
         if ( php_sapi_name() === 'cli'
             || $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR']
             || defined( 'WP_INSTALLING' ) && WP_INSTALLING
         )
             return;
 
-        // prevent usage as a normal plugin in wp-content/plugins
+        // Prevent usage as a normal plugin in wp-content/plugins
         if ( did_action( 'muplugins_loaded' ) )
             $this->exit_with_instructions();
 
-        // don't redirect to admin
+        // Don't redirect to admin
         remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
 
-        // logins
+        // Disable login
         if ( defined( 'O1_WP_FAIL2BAN_DISABLE_LOGIN' ) && O1_WP_FAIL2BAN_DISABLE_LOGIN ) {
             add_action( 'login_head', array( $this, 'disable_user_login_js' ) );
             add_filter( 'authenticate', array( $this, 'authentication_disabled' ),  0, 3 );
@@ -101,37 +101,40 @@ class O1_WP_Fail2ban_MU {
             // wp-login + XMLRPC login (any authentication)
             add_action( 'wp_login_failed', array( $this, 'login_failed' ) );
             add_filter( 'authenticate', array( $this, 'before_login' ), 0, 3 );
-            //TODO: no filter for successful XMLRPC login in wp_authenticate()
+            // @TODO No filter for successful XMLRPC login in wp_authenticate()
             add_action( 'wp_login', array( $this, 'after_login' ), 99999, 2 );
         }
         add_action( 'wp_logout', array( $this, 'logout' ) );
         add_action( 'retrieve_password', array( $this, 'lostpass' ) );
 
-        // non-existent URLs
+        // Non-existent URLs
         add_action( 'init', array( $this, 'url_hack' ) );
         add_filter( 'redirect_canonical', array( $this, 'redirect' ), 1, 2 );
 
-        // on robot and human 404
+        // Robot and human 404
         add_action( 'plugins_loaded', array( $this, 'robot_403' ), 0 );
         add_action( 'template_redirect', array( $this, 'wp_404' ) );
 
-        // on non-empty wp_die messages
+        // Non-empty wp_die messages
         add_filter( 'wp_die_ajax_handler', array( $this, 'wp_die_ajax' ), 1 );
         add_filter( 'wp_die_xmlrpc_handler', array( $this, 'wp_die_xmlrpc' ), 1 );
         add_filter( 'wp_die_handler', array( $this, 'wp_die' ), 1 );
 
-        // ban spammers (Contact Form 7 Robot Trap)
+        // Unknown admin-ajax and admin-post action
+        add_action( 'all', array( $this, 'all_action' ), 0 );
+
+        // Ban spammers (Contact Form 7 Robot Trap)
         add_action( 'robottrap_hiddenfield', array( $this, 'wpcf7_spam' ) );
         add_action( 'robottrap_mx', array( $this, 'wpcf7_spam_mx' ) );
     }
 
     private function trigger_hard( $slug, $message, $level = 'error', $prefix = '' ) {
 
-        //FIXME solve fastcgi "multiline-message" stderr logging on nginx
+        // @FIXME Solve fastcgi "multiline-message" stderr logging on nginx
         for ( $i = 0; $i < $this->trigger_count; $i++ )
             $this->trigger( $slug, $message, $level, $prefix );
 
-        // helps learning attack internals
+        // Helps learning attack internals
         error_log( 'HTTP REQUEST: ' . $this->esc_log( $_REQUEST ) );
 
         ob_get_level() && ob_end_clean();
@@ -386,6 +389,18 @@ class O1_WP_Fail2ban_MU {
 
         // call previous handler
         call_user_func( $this->wp_die_handler, $message, $title, $args );
+    }
+
+    public function all_action( $tag ) {
+
+       global $wp_filter;
+
+        if ( ( 'admin_post_' === substr( $tag, 0, 11 )
+            || 'wp_ajax_' === substr( $tag, 0, 8 ) )
+            && ! isset( $wp_filter[ $tag ] )
+        ) {
+            $this->trigger( 'wpf2b_admin_action_unknown', $tag );
+        }
     }
 
     public function wpcf7_spam( $text ) {

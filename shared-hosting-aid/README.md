@@ -89,8 +89,8 @@ require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
 //ini_set( 'error_log', '/path/to/error.log' );
 //ini_set( 'log_errors', 1 );
 
-//define( 'WP_CONTENT_DIR', '<DOCUMENT-ROOT>/site' );
-//define( 'WP_CONTENT_URL', '<DOMAIN>/static' );
+//define( 'WP_CONTENT_DIR', 'DOCUMENT-ROOT/static' );
+//define( 'WP_CONTENT_URL', 'DOMAIN/static' );
 // siteurl .= /site , search-replace: /wp-includes/ -> /site/wp-includes/ , /wp-content/ -> /static/
 
 // Live debugging
@@ -302,47 +302,7 @@ exit( md5( $pong ) );
 - Visual changes: PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`
 - pingdom  https://www.pingdom.com/free/
 - RBL blacklists  https://www.rblmon.com/
-- can-send-email @daily  use smarthost, whitelist on the smarthost, wget can-send-email.php,
-wait 5 minutes, check mailbox for message with this subject:
-
-"Subject: [admin] can-send-email from HOSTNAME"
-
-```php
-<?php
-
-$to      = "viktor@szepe.net";
-
-$headers = "X-Mailer: PHP/" . phpversion();
-$subject = "[admin] can-send-email from {$_SERVER['SERVER_NAME']}";
-// http://www.randomtext.me/download/txt/gibberish/p-5/20-35
-$message = '
-Much bowed when mammoth for lusciously lost a dear whooped some ouch
-insufferably one indefatigably contemplated manifestly therefore much
-mongoose and llama far feeble a cocky.
-
-Robin the whistled scorpion mongoose fleetly past together toucan compulsively
-coarsely inadvertent far hence within when up prissily amicable one and since
-gawked jollily rude.
-
-Met patiently excluding because and far sleazily sufficiently hyena enormously
-that goodness much hawk mastodon walking this this whale ouch shed kookaburra
-sleekly that one the affably.
-
-Alarmingly much this the inoffensive in more much sobbed aboard reined that
-labrador ordered much less jeez gibbered checked a wove selflessly goodness
-this adjusted honey flustered a that turtle unavoidable hello messily.
-
-Cringed apart complete bat knitted impulsively domestic behind jokingly a far
-jeepers folded blubbered wildebeest lighthearted much exultingly yikes yawned
-well winced swept far slowly decorously.
-';
-// @TODO rewrite mu-smtp-uri/smtp-uri.php for phpmailer
-$mail = mail( $to, $subject, $message, $headers );
-if ( true !== $mail )
-    print "mail() returned: " . var_export( $mail, true );
-exit;
-```
-
+- can-send-email @daily  use smarthost, whitelist on the smarthost, see: ${D}/monitoring/cse/
 - see: shared-hosting-aid/remote-log-watch.sh @*/30
 - FIXME munin-plugin: log size in lines
 - FIXME remote-rotate error.log

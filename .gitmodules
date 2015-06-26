@@ -67,12 +67,12 @@
 [submodule "shared-hosting-aid/unified-post-types"]
 	path = shared-hosting-aid/unified-post-types
 	url = https://github.com/fusioneng/Unified-Post-Types.git
-[submodule "disable-emojis"]
-	path = disable-emojis
-	url = https://github.com/wp-plugins/disable-emojis.git
 [submodule "shared-hosting-aid/stream-archive/archivestream-php"]
 	path = shared-hosting-aid/stream-archive/archivestream-php
 	url = https://github.com/barracudanetworks/ArchiveStream-php.git
 [submodule "emojis"]
 	path = emojis
 	url = https://github.com/wp-plugins/classic-smilies.git
+[submodule "svn-updater"]
+	path = svn-updater
+	url = git@github.com:szepeviktor/svn-updater.git
