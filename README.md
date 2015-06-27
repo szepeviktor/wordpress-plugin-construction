@@ -72,6 +72,6 @@ wp-content/updraft/
  *     self::updatePlugin(self::DEFAULT_VIEW);
  */
 for ( $fb = 0; $fb < 6; $fb++ ) {
-    error_log( 'Malicious traffic detected: ' . 'revslider/update_plugin' );
+    error_log( 'Malicious traffic detected: ' . 'revslider_update_plugin' );
 }
 ```
