@@ -171,7 +171,7 @@ class O1_WP_Fail2ban_MU {
          *
          * level, IP address, port, referer
          */
-        $log_destination = ini_get( 'error_log' );
+        $log_destination = function_exists( 'ini_get' ) ? ini_get( 'error_log' ) : '';
         if ( ! empty( $log_destination ) ) {
             if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
                 $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );

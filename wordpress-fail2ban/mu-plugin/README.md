@@ -20,7 +20,7 @@ The code is commented, so you may understand it by looking at the code only.
 - ban sequential 404 requests (from the same IP address)
 - ban on any XMLRPC-based authentication (even on successful ones)
 - ban on invalid AJAX, XMLRPC and other `wp_die()`-handled requests
-- ban on unknown admin-ajax and amind-post actions
+- ban on unknown admin-ajax and admin-post actions
 - stop spammers in cooperation with [Contact Form 7 Robot Trap](https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/contact-form-7-robot-trap) plugin
 - log WordPress logins and logouts
 

@@ -6,7 +6,7 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.14
+Version: 1.15.0
 Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE,
 Options: O1_BAD_REQUEST_CDN_HEADERS, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8,
 Options: O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE,
@@ -118,6 +118,17 @@ class O1_Bad_Request {
 
     private function check() {
 
+        // Declare apache_request_headers()
+        if ( ! function_exists( 'apache_request_headers' ) ) {
+            function apache_request_headers() {
+               $headers = '';
+               foreach ( $_SERVER as $name => $value )
+                   if ( 'HTTP_' === substr( $name, 0, 5 ) )
+                       $headers[ substr( $name, 5 ) ] = $value;
+               return $headers;
+            }
+        }
+
         // Exit on local access
         // Don't run on install / upgrade
         if ( php_sapi_name() === 'cli'
@@ -134,8 +145,10 @@ class O1_Bad_Request {
         if ( ! empty( $this->cdn_headers ) && '/robots.txt' !== $request_path ) {
             $commons = array_intersect( $this->cdn_headers, array_keys( $_SERVER ) );
             if ( $commons === $this->cdn_headers ) {
+                // Log HTTP request headers
+                error_log( 'HTTP headers: ' . $this->esc_log( apache_request_headers() ) );
                 // Workaround to prevent edge server banning
-                //@TODO block these by another method
+                // @TODO block these by another method
                 $this->trigger_count = 1;
                 $this->prefix = 'Attack through CDN: ';
                 return 'bad_request_cdn_attack';
@@ -173,15 +186,6 @@ class O1_Bad_Request {
         }
 
         // Maximum request size
-        if ( ! function_exists( 'apache_request_headers' ) ) {
-            function apache_request_headers() {
-               $headers = '';
-               foreach ( $_SERVER as $name => $value )
-                   if ( 'HTTP_' === substr( $name, 0, 5 ) )
-                       $headers[substr( $name, 5 )] = $value;
-               return $headers;
-            }
-        }
         $request_size = strlen( http_build_query( apache_request_headers() ) )
             + strlen( $_SERVER['REQUEST_URI'] )
             + strlen( http_build_query( $_POST ) );
@@ -343,7 +347,7 @@ class O1_Bad_Request {
          *
          * level, IP address, port, referer
          */
-        $log_destination = ini_get( 'error_log' );
+        $log_destination = function_exists( 'ini_get' ) ? ini_get( 'error_log' ) : '';
         if ( ! empty( $log_destination ) ) {
             if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
                 $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );

@@ -50,10 +50,16 @@ E.g. to allow Connection header other than `keep-alive` use this:
 define( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE', true );
 ```
 
-To blocks non-static requests from Amazon CloudFront use this:
+To blocks non-static requests from Amazon CloudFront copy this to your wp-config.php:
 
 ```php
-define( 'O1_BAD_REQUEST_CDN_HEADERS', 'HTTP_X_AMZ_CF_ID:HTTP_VIA:HTTP_X_FORWARDED_FOR' );
+define( 'O1_BAD_REQUEST_CDN_HEADERS', 'HTTP_X_FORWARDED_FOR:HTTP_X_AMZ_CF_ID:HTTP_VIA' );
+```
+
+TODO: Identify CloudFlare in PHP application by HTTP headers
+
+```
+HTTP_CF_CONNECTING_IP:HTTP_X_FORWARDED_FOR:HTTP_CF_RAY
 ```
 
 - (boolean) `O1_BAD_REQUEST_POST_LOGGING` enable logging of all POST requests, even normal ones

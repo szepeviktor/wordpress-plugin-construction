@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban option table scan
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Find <script> and <iframe> tags in wp_options and alert.
-Version: 0.1.0
+Version: 0.1.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -11,12 +11,12 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 */
 
 add_action( 'plugins_loaded', 'wpf2b_add_schedule' );
-add_action( 'wpf2b/option_scan', 'wpf2b_option_scan' );
+add_action( 'wpf2b/daily', 'wpf2b_option_scan' );
 
 function wpf2b_add_schedule() {
 
-    if ( false === wp_get_schedule( 'wpf2b/option_scan' ) ) {
-        wp_schedule_event( time(), 'daily', 'wpf2b/option_scan' );
+    if ( false === wp_get_schedule( 'wpf2b/daily' ) ) {
+        wp_schedule_event( time(), 'daily', 'wpf2b/daily' );
     }
 }
 
