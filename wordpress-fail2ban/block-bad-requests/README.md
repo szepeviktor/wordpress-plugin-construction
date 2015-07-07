@@ -69,8 +69,17 @@ HTTP_CF_CONNECTING_IP:HTTP_X_FORWARDED_FOR:HTTP_CF_RAY
 - (boolean) `O1_BAD_REQUEST_ALLOW_REG` allow WP registration, disabled referer and test cookie checks
 - (boolean) `O1_BAD_REQUEST_ALLOW_IE8` allow login with IE8 too (IE8 is not a `Mozilla/5.0` browser)
 - (boolean) `O1_BAD_REQUEST_ALLOW_OLD_PROXIES` allow `HTTP/1.0` login requests
+- (boolean) `O1_BAD_REQUEST_ALLOW_CONNECTION_EMPTY` allow requests without HTTP Connection header
 - (boolean) `O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE` allow other HTTP Connection headers than `keep-alive`
 - (boolean) `O1_BAD_REQUEST_ALLOW_TWO_CAPS` allow user names like `JohnDoe`
+
+### SPDY note
+
+All connections with SPDY are persistent connections.
+
+```php
+define( 'O1_BAD_REQUEST_ALLOW_CONNECTION_EMPTY', true );
+```
 
 ### Other notes
 

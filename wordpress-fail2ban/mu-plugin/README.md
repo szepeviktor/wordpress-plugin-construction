@@ -61,24 +61,11 @@ if ( '/wp-content/plugins/newsletter/statistics/open.php' === $newsletter_path
 
 ### Set up the fail2ban filter
 
-For fail2ban 0.8.x
+See: https://github.com/szepeviktor/debian-server-tools/tree/master/security/fail2ban-conf
 
-```
-failregex = [[]client <HOST>[]] (Malicious traffic detected by wpf2b|script not found or unable to stat): /\S*(, referer: \S+)?\s*$
-            [[]client <HOST>[]] script '.*' not found or unable to stat/\S*(, referer: \S+)?\s*$
-```
-
-For fail2ban 0.9.x
-
-```
-failregex = ^%(_apache_error_client)s ((AH001(28|30): )?File does not exist|(AH01264: )?script not found or unable to stat): /\S*(, referer: \S+)?\s*$
-            ^%(_apache_error_client)s script '.*' not found or unable to stat(, referer: \S+)?\s*$
-
-```
-
-Please examine the latest filter `failregexp`-s in the
+Please examine the latest filter `failregexp`-s in
 [fail2ban GitHub repository](https://github.com/fail2ban/fail2ban/blob/master/config/filter.d).
 It worth to combine every webserver related regexp-s in one custom filter.
-You can customize the fail2ban trigger string in the `$prefix` property of the `O1_WP_Fail2ban_MU` class.
+You can customize the fail2ban trigger string in the `$prefix` property of `O1_WP_Fail2ban_MU` class.
 
 **All the best wishes to you!**

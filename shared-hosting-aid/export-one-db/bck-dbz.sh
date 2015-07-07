@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Backup remote database dumps.
+# Backup remote databases.
 #
 # VERSION       :1.4.0
 # DATE          :2015-06-12

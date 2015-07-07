@@ -4,10 +4,14 @@
 #
 
 echo '# Download phpMyAdmin'
-~/src/debian-server-tools/package/phpmyadmin-get-sf.sh || exit 1
+# For MySQL 5.0
+#/usr/local/src/debian-server-tools/package/phpmyadmin-get-http-old.sh || exit 1
+/usr/local/src/debian-server-tools/package/phpmyadmin-get-http.sh || exit 1
 
 echo '# Copy included files'
 pushd phpMyAdmin-*-english || exit 2
+# For MySQL 5.0
+#cat ../exp-o-pma-includes-4.0.x.txt|xargs -I {} cp -a --parents {} ../ || exit 3
 cat ../exp-o-pma-includes.txt|xargs -I {} cp -a --parents {} ../ || exit 3
 popd || exit 4
 rm -rf phpMyAdmin-*-english phpMyAdmin-*-english.tar.xz || exit 5

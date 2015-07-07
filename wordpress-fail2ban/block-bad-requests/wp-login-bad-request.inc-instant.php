@@ -6,7 +6,7 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
-Version: 1.16.0
+Version: 2.0.0
 Options: O1_BAD_REQUEST_COUNT, O1_BAD_REQUEST_MAX_LOGIN_REQUEST_SIZE,
 Options: O1_BAD_REQUEST_CDN_HEADERS, O1_BAD_REQUEST_ALLOW_REG, O1_BAD_REQUEST_ALLOW_IE8,
 Options: O1_BAD_REQUEST_ALLOW_OLD_PROXIES, O1_BAD_REQUEST_ALLOW_CONNECTION_EMPTY,
@@ -27,6 +27,7 @@ Options: O1_BAD_REQUEST_POST_LOGGING
 class O1_Bad_Request {
 
     private $prefix = 'Malicious traffic detected: ';
+    private $prefix_instant = 'Break-in attempt detected: ';
     private $trigger_count = 6;
     private $max_login_request_size = 2000;
     private $names2ban = array(
@@ -316,20 +317,13 @@ class O1_Bad_Request {
     private function trigger() {
 
         // Trigger fail2ban
-        //@FIXME nginx will log all lines into one error message
-        for ( $i = 0; $i < $this->trigger_count; $i++ ) {
+        if ( 1 === $this->trigger_count ) {
             $this->enhanced_error_log( $this->prefix . $this->result );
-        }
+        } else {
+            $this->enhanced_error_log( $this->prefix_instant . $this->result );
+        {
 
-        // Learning attack internals
-        /* Too verbose!
-        $headers = array();
-        foreach ( $_SERVER as $header => $value ) {
-            if ( 'HTTP_' === substr( $header, 0, 5 ) )
-                $headers[$header] = addslashes( $value );
-        }
-        error_log( 'HTTP HEADERS: ' . $this->esc_log( $headers ) );
-        */
+        // Helps learning attack internals
         error_log( 'HTTP REQUEST: ' . $this->esc_log( $_REQUEST ) );
 
         ob_get_level() && ob_end_clean();
@@ -344,7 +338,7 @@ class O1_Bad_Request {
         //$log_enabled = ( '1' === ini_get( 'log_errors' ) );
         //if ( ! $log_enabled || empty( $log_destination ) ) {
 
-        // Add entry point, true when `auto_prepend_file` is empty
+        // Add entry point. Correct only when `auto_prepend_file` is empty.
         $error_msg = (string)$message
             . ' <' . reset( get_included_files() );
 

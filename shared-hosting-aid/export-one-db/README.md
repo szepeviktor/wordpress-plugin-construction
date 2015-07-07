@@ -1,4 +1,6 @@
-### Use utility
+### Use the configuration utility!
+
+MySQL **minumum** version: `5.5`.
 
 `exp-o-util.sh`
 
@@ -8,25 +10,31 @@ See: package/phpmyadmin-get-sf.sh
 
 ### Preparations
 
-pma server export simulation: prepend to export.php `echo '<pre>'; var_export($_POST); var_export($_COOKIE); exit;`
+For pma server export simulation prepend this to export.php
+`echo '<pre>'; var_export($_POST); var_export($_COOKIE); exit;`
 
-Results are in `export-one-db.php`.
+Replace cookie authentication class with "config" authentication class.
 
-Included files: append code to export.php `file_put_contents('./exp-o-pma-includes.txt', implode("\n", get_included_files()));`
+See results in `export-one-db.php`.
 
-Results are in `exp-o-pma-includes.txt`.
+To get the list of included files append this to export.php
+`file_put_contents('./exp-o-pma-includes.txt', implode("\n", get_included_files()));`
 
-### Copy included files
+See results in `exp-o-pma-includes.txt`.
 
-`cat ../exp-o-pma-includes.txt|xargs -I {} cp -a --parents {} ../`
+### Copy included files from pma
+
+`cat ../exp-o-pma-includes.txt | xargs -I {} cp -a --parents {} ../`
 
 ### Generate 2048 bit RSA encryption key
 
-Private key: `openssl genpkey -algorithm rsa -pkeyopt rsa_keygen_bits:2048 -out exp-o-private.key`
+Private key:
+`openssl genpkey -algorithm rsa -pkeyopt rsa_keygen_bits:2048 -out exp-o-private.key`
 
-Public key: `openssl rsa -in exp-o-private.key -pubout -out exp-o-public.pem`
+Public key:
+`openssl rsa -in exp-o-private.key -pubout -out exp-o-public.pem`
 
-### Setup configuration file
+### Set up configuration file
 
 - Initialization Vector `pwgen 16 1`
 - Public key location
@@ -39,8 +47,8 @@ Change IP address in `.htaccess`.
 
 ### What files to upload
 
-- .htaccess / (set nginx config)
-- pma files (from exp-o-pma-includes.txt)
+- .htaccess / @TODO Set nginx config.
+- pma files from exp-o-pma-includes.txt
 - config.inc.php
 - exp-o-config.php
 - exp-o-public.pem
@@ -49,7 +57,8 @@ Change IP address in `.htaccess`.
 ## How to backup
 
 - Save Initialization Vector
-- Save HTTP headers `wget -q -S --content-disposition --user-agent="<UA>" --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php" 2> http-headers.log`
+- Save HTTP headers
+  `wget -q -S --content-disposition --user-agent="<UA>" --header="X-Secret-Key: <SECRET-KEY>" "https://<DOMAIN-AND-PATH>/export-one-db.php" 2> http-headers.log`
 - Keep private key file **apart** and secure
 
 ## Decryption

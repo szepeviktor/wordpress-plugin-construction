@@ -35,7 +35,7 @@ if ( empty( $argv[1] ) || empty( $argv[2] ) || ! file_exists( $argv[3] ) ) {
     exit_message( 2, 'Invalid parameters.' . PHP_EOL ) ;
 }
 
-# base64 encoded password from the "X-Password" header
+# Base64 encoded password from the "X-Password" header
 $password64 = $argv[1];
 # Initialization Vector
 $iv = $argv[2];
@@ -52,7 +52,7 @@ if ( false === $decryption ) {
     exit_message( 4, 'Decryption failed.' . PHP_EOL );
 }
 
-# removed "-nopad"
+# Removed "-nopad"
 printf( "openssl enc -aes-128-cbc -d -nosalt -K %s -iv %s -in " . PHP_EOL,
     strtohex ( $decrypted ),
     strtohex( $iv )

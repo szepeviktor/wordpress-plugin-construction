@@ -1,7 +1,7 @@
 <?php
 /*
 Snippet Name: WordPress Live Debugger
-Version: 0.3
+Version: 0.3.0
 Description: Enhance information available for debugging.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Source: https://gist.github.com/jrfnl/5925642
@@ -18,7 +18,8 @@ Source: https://gist.github.com/jrfnl/5925642
  * Enable debugging mode based on IP address and a cookie.
  *
  * 1. !wget -qO- http://www.szepe.net/ip/
- * 2. set WP_DEBUG cookie with path of WordPress root (in Javascript: `document.cookie="WP_DEBUG=1;path=/"`)
+ * 2. Set WP_DEBUG cookie with path of WordPress root (in Javascript: `document.cookie="WP_DEBUG=1;path=/"`)
+ * 3. Copy this code block to your wp-config.php
  */
 /*
 $debugger_ip_addresses = array( '<ADD-YOUR-IP-ADDRESS-HERE>' );
@@ -81,7 +82,7 @@ if ( empty( $error_log ) || 'error_log' === $error_log ) {
 /**
  * Turn on error logging and show errors on-screen if in debugging mode
  */
-@error_reporting( E_ALL );
+error_reporting( E_ALL );
 /**
  * Forgiving error reporting for old plugins and themes on modern PHP versions.
  */
