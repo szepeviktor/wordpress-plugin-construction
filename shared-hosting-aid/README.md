@@ -141,7 +141,7 @@ define( 'ABSPATH', dirname( __FILE__ ) . '/site' );
 ### Root files
 
 - .htaccess
-- *htaccess*
+- `*htaccess*`
 - index.html
 - index.php
 - robots.txt
@@ -158,10 +158,11 @@ https://github.com/h5bp/mobile-boilerplate/blob/master/index.html
 - apple-touch-icon*.png
 - browserconfig.xml
 
-http://realfavicongenerator.net/
+http://realfavicongenerator.net/ 
 http://realfavicongenerator.net/favicon_checker
 
-Don't index files for robots `.htaccess`.
+Files for robots should not be indexed. 
+`.htaccess`
 
 ```apache
 # Don't index files for robots
@@ -172,15 +173,15 @@ Don't index files for robots `.htaccess`.
 
 ### PHP security check
 
+https://github.com/sektioneins/pcc/raw/master/phpconfigcheck.php
+
 Enable access in `.htaccess`.
 
 ```apache
 SetEnv PCC_ALLOW_IP 1.2.3.4
 ```
 
-https://github.com/sektioneins/pcc/raw/master/phpconfigcheck.php
-
-### WordPress security check
+### WordPress security checks
 
 - Gauntlet Security plugin
 
@@ -253,6 +254,8 @@ plungins.forEach(function(p){console.log(decodeURIComponent(p.search.split('&')[
 
 Use reliable smart host with STARTTLS for email sending.
 
+Consider using [Mandrill](https://mandrill.com/signup/) for low volume email traffic.
+
 https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-uri/smtp-uri.php
 
 ### Monitoring
@@ -266,6 +269,7 @@ https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-
 ....... 4. routine: pseudo script for copy&pasting
 
 DNS checks: NS, A, MX, TXT(spf)
+RBL check (also shared-hosting servers)
 
 ```
 # <SITE-NAME> - Static file check
@@ -297,15 +301,15 @@ $pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
 exit( md5( $pong ) );
 ```
 
-- wget -qO- <FRONT-PAGE>|grep -q '<h1>Title string'                  @FIXME one request only
-- wget -qO- <FRONT-PAGE>|grep -qEi 'mysql|php|error|notice|warning|Account.*Suspend' @FIXME one request only
+- `wget -qO- <FRONT-PAGE>|grep -q '<h1>Title string'`                @FIXME one request only
+- `wget -qO- <FRONT-PAGE>|grep -qEi 'mysql|php|error|notice|warning|Account.*Suspend'` @FIXME one request only
 - Visual changes: PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`
-- pingdom  https://www.pingdom.com/free/
-- RBL blacklists  https://www.rblmon.com/
-- can-send-email @daily  use smarthost, whitelist on the smarthost, see: ${D}/monitoring/cse/
+- [pingdom](https://www.pingdom.com/free/)
+- [RBL blacklists monitoring](https://www.rblmon.com/)
+- can-send-email @daily, see: ${D}/monitoring/cse/
 - see: shared-hosting-aid/remote-log-watch.sh @*/30
-- FIXME munin-plugin: log size in lines
-- FIXME remote-rotate error.log
+- TODO munin-plugin: log size in lines
+- TODO remote-rotate error.log
 - opcache/apc/memcache control panels @weekly
 - domain name expiry @monthly
 - Safebrowsing, Sucuri, Virustotal check @daily

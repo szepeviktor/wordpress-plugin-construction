@@ -3,7 +3,7 @@
 Plugin Name: WordPress fail2ban MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Triggers fail2ban on various attacks. <strong>This is a Must Use plugin, must be copied to <code>wp-content/mu-plugins</code>.</strong>
-Version: 4.0.0
+Version: 4.0.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -171,7 +171,7 @@ class O1_WP_Fail2ban_MU {
          */
         $log_destination = function_exists( 'ini_get' ) ? ini_get( 'error_log' ) : '';
         if ( ! empty( $log_destination ) ) {
-            if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+            if ( array_key_exists( 'HTTP_REFERER', $_SERVER ) ) {
                 $referer = $this->esc_log( $_SERVER['HTTP_REFERER'] );
             } else {
                 $referer = false;
@@ -191,7 +191,7 @@ class O1_WP_Fail2ban_MU {
         if ( ! is_404() )
             return;
 
-        $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $ua = array_key_exists( 'HTTP_USER_AGENT', $_SERVER ) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $request_uri = $_SERVER['REQUEST_URI'];
 
         // don't show the 404 page for robots
@@ -298,7 +298,7 @@ class O1_WP_Fail2ban_MU {
      */
     public function robot_403() {
 
-        $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $ua = array_key_exists( 'HTTP_USER_AGENT', $_SERVER ) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $request_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
         $admin_path = parse_url( admin_url(), PHP_URL_PATH );
         $wp_dirs = 'wp-admin|wp-includes|wp-content|' . basename( WP_CONTENT_DIR );
@@ -395,7 +395,8 @@ class O1_WP_Fail2ban_MU {
 
         if ( ( 'admin_post_' === substr( $tag, 0, 11 )
             || 'wp_ajax_' === substr( $tag, 0, 8 ) )
-            && ! isset( $wp_filter[ $tag ] )
+            && is_array( $wp_filter )
+            && array_key_exists( $tag, $wp_filter )
         ) {
             $this->trigger( 'wpf2b_admin_action_unknown', $tag );
         }
@@ -440,7 +441,7 @@ class O1_WP_Fail2ban_MU {
 
     private function exit_with_instructions() {
 
-        $doc_root = isset( $_SERVER['DOCUMENT_ROOT'] ) ? $_SERVER['DOCUMENT_ROOT'] : ABSPATH;
+        $doc_root = array_key_exists( 'DOCUMENT_ROOT', $_SERVER ) ? $_SERVER['DOCUMENT_ROOT'] : ABSPATH;
 
         $iframe_msg = sprintf( '<p style="font:14px \'Open Sans\',sans-serif">
             <strong style="color:#DD3D36">ERROR:</strong> This is <em>not</em> a normal plugin,

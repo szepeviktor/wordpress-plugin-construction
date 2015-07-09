@@ -2,8 +2,8 @@
 #
 # Run WordPress cron via the webserver.
 #
-# VERSION       :0.3.0
-# DATE          :2015-06-18
+# VERSION       :0.3.1
+# DATE          :2015-07-08
 # AUTHOR        :Viktor Szépe <viktor@szepe.net>
 # LICENSE       :The MIT License (MIT)
 # URL           :https://github.com/szepeviktor/debian-server-tools
@@ -16,7 +16,7 @@
 #
 # Create cron job for an existing user with email delivery
 #
-#     1,31 *	* * *	someuser	/usr/local/bin/wp-cron-http.sh http://SITE-URL/SUBDIR/wp-cron.php
+#     01,31 *	* * *	someuser	/usr/local/bin/wp-cron-http.sh http://SITE-URL/SUBDIR/wp-cron.php
 
 WPCRON_URL="$1"
 
@@ -61,7 +61,7 @@ wget -q -S -O- --max-redirect=0 --tries=1 --timeout=5 --user-agent="$HTTP_USER_A
 
 # Die on error or missing headers and report non-200 response
 if head -n 1 "$HEADERS_FIFO" | grep "^  HTTP/" | grep -v "^  HTTP/1\.1 200 OK$" >&2; then
-    Die 2 "Non-200 HTTP status code during ${WPCRON_URL}$(echo; timeout 5 cat "$HEADERS_FIFO")"
+    Die 2 "Non-200 HTTP status code during ${WPCRON_URL}"
 fi
 
 wait $!

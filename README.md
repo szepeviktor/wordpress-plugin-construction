@@ -1,8 +1,8 @@
-wordpress-plugin-construction
-=============================
+# Wordpress plugin construction
 
 A playground where WordPress plugin development goes on.
-Please select a folder in the list above to see your plugin's development.
+Please select a folder in the list above to see the plugin's development.
+
 
 ### How to add images to a WordPress plugin?
 

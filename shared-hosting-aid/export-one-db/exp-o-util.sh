@@ -6,7 +6,7 @@
 echo '# Download phpMyAdmin'
 # For MySQL 5.0
 #/usr/local/src/debian-server-tools/package/phpmyadmin-get-http-old.sh || exit 1
-/usr/local/src/debian-server-tools/package/phpmyadmin-get-http.sh || exit 1
+/usr/local/src/debian-server-tools/package/phpmyadmin-get.sh || exit 1
 
 echo '# Copy included files'
 pushd phpMyAdmin-*-english || exit 2

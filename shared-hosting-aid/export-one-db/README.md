@@ -6,7 +6,7 @@ MySQL **minumum** version: `5.5`.
 
 ### Download phpMyAdmin
 
-See: package/phpmyadmin-get-sf.sh
+See: package/phpmyadmin-get.sh
 
 ### Preparations
 
