@@ -73,3 +73,6 @@
 [submodule "svn-updater"]
 	path = svn-updater
 	url = git@github.com:szepeviktor/svn-updater.git
+[submodule "wordpress-fail2ban"]
+	path = wordpress-fail2ban
+	url = git@github.com:szepeviktor/wordpress-fail2ban.git
