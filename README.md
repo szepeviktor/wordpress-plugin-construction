@@ -33,6 +33,10 @@ Please select a folder in the list above to see the plugin's development.
     });
     ```
 
+### Manage plugins with composer
+
+http://wpackagist.org/
+
 ### WordPress .gitignore
 
 ```

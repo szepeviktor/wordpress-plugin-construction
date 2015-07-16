@@ -46,9 +46,6 @@
 [submodule "option-inspector"]
 	path = option-inspector
 	url = git@github.com:szepeviktor/option-inspector.git
-[submodule "sucuri-cleanup"]
-	path = sucuri-cleanup
-	url = git@github.com:szepeviktor/sucuri-cleanup.git
 [submodule "plugin-installer-speedup"]
 	path = plugin-installer-speedup
 	url = git@github.com:szepeviktor/plugin-installer-speedup.git
@@ -76,3 +73,6 @@
 [submodule "wordpress-fail2ban"]
 	path = wordpress-fail2ban
 	url = git@github.com:szepeviktor/wordpress-fail2ban.git
+[submodule "sucuri-custom"]
+	path = sucuri-custom
+	url = git@github.com:szepeviktor/custom-sucuri.git

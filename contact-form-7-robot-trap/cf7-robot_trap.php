@@ -3,7 +3,7 @@
 Plugin Name: Contact Form 7 Robot Trap
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Stops spammer robots, add <code>[robottrap email-verify class:email-verify tabindex:2]</code> and hide the field with CSS.
-Version: 0.3
+Version: 0.4.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -12,26 +12,29 @@ Author URI: http://www.online1.hu/webdesign/
 /**
  * Hidden input field for stopping robots.
  *
- * Add [robottrap email-verify class:email-verify tabindex:2] after the email address field,
- * and hide it with CSS <code>div.wpcf7 .wpcf7-robottrap{ display:none }</code>.
+ *  - Add <code>[robottrap email-verify class:email-verify tabindex:2]</code> after email address field
+ *  - Hide it with CSS <code>div.wpcf7 .wpcf7-robottrap { display:none; }</code>
+ *
  * Fires robottrap_hiddenfield and robottrap_mx hooks to do something with the spammer.
- * WARNING: If the nameserver is down domain validation will generate false positives.
- * Disable domain validation by copying it to your wp-config.php.
- * <code>
- * define( 'WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE', true );
- * </code>
+ *
+ * WARNING
+ *
+ * If the nameserver fails domain validation will generate false positives.
+ * Disable domain validation by copying this to your wp-config.php:
+ *
+ *     define( 'WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE', true );
  *
  * @package wpcf7-robottrap
  */
-
 add_action( 'wpcf7_init', 'wpcf7_add_shortcode_robottrap' );
-add_filter( 'wpcf7_validate_robottrap', 'wpcf7_robottrap_validation_filter', 1, 2 );
+add_filter( 'wpcf7_validate_robottrap', 'wpcf7_robottrap_validation_filter', 10, 2 );
 if ( ! ( defined( 'WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE' ) && WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE ) ) {
-    add_filter( 'wpcf7_validate_email', 'wpcf7_robottrap_domain_validation_filter', 1, 2 );
-    add_filter( 'wpcf7_validate_email*', 'wpcf7_robottrap_domain_validation_filter', 1, 2 );
+    add_filter( 'wpcf7_validate_email', 'wpcf7_robottrap_domain_validation_filter', 20, 2 );
+    add_filter( 'wpcf7_validate_email*', 'wpcf7_robottrap_domain_validation_filter', 20, 2 );
 }
 
 function wpcf7_add_shortcode_robottrap() {
+
     wpcf7_add_shortcode(
         array( 'robottrap' ),
         'wpcf7_robottrap_shortcode_handler',
@@ -40,6 +43,7 @@ function wpcf7_add_shortcode_robottrap() {
 }
 
 function wpcf7_robottrap_shortcode_handler( $tag ) {
+
     $tag = new WPCF7_Shortcode( $tag );
 
     // default field name
@@ -107,6 +111,7 @@ function wpcf7_robottrap_shortcode_handler( $tag ) {
  * @return object The modified WPCF7 object.
  */
 function wpcf7_robottrap_validation_filter( $result, $tag ) {
+
     $tag = new WPCF7_Shortcode( $tag );
 
     $name = $tag->name;
@@ -141,6 +146,7 @@ function wpcf7_robottrap_validation_filter( $result, $tag ) {
  * @return object The modified WPCF7 object.
  */
 function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
+
     $tag = new WPCF7_Shortcode( $tag );
 
     $name = $tag->name;
@@ -149,15 +155,19 @@ function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
         ? trim( wp_unslash( sanitize_text_field( (string) $_POST[$name] ) ) )
         : '';
 
+    if ( ! $result->is_valid( $name ) || '' === $value ) {
+        return $result;
+    }
+
     $domain = sanitize_text_field( substr( strrchr( $value, '@' ), 1 ));
 
     if ( empty( $domain ) || ! checkdnsrr( $domain, 'MX' ) ) {
         /**
          * Counteraction for empty or MX-less domain part of email addresses.
          *
-         * Usually this is spammer robot.
+         * Usually this is a spammer robot.
          *
-         * @param type $domain Email domain.
+         * @param type $domain  Email domain.
          */
         do_action( 'robottrap_mx', $domain );
 

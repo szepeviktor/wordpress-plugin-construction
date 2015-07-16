@@ -3,7 +3,7 @@
 Plugin Name: Nofollow Robot Trap MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
-Version: 0.2
+Version: 0.3.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -12,7 +12,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 
 if ( ! function_exists( 'add_filter' ) ) {
     // for fail2ban
-    error_log( 'Malicious traffic detected: nofollow_robot_trap_direct_access '
+    error_log( 'Break-in attempt detected: nofollow_robot_trap_direct_access '
         . addslashes( $_SERVER['REQUEST_URI'] ) );
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
@@ -50,13 +50,12 @@ if ( ! function_exists( 'add_filter' ) ) {
  *  - the immediate block URL
  */
 
-class NofollowTrap {
+class O1_NofollowTrap {
 
     private $version = '0.1';
     private $activation;
 
-    private $prefix = 'File does not exist: ';
-    private $trigger_count = 6;
+    private $prefix = 'Break-in attempt detected: ';
 
     private $block_url;
     private $allow_url;
@@ -88,7 +87,7 @@ class NofollowTrap {
         // setup - also on admin
         add_action( 'init', array( $this, 'register_urls' ) );
         // add lines to robots.txt
-        add_filter('robots_txt', array( $this, 'robotstxt_disallow' ), 2, 1);
+        add_filter( 'robots_txt', array( $this, 'robotstxt_disallow' ), 2, 1 );
 
         // frontend only
         if ( is_admin() )
@@ -103,10 +102,9 @@ class NofollowTrap {
     }
 
     private function trigger() {
-        // trigger fail2ban
-        for ( $i = 0; $i < $this->trigger_count; $i++ ) {
-            error_log( $this->prefix  . 'nofollow_robot_trap' );
-        }
+
+        // Trigger fail2ban
+        error_log( $this->prefix  . 'nofollow_robot_trap' );
 
         ob_get_level() && ob_end_clean();
         header( 'Status: 403 Forbidden' );
@@ -129,9 +127,9 @@ class NofollowTrap {
 
         add_rewrite_tag( '%nfrt%', '(block|allow|nofollow)');
 
-        // flush rules on first run
+        // Flush rules on first run
         if ( ! $this->activation || $this->activation !== $this->version )
-            // flush at shutdown to be safe
+            // Flush at shutdown to be safe
             add_action( 'shutdown', array( $this, 'activate' ) );
 
     }
@@ -163,7 +161,8 @@ class NofollowTrap {
     public function generate_pages() {
 
         $nfrt = get_query_var( 'nfrt' );
-        // for speed
+
+        // For performance
         if ( empty ( $nfrt ) )
             return;
 
@@ -191,6 +190,7 @@ class NofollowTrap {
     }
 
     private function generate_allow_page() {
+
         status_header( 200 );
         header( 'Content-Type: text/html; charset=utf-8' );
         // prevent indexing
@@ -222,6 +222,7 @@ class NofollowTrap {
     }
 
     public function generate_nofollow_page() {
+
         status_header( 200 );
         header( 'Content-Type: text/html; charset=utf-8' );
         // prevent indexing
@@ -253,11 +254,12 @@ class NofollowTrap {
     }
 
     private function str_endswith( $haystack, $needle ) {
+
         return strpos( $haystack, $needle ) + strlen( $needle ) === strlen( $haystack );
     }
 }
 
-new NofollowTrap();
+new O1_NofollowTrap();
 
 /*TODO
 - add readme.md
