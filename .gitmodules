@@ -76,3 +76,6 @@
 [submodule "sucuri-custom"]
 	path = sucuri-custom
 	url = git@github.com:szepeviktor/custom-sucuri.git
+[submodule "resource-versioning"]
+	path = resource-versioning
+	url = git@github.com:szepeviktor/resource-versioning.git

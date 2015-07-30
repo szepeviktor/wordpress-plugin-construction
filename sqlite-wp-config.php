@@ -2,11 +2,9 @@
 /*
     wp-config file for SQLite Integration
 
-    Convert MySQL: https://gist.github.com/esperlu/943776
+    Convert MySQL - mysql2sqlite.sh: https://gist.github.com/esperlu/943776
     Administer: https://bitbucket.org/phpliteadmin/public
-*/
 
-/*
     Installation
 
     wget -q -O- https://wordpress.org/latest.tar.gz | tar -xz
@@ -40,11 +38,10 @@ $table_prefix = 'sql3_';
 */
 
 /*
-
     Webserver
 
     apt-get install -y php5-cli
-
+    php -S
 */
 
 

@@ -3,14 +3,14 @@
 Plugin Name: SMTP URI MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Set SMTP options from the SMTP_URI named constant.
-Version: 0.3
+Version: 0.3.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-smtp-uri
 */
 
-// @TODO set DKIM header
+// @TODO Add DKIM header
 
 /**
  * Set PHPMailer SMTP options from the SMTP_URI named constant.
@@ -38,9 +38,7 @@ function o1_smtp_options( $mail ) {
 
     $uri = parse_url( SMTP_URI );
 
-    /**
-     * Check protocol.
-     */
+    // Protocol and encryption
     switch ( $uri['scheme'] ) {
         case 'smtp':
             $mail->SMTPSecure = '';
@@ -59,19 +57,18 @@ function o1_smtp_options( $mail ) {
             return;
     }
 
-    /**
-     * Check host name.
-     */
+    // Host name
     if ( empty( $uri['host'] ) ) {
         return;
-    } else {
-        $mail->Host = urldecode( $uri['host'] );
+    }
+    $mail->Host = urldecode( $uri['host'] );
+
+    // Port
+    if ( is_int( $uri['port'] ) ) {
+        $mail->Port = $uri['port'];
     }
 
-    if ( is_int( $uri['host'] ) ) {
-        $mail->Port = urldecode( $uri['port'] );
-    }
-
+    // Authentication
     if ( ! empty( $uri['user'] ) && ! empty( $uri['pass'] ) ) {
         $mail->SMTPAuth = true;
         $mail->Username = urldecode( $uri['user'] );
