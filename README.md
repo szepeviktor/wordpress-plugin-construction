@@ -18,7 +18,7 @@ Please select a folder in the list above to see the plugin's development.
 - Remove emoji Javascript: classic-smilies
 - Security: wordpress-fail2ban/, sucuri-scanner, custom-sucuri
 - Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, obfuscate-email
-- 
+
 
 ### Content plugin categories
 
@@ -33,9 +33,10 @@ Please select a folder in the list above to see the plugin's development.
     + Admin Columns `codepress-admin-columns` e.g. post ID column
 1. integration
     + Cloudinary
-1. UI cleaning
+1. UI tuning
     + mu-strip-dashboard/
     + wp-solarized
+    + mark-posts
     + https://github.com/fusioneng/Unified-Post-Types
     ```php
     add_filter( 'unified_post_types', function ( $post_types ) {

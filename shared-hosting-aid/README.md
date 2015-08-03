@@ -260,7 +260,7 @@ https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-
 
 ### Monitoring
 
-....... üzemeltetés TODO
+....... üzemeltetés @TODO
 ....... -----------
 .......
 ....... 1. ügyfeleknek szolg leírása en/hu
@@ -268,15 +268,41 @@ https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-
 ....... 3. setup with snippets and links
 ....... 4. routine: pseudo script for copy&pasting
 
-DNS checks: NS, A, MX, TXT(spf)
-RBL check (also shared-hosting servers)
+```
+# Static file check
+01 *	* * *	web	/usr/bin/wget -qO- SITE-URL/wp-includes/wlwmanifest.xml|grep -qF '<serviceName>WordPress</serviceName>'
 
+# PHP version and MySQL version check
+01 *	* * *	web	/usr/bin/wget -qO- SITE-URL/ping.php|grep -qFx 'MD5-SUM'
+
+# Front-page fixed string
+# @FIXME Only one request for the front-page.
+02 *	* * *	web	/usr/local/bin/firefox.sh -qO- FRONT-PAGE|grep -q '<h1>Title string'
+
+# Front-page errors
+02 *	* * *	web	/usr/local/bin/firefox.sh -qO- FRONT-PAGE|grep -qEi 'PHP \S+: |MySQL|error|notice|warning|Account.*Suspend'
+
+# Front-page -exceptions = MD5
 ```
-# <SITE-NAME> - Static file check
-1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/license.txt|grep -qF "GNU GENERAL PUBLIC LICENSE"
-# <SITE-NAME> - PHP version and MySQL version check
-1 *  * * *  nobody  /usr/bin/wget -qO- <SITE.URL>/ping.php|grep -qFx "<MD5-SUM>"
-```
+
+- Visual changes: PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`
+- [pingdom](https://www.pingdom.com/free/)
+- @TODO rbl-watch.sh (also shared-hosting servers)
+- @TODO detect JavaScript errors, Piwik, http://jserrlog.appspot.com/ , https://github.com/mperdeck/jsnlog.js , https://developers.google.com/analytics/devguides/collection/analyticsjs/exceptions
+https://github.com/errbit/errbit + https://github.com/airbrake/airbrake-js
+- [RBL blacklists monitoring](https://www.rblmon.com/)
+- dns-watch, see: ${D}/monitoring/dns-watch.sh
+- can-send-email @daily, see: ${D}/monitoring/cse/
+- see: shared-hosting-aid/remote-log-watch.sh @*/30
+- TODO munin-plugin: log size in lines
+- TODO remote-rotate error.log
+- opcache/apc/memcache control panels @weekly
+- domain name expiry @monthly
+- Safebrowsing, Sucuri, Virustotal check @daily
+- SEO Panel @weekly
+- Analytics @weekly
+- Google WMT @weekly
+- PageSpeed, webpagetest.org @weekly
 
 ```php
 <?php
@@ -301,19 +327,8 @@ $pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
 exit( md5( $pong ) );
 ```
 
-- `wget -qO- <FRONT-PAGE>|grep -q '<h1>Title string'`                @FIXME one request only
-- `wget -qO- <FRONT-PAGE>|grep -qEi 'mysql|php|error|notice|warning|Account.*Suspend'` @FIXME one request only
-- Visual changes: PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`
-- [pingdom](https://www.pingdom.com/free/)
-- [RBL blacklists monitoring](https://www.rblmon.com/)
-- can-send-email @daily, see: ${D}/monitoring/cse/
-- see: shared-hosting-aid/remote-log-watch.sh @*/30
-- TODO munin-plugin: log size in lines
-- TODO remote-rotate error.log
-- opcache/apc/memcache control panels @weekly
-- domain name expiry @monthly
-- Safebrowsing, Sucuri, Virustotal check @daily
-- SEO Panel @weekly
-- Analytics @weekly
-- Google WMT @weekly
-- PageSpeed, webpagetest.org @weekly
+### WordPress Cleanup
+
+- old/all transients
+- spam/trash comments
+- old/all cache items

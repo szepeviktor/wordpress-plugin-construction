@@ -3,7 +3,7 @@
 Plugin Name: SMTP URI MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Set SMTP options from the SMTP_URI named constant.
-Version: 0.3.1
+Version: 0.4.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -13,21 +13,22 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 // @TODO Add DKIM header
 
 /**
- * Set PHPMailer SMTP options from the SMTP_URI named constant.
+ * Read PHPMailer SMTP options from SMTP_URI named constant.
  *
  * Protocols: smtp://  smtps://  smtpstarttls://  smtptls://
  *
  *     define( 'SMTP_URI', 'smtps://[<USERNAME>:<PASSWORD>@]<HOST>:<PORT>' );
  *
- * Use URL-encoded strings!
+ * WARNING! Use URL-encoded strings.
  *
- * Mandrill example (%40 stands for the @ sign)
+ * Mandrill example (use %40 in place of the @ sign)
  *
  *     define( 'SMTP_URI', 'smtptls://REGISTERED%40EMAIL:API-KEY@smtp.mandrillapp.com:587' );
  *
  * To set From name and From address use WP Mail From II plugin.
  *
  * @see: https://wordpress.org/plugins/wp-mailfrom-ii/
+ *
  * @param: object $mail PHPMailer instance.
  * @return void
  */
@@ -77,16 +78,27 @@ function o1_smtp_options( $mail ) {
 
     $mail->isSMTP();
 
-    /**
-     * Turn on SMTP debugging.
-     */
+    // Turn on SMTP debugging
     //$mail->SMTPDebug = 4;
     //$mail->Debugoutput = 'error_log';
 
-    /**
-     * Bcc someone.
-     */
-    //$mail->addBCC( '<BCC-ADDRESS', '<BCC-NAME>' );
+    // Bcc admin email
+    //$mail->addBCC( get_bloginfo( 'admin_email' ) );
+
+    // Send mail from here
+    try {
+        $mail->Send();
+    } catch ( phpmailerException $error ) {
+        error_log( sprintf( "SMTP error #%s: %s",
+            (string)$error->getCode(),
+            $error->getMessage()
+        ) );
+    }
+
+    // Prevent second sending in WordPress code
+    $mail->clearAddresses();
+    $mail->clearCCs();
+    $mail->clearBCCs();
 }
 
-add_action( 'phpmailer_init', 'o1_smtp_options' );
+add_action( 'phpmailer_init', 'o1_smtp_options', 4294967295 );
