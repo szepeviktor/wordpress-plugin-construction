@@ -79,3 +79,6 @@
 [submodule "resource-versioning"]
 	path = resource-versioning
 	url = git@github.com:szepeviktor/resource-versioning.git
+[submodule "smtp-uri"]
+	path = smtp-uri
+	url = git@github.com:szepeviktor/smtp-uri.git

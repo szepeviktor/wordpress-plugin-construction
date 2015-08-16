@@ -7,18 +7,36 @@ SSLOFF="set ftp:ssl-allow off;"
 lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
 ```
 
+### Plugins for shared hosting problems
+
+- See: "Recommended plugins" in ../README.md
+- Error log setup: shared-hosting-aid/enable-logging.php
+- Error log watch: `error-log-monitor`
+- Outgoing HTTP traffic monitoring: `snitch`
+- Email traffic checking: ${D}/monitoring/cse/
+- Cron job: shared-hosting-aid/wp-cron-http.sh
+- WordPress database cleanup: `wp-clean-up`
+- Integrity: `exploit-scanner`
+- Security checklist: `gauntlet-security`
+
+
+
 ### Move/clone site with lftp
+
+Turn off Maxer SiteProtection!
 
 ```bash
 #!/usr/bin/lftp -f
 #open ftp://domain.tld
 #cd website/html/
+lcd tmp/
 mkdir sr; cd sr
 !wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
 !wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
+!ls -ltr|tail
 put index.php; put srdb.class.php
 #
-# mrm *; cd ..; rmdir sr
+# rm index.php srdb.class.php; cd ..; rmdir sr/
 ```
 
 #### Search & replace items
@@ -42,17 +60,19 @@ https://github.com/szepeviktor/hosting-check
 - content-compression
 - content-cache
 
-https://github.com/h5bp/html5-boilerplate/blob/master/.htaccess
+https://github.com/h5bp/html5-boilerplate/blob/master/dist/.htaccess
 
 https://redbot.org/
 
 #### PHP settings
 
-see: shared-hosting-aid/php-vars.php
+See: shared-hosting-aid/php-vars.php
+
+`wget -nv https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/shared-hosting-aid/php-vars.php`
 
 #### Default email from address
 
-see: shared-hosting-aid/php-mail-sender.php
+See: shared-hosting-aid/php-mail-sender.php
 
 - Set sender or forward as necessary.
 - Set usual addresses: info@, postmaster@, abuse@
@@ -332,3 +352,4 @@ exit( md5( $pong ) );
 - old/all transients
 - spam/trash comments
 - old/all cache items
+- optimize db tables

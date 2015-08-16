@@ -29,7 +29,7 @@ if ( isset( $_SERVER['REMOTE_ADDR'] )
     ) {
     define( 'DISABLE_WP_CRON', true );
     define( 'WP_DEBUG', true );
-    //define( 'SCRIPT_DEBUG', true );
+    //define( 'SCRIPT_DEBUG', true ); define( 'CONCATENATE_SCRIPTS', false );
     //define( 'SAVEQUERIES', true );
     include_once( dirname(__FILE__) . '/wp-config-live-debug.php' );
 } else {

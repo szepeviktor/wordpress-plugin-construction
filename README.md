@@ -3,6 +3,14 @@
 A playground where WordPress plugin development goes on.
 Please select a folder in the list above to see the plugin's development.
 
+### An article about code quality
+
+http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
+
+### VIP Plugins
+
+https://vip.wordpress.com/plugins/
+
 ### How to add images to a WordPress plugin?
 
 - assets/banner-772x250.png
@@ -12,31 +20,35 @@ Please select a folder in the list above to see the plugin's development.
 
 ### Recommended plugins
 
-- Protect plugins: mu-protect-plugins/
-- Email "From:" header: wp-mailfrom-ii
-- SMTP settings: mu-smtp-uri/
 - Remove emoji Javascript: classic-smilies
-- Security: wordpress-fail2ban/, sucuri-scanner, custom-sucuri
-- Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, obfuscate-email
-
+- Email "From:" header: wp-mailfrom-ii
+- SMTP settings: smtp-uri/
+- Security: wordpress-fail2ban/, `sucuri-scanner`, `custom-sucuri`
+- Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, `obfuscate-email`
+- Redirects: `safe-redirect-manager`
+- Audit: `simple-history`
+- User roles: `user-role-editor`
+- Comments: `disable-comments`, mu-disable-comments/
+- Post connector: `post-connector`, `posts-to-posts`, `related-posts-for-wp`
 
 ### Content plugin categories
 
-1. fix shortcode output
-    + /mu-shortcode-unautop/
-1. bulk edit aid
+1. Forcing
+    + mu-protect-plugins/
+    + `force-featured-image`
+    + mu-deny-giant-image-uploads/
+    + `prevent-concurrent-logins`
+    + `user-session-control`
+1. Fixes
+    + mu-shortcode-unautop/
+    + `custom-post-type-permalinks`
+1. UI tuning / bulk edit aid
+    + Editor: `tinymce-advanced`
     + Lenghten taxonomy selector boxes, see: content-extras/nav-menu-meta-box-length.php https://core.trac.wordpress.org/ticket/32237
     + Keep category tree in post editor Category Checklist Tree `category-checklist-tree`
-1. feature
-    + Advanced Image Styles `advanced-image-styles`
-    + media URL column, see: content-extras/media-url-column.php
-    + Admin Columns `codepress-admin-columns` e.g. post ID column
-1. integration
-    + Cloudinary
-1. UI tuning
     + mu-strip-dashboard/
-    + wp-solarized
-    + mark-posts
+    + `wp-solarized`
+    + `mark-posts`
     + https://github.com/fusioneng/Unified-Post-Types
     ```php
     add_filter( 'unified_post_types', function ( $post_types ) {
@@ -45,6 +57,26 @@ Please select a folder in the list above to see the plugin's development.
         return $post_types;
     });
     ```
+    + `simple-page-ordering`
+    + `post-types-order`
+    + Media URL column, see: content-extras/media-url-column.php
+    + `codepress-admin-columns`
+    + `featured-image-column`
+    + `advanced-excerpt`
+    + Advanced Image Styles `advanced-image-styles`
+    + `unattach`
+1. Content
+    + `custom-content-shortcode`
+    + `column-shortcodes`
+    + `tablepress`
+    + Map: `wp-geo`
+    + `ankyler`
+1. Imaging
+    + Cloudinary
+    + `my-eyes-are-up-here`
+1. Develop, debug
+    + `query-monitor`
+
 
 ### Manage plugins with composer
 

@@ -1,22 +1,22 @@
 <?php
 /*
-Snippet Name: Enable PHP error logging.
-Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
+Snippet Name: Enable PHP error logging
+Version: 0.3.1
 Description: Sets up PHP error logging in a protected directory.
-Version: 0.3
+Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 */
 
 /**
- * USAGE
+ * Usage
  *
  * 1. Upload this file to the document root.
- * 3. Load it in your browser.
+ * 2. Load it in your browser.
  *     Add `?above` to place error log above your public folder.
  *     Add `?above=<DIR-NAME>` to name the directory other than "log".
- * 4. Copy the code to your application's config file.
+ * 3. Copy the code to your PHP application's config file.
  */
 
 ?>

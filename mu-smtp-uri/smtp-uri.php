@@ -3,14 +3,12 @@
 Plugin Name: SMTP URI MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Set SMTP options from the SMTP_URI named constant.
-Version: 0.4.0
+Version: 0.4.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-smtp-uri
 */
-
-// @TODO Add DKIM header
 
 /**
  * Read PHPMailer SMTP options from SMTP_URI named constant.
@@ -25,6 +23,10 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
  *
  *     define( 'SMTP_URI', 'smtptls://REGISTERED%40EMAIL:API-KEY@smtp.mandrillapp.com:587' );
  *
+ * Use local SMTP server without authentication (instead of using sendmail)
+ *
+ *     define( 'SMTP_URI', 'smtp://localhost' );
+ *
  * To set From name and From address use WP Mail From II plugin.
  *
  * @see: https://wordpress.org/plugins/wp-mailfrom-ii/
@@ -33,6 +35,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
  * @return void
  */
 function o1_smtp_options( $mail ) {
+
     if ( ! ( defined( 'SMTP_URI' ) && SMTP_URI ) ) {
         return;
     }
@@ -84,21 +87,6 @@ function o1_smtp_options( $mail ) {
 
     // Bcc admin email
     //$mail->addBCC( get_bloginfo( 'admin_email' ) );
-
-    // Send mail from here
-    try {
-        $mail->Send();
-    } catch ( phpmailerException $error ) {
-        error_log( sprintf( "SMTP error #%s: %s",
-            (string)$error->getCode(),
-            $error->getMessage()
-        ) );
-    }
-
-    // Prevent second sending in WordPress code
-    $mail->clearAddresses();
-    $mail->clearCCs();
-    $mail->clearBCCs();
 }
 
 add_action( 'phpmailer_init', 'o1_smtp_options', 4294967295 );

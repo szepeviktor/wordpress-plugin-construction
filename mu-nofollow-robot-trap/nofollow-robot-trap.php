@@ -3,7 +3,7 @@
 Plugin Name: Nofollow Robot Trap MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
-Version: 0.3.0
+Version: 0.4.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Author URI: http://www.online1.hu/webdesign/
@@ -11,12 +11,13 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    // for fail2ban
-    error_log( 'Break-in attempt detected: nofollow_robot_trap_direct_access '
-        . addslashes( $_SERVER['REQUEST_URI'] ) );
+    error_log( 'Break-in attempt detected: wpf2b_mu_direct_access '
+        . addslashes( @$_SERVER['REQUEST_URI'] )
+    );
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.1 403 Forbidden' );
+    header( 'HTTP/1.1 403 Forbidden', true, 403 );
+    header( 'Connection: Close' );
     exit();
 }
 
@@ -34,26 +35,27 @@ if ( ! function_exists( 'add_filter' ) ) {
  * 4. Flush rules on deletion of this mu-plugin (wp rewrite flush).
  *
  * Bait pages and links
- *  - invisible link on the front page: allow page
+ *  - invisible link on the front page:
+ *      - allow page
  *  - allow page links to:
  *      - nofollow page
  *      - rel=nofollow block URL
  *      - protocol relative URL
- *  - nofollow (meta tag) page links to: block URL
- *  - robots.txt:
+ *  - nofollow (meta tag) page links to:
+ *      - block URL
+ *  - robots.txt contains:
  *      - Disallow: block URL
  *      - Allow: allow page
  *      - Allow: nofollow page
- *  - sitemap item:
+ *  - sitemap contains:
  *      - allow page
  *      - nofollow page
  *  - the immediate block URL
  */
 
-class O1_NofollowTrap {
+class O1_Nofollow_Robot_Trap {
 
-    private $version = '0.1';
-    private $activation;
+    private $version = '0.4.0';
 
     private $prefix = 'Break-in attempt detected: ';
 
@@ -70,11 +72,13 @@ class O1_NofollowTrap {
         // Must-Use plugins don't have activation
         //register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
-        // generate URLs
-        /*$sprintf('%u', crc32( get_bloginfo( 'url' ) ) . '1' ); 1 for block_url, 2 for allow_url ...
+        // Generate URL-s
+        /*
+        $sprintf('%u', crc32( get_bloginfo( 'url' ) ) . '1' ); 1 for block_url, 2 for allow_url ...
         defined();
         // options-general.php fieldset
-        get_option();*/
+        get_option();
+        */
 
         $this->block_url = 'disallow/';
         $this->allow_url = 'allow/';
@@ -84,53 +88,62 @@ class O1_NofollowTrap {
         $this->hide_class = 'nfrt';
         $this->anchor_text = '&nbsp;';
 
-        // setup - also on admin
+        // Setup - also on admin
         add_action( 'init', array( $this, 'register_urls' ) );
-        // add lines to robots.txt
+        // Add lines to robots.txt
         add_filter( 'robots_txt', array( $this, 'robotstxt_disallow' ), 2, 1 );
 
-        // frontend only
-        if ( is_admin() )
+        // Frontend only
+        if ( is_admin() ) {
             return;
+        }
 
-        // add the hidden link to the front page
+        // Add the hidden link to the front page
         add_action('wp_footer', array( $this, 'add_allow_url' ), 100 );
-        // generate output or block
+        // Generate output or block
         add_action( 'template_redirect', array( $this, 'generate_pages' ) );
-        // detect protocol relative URL
+        // Detect protocol relative URL
         add_filter( 'redirect_canonical', array( $this, 'protocol_relative' ), 1, 2 );
     }
 
+    /**
+     * Trigger fail2ban.
+     */
     private function trigger() {
 
-        // Trigger fail2ban
         error_log( $this->prefix  . 'nofollow_robot_trap' );
 
         ob_get_level() && ob_end_clean();
         header( 'Status: 403 Forbidden' );
-        header( 'HTTP/1.0 403 Forbidden' );
+        header( 'HTTP/1.1 403 Forbidden' );
+        header( 'Connection: Close' );
+        header( 'Cache-Control: max-age=0, private, no-store, no-cache, must-revalidate' );
+        header( 'X-Robots-Tag: noindex, nofollow' );
+        header( 'Content-Type: text/html' );
+        header( 'Content-Length: 0' );
         exit();
     }
 
     public function register_urls() {
 
-        $this->activation = get_site_option( 'nfrt_activate' );
+        $activation = get_site_option( 'nfrt_activate' );
 
-        // permit missing trailing slash
+        // Permit missing trailing slash
         add_rewrite_rule( '^' . $this->block_url . '?$', 'index.php?nfrt=block', 'top' );
         add_rewrite_rule( '^' . $this->allow_url . '?$', 'index.php?nfrt=allow', 'top' );
         add_rewrite_rule( '^' . $this->nofollow_url . '?$', 'index.php?nfrt=nofollow', 'top' );
 
-        // Rewrite Api cannot handle this
-        // see: function protocol_relative() below
+        // Rewrite API cannot handle this
+        // See: protocol_relative() below
         //add_rewrite_rule( '^' . preg_quote( $this->protocol_relative_url ) . '$', 'index.php?nfrt=relprot', 'top' );
 
         add_rewrite_tag( '%nfrt%', '(block|allow|nofollow)');
 
         // Flush rules on first run
-        if ( ! $this->activation || $this->activation !== $this->version )
+        if ( ! $activation || $activation !== $this->version ) {
             // Flush at shutdown to be safe
             add_action( 'shutdown', array( $this, 'activate' ) );
+        }
 
     }
 
@@ -150,11 +163,10 @@ class O1_NofollowTrap {
         if ( ! is_front_page() )
             return;
 
-        printf ( '<div class="%s"><a href="%s">%s</a></div>%s',
+        printf ( "<div class='%s'><a href='%s'>%s</a></div>%s\n",
             $this->hide_class,
             home_url( $this->allow_url ),
-            $this->anchor_text,
-            PHP_EOL
+            $this->anchor_text
         );
     }
 
@@ -183,8 +195,9 @@ class O1_NofollowTrap {
 
     public function protocol_relative( $redirect_url, $requested_url ) {
 
-        if ( $this->str_endswith( $requested_url, $this->protocol_relative_url ) )
+        if ( $this->str_endswith( $requested_url, $this->protocol_relative_url ) ) {
             $this->trigger();
+        }
 
         return $redirect_url;
     }
@@ -193,8 +206,9 @@ class O1_NofollowTrap {
 
         status_header( 200 );
         header( 'Content-Type: text/html; charset=utf-8' );
-        // prevent indexing
-        header( 'X-Robots-Tag: noindex,follow', true );
+        // Prevent indexing
+        header( 'X-Robots-Tag: noindex, follow', true );
+        header( 'Cache-Control: max-age=0, private, no-store, no-cache, must-revalidate' );
 
         printf( '<!DOCTYPE html>
 <html>
@@ -225,8 +239,9 @@ class O1_NofollowTrap {
 
         status_header( 200 );
         header( 'Content-Type: text/html; charset=utf-8' );
-        // prevent indexing
-        header( 'X-Robots-Tag: noindex,nofollow', true );
+        // Prevent indexing
+        header( 'X-Robots-Tag: noindex, nofollow', true );
+        header( 'Cache-Control: max-age=0, private, no-store, no-cache, must-revalidate' );
 
         printf( '<!DOCTYPE html>
 <html>
@@ -255,13 +270,14 @@ class O1_NofollowTrap {
 
     private function str_endswith( $haystack, $needle ) {
 
-        return strpos( $haystack, $needle ) + strlen( $needle ) === strlen( $haystack );
+        return ( strpos( $haystack, $needle ) + strlen( $needle ) === strlen( $haystack ) );
     }
 }
 
-new O1_NofollowTrap();
+new O1_Nofollow_Robot_Trap();
 
-/*TODO
+/* @TODO
+
 - add readme.md
 - trap type: fail2ban, .htaccess, nginx.conf, CloudFlare API, call itsec
 - set cookie for robots -> measure next request frequency -> log
