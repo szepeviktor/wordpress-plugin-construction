@@ -19,8 +19,6 @@ lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
 - Integrity: `exploit-scanner`
 - Security checklist: `gauntlet-security`
 
-
-
 ### Move/clone site with lftp
 
 Turn off Maxer SiteProtection!
@@ -50,7 +48,6 @@ put index.php; put srdb.class.php
 
 Manual replace: constants in wp-config.
 
-
 ### Webserver settings
 
 https://github.com/szepeviktor/hosting-check
@@ -74,18 +71,22 @@ See: shared-hosting-aid/php-vars.php
 
 See: shared-hosting-aid/php-mail-sender.php
 
+`wget -nv https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/shared-hosting-aid/php-mail-sender.php`
+
 - Set sender or forward as necessary.
 - Set usual addresses: info@, postmaster@, abuse@
 - Set up your account: webmaster@DOMAIN
 
 ### Security plugin
 
-- Sucuri plugin + sucuri-cleanup
-- (iThemes Security plugin)
+- sucuri-scanner plugin + sucuri-cleanup
+- gauntlet-security plugin
 
 ### Plugins to protect
 
-https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
+`wget -nv https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php`
+
+
 
 ### wp-config.php
 
@@ -96,67 +97,9 @@ https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-prote
 
 #### Block Bad Requests
 
-https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/wordpress-fail2ban/block-bad-requests/wp-login-bad-request.inc.php
+`wget -nv https://github.com/szepeviktor/wordpress-fail2ban/raw/master/block-bad-requests/wp-login-bad-request-instant.inc.php`
 
-`wp-config.php`
 
-```php
-define( 'O1_BAD_REQUEST_COUNT', 1 );
-//define( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE', true );
-require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
-
-// see: shared-hosting-aid/enable-logging.php
-//ini_set( 'error_log', '/path/to/error.log' );
-//ini_set( 'log_errors', 1 );
-
-//define( 'WP_CONTENT_DIR', 'DOCUMENT-ROOT/static' );
-//define( 'WP_CONTENT_URL', 'DOMAIN/static' );
-// siteurl .= /site , search-replace: /wp-includes/ -> /site/wp-includes/ , /wp-content/ -> /static/
-
-// Live debugging
-// see: /wp-config-live-debugger/
-define( 'WP_DEBUG', false );
-
-define( 'WP_MEMORY_LIMIT', '96M' );
-//define( 'WP_MAX_MEMORY_LIMIT', '384M' );
-define( 'WP_POST_REVISIONS', 10 );
-define( 'WP_USE_EXT_MYSQL', false );
-define( 'DISALLOW_FILE_EDIT', true );
-
-//define( 'WP_CACHE', true);
-
-// web cron, see: shared-hosting-aid/wp-cron-http.sh
-// CLI cron, see: debian-server-tools:/webserver/wp-cron-cli.sh
-// simple CLI cron:  /usr/bin/php <ABSPATH>/wp-cron.php  # stdout, stderr to cron email
-define( 'DISABLE_WP_CRON', true );
-define( 'AUTOMATIC_UPDATER_DISABLED', true );
-define( 'ENABLE_FORCE_CHECK_UPDATE', true );
-
-//define( 'ITSEC_FILE_CHECK_CRON', true );
-//define( 'ITSEC_BACKUP_CRON', true );
-
-/*
-// Upload and session directory.
-ini_set( 'upload_tmp_dir', '<HOME>/tmp' );
-ini_set( 'session.save_path', '<HOME>/session' );
-
-// Test - Comment out after first use!
-mkdir( '<HOME>/tmp', 0700 );
-mkdir( '<HOME>/session', 0700 );
-*/
-
-/*
-// For different FTP/PHP UID.
-define( 'FS_METHOD', 'direct' );
-define( 'FS_CHMOD_DIR', (0775 & ~ umask()) );
-define( 'FS_CHMOD_FILE', (0664 & ~ umask()) );
-*/
-
-/*
-// Change ABSPATH if wp-config is above WordPress
-define( 'ABSPATH', dirname( __FILE__ ) . '/site' );
-*/
-```
 
 ### Root files
 
@@ -191,9 +134,11 @@ Files for robots should not be indexed.
 </FilesMatch>
 ```
 
+
+
 ### PHP security check
 
-https://github.com/sektioneins/pcc/raw/master/phpconfigcheck.php
+`wget -nv https://github.com/sektioneins/pcc/raw/master/phpconfigcheck.php`
 
 Enable access in `.htaccess`.
 
@@ -201,9 +146,7 @@ Enable access in `.htaccess`.
 SetEnv PCC_ALLOW_IP 1.2.3.4
 ```
 
-### WordPress security checks
 
-- Gauntlet Security plugin
 
 ### File change notification
 
@@ -229,6 +172,8 @@ Tripwire access protection `.htaccess`.
 </IfModule>
 ```
 
+
+
 ### Block access to a directory
 
 Deny all traffic `.htaccess`.
@@ -246,23 +191,29 @@ Deny all traffic `.htaccess`.
 </IfModule>
 ```
 
+
+
 ### MySQL
 
 - ALTER table engine
-- //TODO
+- @TODO
+
+
 
 ### List WordPress plugin names and paths
 
-Go to the Plugins page.
+Go to the Plugins page and execute:
 
 ```js
-// plugin_names
+// List plugin names
 jQuery('#wpbody .plugins .plugin-title strong').each(function (){console.log(jQuery(this).text());});
 
-// plugin_slugs from "Deactivate" links
+// List plugin slugs (from "Deactivate" links)
 var plungins=[].slice.call(document.querySelectorAll('#wpbody .plugins .plugin-title .deactivate a'));
 plungins.forEach(function(p){console.log(decodeURIComponent(p.search.split('&')[1].split('=')[1]));});
 ```
+
+
 
 ### MU plugins
 
@@ -270,13 +221,17 @@ plungins.forEach(function(p){console.log(decodeURIComponent(p.search.split('&')[
 - https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
 - https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-disable-updates/disable-updates.php
 
+
+
 ### SMTP
 
 Use reliable smart host with STARTTLS for email sending.
 
 Consider using [Mandrill](https://mandrill.com/signup/) for low volume email traffic.
 
-https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-uri/smtp-uri.php
+`wget -nv https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-uri/smtp-uri.php`
+
+
 
 ### Monitoring
 
@@ -325,29 +280,34 @@ https://github.com/errbit/errbit + https://github.com/airbrake/airbrake-js
 - PageSpeed, webpagetest.org @weekly
 
 ```php
-<?php
+<?php // ping.php
 $management_server_ip = 'MANAGEMENT_SERVER_IP';
 
 if ( $management_server_ip !== @$_SERVER['REMOTE_ADDR'] ) {
     error_log( 'Malicious traffic detected: ping_extraneous_access '
-        . addslashes( @$_SERVER['REQUEST_URI'] )
+        . addslashes( $_SERVER['REQUEST_URI'] )
     );
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.0 403 Forbidden' );
     exit();
 }
-$wpload_path = dirname( __FILE__ ) . '/wp-load.php';
+
 define( 'WP_USE_THEMES', false );
+$wpload_path = dirname( __FILE__ ) . '/wp-load.php';
 require_once( $wpload_path );
+
 global $wpdb;
 $mysql_version_query = "SHOW VARIABLES LIKE 'version'";
 $pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
+
 //exit( $pong );
 exit( md5( $pong ) );
 ```
 
-### WordPress Cleanup
+
+
+### WordPress cleanup
 
 - old/all transients
 - spam/trash comments
