@@ -1,15 +1,6 @@
-### FTP/SFTP access
+### Plugins and tools for shared hosting problems
 
-```bash
-SSLOFF="set ftp:ssl-allow off;"
-
-# lftp -e "$SSLOFF cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
-lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
-```
-
-### Plugins for shared hosting problems
-
-- See: "Recommended plugins" in ../README.md
+- See: "Recommended plugins" in [../README.md](../README.md)
 - Error log setup: shared-hosting-aid/enable-logging.php
 - Error log watch: `error-log-monitor`
 - Outgoing HTTP traffic monitoring: `snitch`
@@ -19,34 +10,50 @@ lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
 - Integrity: `exploit-scanner`
 - Security checklist: `gauntlet-security`
 
+
+
+### FTP/SFTP access with lftp
+
+```bash
+SSLOFF="set ftp:ssl-allow off"
+
+# lftp -e "${SSLOFF}; cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
+lftp -e "cd" -u 'FTP-USER,FTP_PASS' FTP_HOST.
+```
+
+
+
 ### Move/clone site with lftp
 
 Turn off Maxer SiteProtection!
 
 ```bash
 #!/usr/bin/lftp -f
-#open ftp://domain.tld
+
+#open ftp://DOMAIN.TLD
 #cd website/html/
 lcd tmp/
 mkdir sr; cd sr
 !wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/index.php
 !wget -nv -N https://github.com/interconnectit/Search-Replace-DB/raw/master/srdb.class.php
-!ls -ltr|tail
+!ls -ltr | tail
 put index.php; put srdb.class.php
-#
-# rm index.php srdb.class.php; cd ..; rmdir sr/
+
+# rm index.php srdb.class.php; cd ../; rmdir sr/
 ```
 
-#### Search & replace items
+#### Search & replace items with wp-cli
 
 `wp search-replace --precise --recurse-objects --all-tables-with-prefix`
 
-1. http://domain.tld or https (no trailing slash)
-1. /var/www/path/to/site (no trailing slash)
-1. email@address.es
-1. domain.tld
+1. http://DOMAIN.TLD or https (no trailing slash)
+1. /home/PATH/TO/SITE (no trailing slash)
+1. EMAIL@ADDRESS.ES (all addresses)
+1. DOMAIN.TLD (now without http)
 
-Manual replace: constants in wp-config.
+Manual replace constants in `wp-config.php`.
+
+
 
 ### Webserver settings
 
@@ -75,12 +82,16 @@ See: shared-hosting-aid/php-mail-sender.php
 
 - Set sender or forward as necessary.
 - Set usual addresses: info@, postmaster@, abuse@
-- Set up your account: webmaster@DOMAIN
+- Set up your account: webmaster@DOMAIN.TLD
+
+
 
 ### Security plugin
 
 - sucuri-scanner plugin + sucuri-cleanup
 - gauntlet-security plugin
+
+
 
 ### Plugins to protect
 

@@ -20,9 +20,9 @@ https://vip.wordpress.com/plugins/
 
 ### Recommended plugins
 
-- Remove emoji Javascript: classic-smilies
-- Email "From:" header: wp-mailfrom-ii
-- SMTP settings: smtp-uri/
+- Remove emoji Javascript: `classic-smilies`
+- Email "From:" header: `wp-mailfrom-ii`
+- SMTP settings: mu-smtp-uri/, `smtp-uri`
 - Security: wordpress-fail2ban/, `sucuri-scanner`, `custom-sucuri`
 - Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, `obfuscate-email`
 - Redirects: `safe-redirect-manager`

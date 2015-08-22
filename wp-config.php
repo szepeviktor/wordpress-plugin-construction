@@ -69,8 +69,8 @@ define( 'ENABLE_FORCE_CHECK_UPDATE', true );
 //define( 'ITSEC_FILE_CHECK_CRON', true );
 //define( 'ITSEC_BACKUP_CRON', true );
 
-
 /** DB */
+
 define('DB_NAME', 'database_name_here');
 define('DB_USER', 'username_here');
 define('DB_PASSWORD', 'password_here');
@@ -79,9 +79,9 @@ define('DB_CHARSET', 'utf8');
 define('DB_COLLATE', '');
 $table_prefix  = 'wp_';
 
-/* Salts
-    wget -qO- https://api.wordpress.org/secret-key/1.1/salt/
-*/
+/** Salts */
+
+//      wget -qO- https://api.wordpress.org/secret-key/1.1/salt/
 
 
 /* That's all, stop editing! Happy blogging. */

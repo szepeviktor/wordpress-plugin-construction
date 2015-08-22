@@ -82,3 +82,6 @@
 [submodule "smtp-uri"]
 	path = smtp-uri
 	url = git@github.com:szepeviktor/smtp-uri.git
+[submodule "machine-language"]
+	path = machine-language
+	url = git@github.com:szepeviktor/machine-language.git
