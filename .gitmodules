@@ -85,3 +85,6 @@
 [submodule "machine-language"]
 	path = machine-language
 	url = git@github.com:szepeviktor/machine-language.git
+[submodule "wp-mailfrom-ii"]
+	path = wp-mailfrom-ii
+	url = https://github.com/benhuson/wp-mailfrom.git

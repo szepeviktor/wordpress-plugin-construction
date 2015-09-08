@@ -69,7 +69,7 @@ https://vip.wordpress.com/plugins/
     + `custom-content-shortcode`
     + `column-shortcodes`
     + `tablepress`
-    + Map: `wp-geo`
+    + Map `wp-geo`
     + `ankyler`
 1. Imaging
     + Cloudinary

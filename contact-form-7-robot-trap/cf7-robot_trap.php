@@ -3,16 +3,16 @@
 Plugin Name: Contact Form 7 Robot Trap
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Stops spammer robots, add <code>[robottrap email-verify class:email-verify tabindex:2]</code> and hide the field with CSS.
-Version: 0.4.0
+Version: 0.4.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/contact-form-7-robot-trap
 */
 
 /**
- * Hidden input field for stopping robots.
+ * Hidden input field for stopping robots
  *
- *  - Add <code>[robottrap email-verify class:email-verify tabindex:2]</code> after email address field
+ *  - Add <code>[robottrap email-verify class:email-verify tabindex:2]</code> before email address field
  *  - Hide it with CSS <code>div.wpcf7 .wpcf7-robottrap { display:none; }</code>
  *
  * Fires robottrap_hiddenfield and robottrap_mx hooks to do something with the spammer.
@@ -119,15 +119,17 @@ function wpcf7_robottrap_validation_filter( $result, $tag ) {
     /**
      * Should be submitted empty, no $name sanitization.
      */
-    if ( ! empty( $_POST[$name] ) ) {
+    if ( ! empty( $_POST[ $name ] ) ) {
+        $value = sanitize_text_field( $_POST[ $name ] );
+
         /**
-         * Counteraction for filled-out hidden field.
+         * Counteraction for filled-out hidden field
          *
-         * Only a robot is able to see CSS-hidden fields.
+         * Only a robot is able to see fields hidden by CSS.
          *
-         * @param type $domain Sanitized value of the field.
+         * @param string $value  Sanitized value of field.
          */
-        do_action( 'robottrap_hiddenfield', sanitize_text_field( $_POST[$name] ) );
+        do_action( 'robottrap_hiddenfield', $value );
 
         $result->invalidate( $tag, wpcf7_get_message( 'spam' ) );
     }
@@ -151,8 +153,8 @@ function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
 
     $name = $tag->name;
 
-    $value = isset( $_POST[$name] )
-        ? trim( wp_unslash( sanitize_text_field( (string) $_POST[$name] ) ) )
+    $value = isset( $_POST[ $name ] )
+        ? trim( wp_unslash( sanitize_text_field( (string)$_POST[ $name ] ) ) )
         : '';
 
     if ( ! $result->is_valid( $name ) || '' === $value ) {
@@ -163,11 +165,11 @@ function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
 
     if ( empty( $domain ) || ! checkdnsrr( $domain, 'MX' ) ) {
         /**
-         * Counteraction for empty or MX-less domain part of email addresses.
+         * Counteraction for empty or MX-less domain part of email addresses
          *
          * Usually this is a spammer robot.
          *
-         * @param type $domain  Email domain.
+         * @param string $domain  Email domain.
          */
         do_action( 'robottrap_mx', $domain );
 

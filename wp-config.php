@@ -1,5 +1,7 @@
 <?php
 
+// https://codex.wordpress.org/Editing_wp-config.php
+
 /** Shared hosting */
 
 // User home - absolute path without trailing slash
@@ -29,7 +31,7 @@ ini_set( 'log_errors', 1 );
 //define( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE', true );
 //define( 'O1_BAD_REQUEST_CDN_HEADERS', 'HTTP_X_AMZ_CF_ID:HTTP_VIA:HTTP_X_FORWARDED_FOR' );
 //require_once dirname( __FILE__ ) . '/wp-miniban-htaccess.inc.php';
-require_once dirname( __FILE__ ) . '/wp-login-bad-request.inc.php';
+require_once dirname( __FILE__ ) . '/wp-login-bad-request-instant.inc.php';
 
 /** Core */
 

@@ -1,3 +1,9 @@
+### Full featured PHP firewall
+
+http://ninjafirewall.com/pro/overview.php
+
+
+
 ### Plugins and tools for shared hosting problems
 
 - See: "Recommended plugins" in [../README.md](../README.md)
@@ -68,7 +74,7 @@ https://github.com/h5bp/html5-boilerplate/blob/master/dist/.htaccess
 
 https://redbot.org/
 
-#### PHP settings
+#### Check PHP settings
 
 See: shared-hosting-aid/php-vars.php
 
@@ -101,6 +107,10 @@ See: shared-hosting-aid/php-mail-sender.php
 
 ### wp-config.php
 
+#### Skeleton
+
+See wp-config.php
+
 #### Change salt
 
 - Sucuri plugin
@@ -116,6 +126,7 @@ See: shared-hosting-aid/php-mail-sender.php
 
 - .htaccess
 - `*htaccess*`
+- .user.ini
 - index.html
 - index.php
 - robots.txt
@@ -129,13 +140,16 @@ https://github.com/h5bp/mobile-boilerplate/blob/master/index.html
 - favicon.ico
 - apple-touch-icon.png
 - apple-touch-icon-precomposed.png
+- apple-touch-icon-120x120.png
+- apple-touch-icon-120x120-precomposed.png
 - apple-touch-icon*.png
 - browserconfig.xml
 
-http://realfavicongenerator.net/ 
-http://realfavicongenerator.net/favicon_checker
+- http://realfavicongenerator.net/
+- http://realfavicongenerator.net/favicon_checker
 
-Files for robots should not be indexed. 
+Files for robots should not be indexed.
+
 `.htaccess`
 
 ```apache
@@ -172,7 +186,9 @@ cp tripwire_config.sample.ini tripwire_config.ini
 editor tripwire_config.ini
 ```
 
-Tripwire access protection `.htaccess`.
+Tripwire access protection
+
+`.htaccess`
 
 ```apache
 <IfModule mod_rewrite.c>
@@ -238,7 +254,7 @@ plungins.forEach(function(p){console.log(decodeURIComponent(p.search.split('&')[
 
 Use reliable smart host with STARTTLS for email sending.
 
-Consider using [Mandrill](https://mandrill.com/signup/) for low volume email traffic.
+Consider using [Sendgrid](https://sendgrid.com/pricing) or [Mandrill](https://mandrill.com/signup/) for low volume email traffic.
 
 `wget -nv https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-uri/smtp-uri.php`
 
@@ -280,14 +296,14 @@ https://github.com/errbit/errbit + https://github.com/airbrake/airbrake-js
 - dns-watch, see: ${D}/monitoring/dns-watch.sh
 - can-send-email @daily, see: ${D}/monitoring/cse/
 - see: shared-hosting-aid/remote-log-watch.sh @*/30
-- TODO munin-plugin: log size in lines
-- TODO remote-rotate error.log
+- @TODO munin-plugin: log size in lines
+- @TODO remote-rotate error.log
 - opcache/apc/memcache control panels @weekly
 - domain name expiry @monthly
 - Safebrowsing, Sucuri, Virustotal check @daily
 - SEO Panel @weekly
 - Analytics @weekly
-- Google WMT @weekly
+- Google Search Console @weekly
 - PageSpeed, webpagetest.org @weekly
 
 ```php
@@ -301,7 +317,7 @@ if ( $management_server_ip !== @$_SERVER['REMOTE_ADDR'] ) {
     ob_get_level() && ob_end_clean();
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.0 403 Forbidden' );
-    exit();
+    exit;
 }
 
 define( 'WP_USE_THEMES', false );
@@ -318,7 +334,7 @@ exit( md5( $pong ) );
 
 
 
-### WordPress cleanup
+### WordPress cleanup @TODO
 
 - old/all transients
 - spam/trash comments

@@ -3,10 +3,9 @@
 Plugin Name: Nofollow Robot Trap MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
-Version: 0.4.0
+Version: 0.5.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-nofollow-robot-trap
 */
 
@@ -33,6 +32,8 @@ if ( ! function_exists( 'add_filter' ) ) {
  * 3. Optionally add cache exceptions for the four URLs.
  *
  * 4. Flush rules on deletion of this mu-plugin (wp rewrite flush).
+ *
+ * 5. Don't forget to install WordPress fail2ban MU.
  *
  * Bait pages and links
  *  - invisible link on the front page:
@@ -73,7 +74,7 @@ class O1_Nofollow_Robot_Trap {
         //register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
         // Generate URL-s
-        /*
+        /* @TODO
         $sprintf('%u', crc32( get_bloginfo( 'url' ) ) . '1' ); 1 for block_url, 2 for allow_url ...
         defined();
         // options-general.php fieldset
@@ -94,7 +95,7 @@ class O1_Nofollow_Robot_Trap {
         add_filter( 'robots_txt', array( $this, 'robotstxt_disallow' ), 2, 1 );
 
         // Frontend only
-        if ( is_admin() ) {
+        if ( is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
             return;
         }
 
@@ -109,19 +110,16 @@ class O1_Nofollow_Robot_Trap {
     /**
      * Trigger fail2ban.
      */
-    private function trigger() {
+    private function trigger( $message = '' ) {
 
-        error_log( $this->prefix  . 'nofollow_robot_trap' );
-
-        ob_get_level() && ob_end_clean();
-        header( 'Status: 403 Forbidden' );
-        header( 'HTTP/1.1 403 Forbidden' );
-        header( 'Connection: Close' );
-        header( 'Cache-Control: max-age=0, private, no-store, no-cache, must-revalidate' );
-        header( 'X-Robots-Tag: noindex, nofollow' );
-        header( 'Content-Type: text/html' );
-        header( 'Content-Length: 0' );
-        exit();
+        /**
+         * Counteraction for ignoring no-follow rules
+         *
+         * Usually this is an attacker.
+         *
+         * @param string $message  Cause of ban.
+         */
+        do_action( 'nofollow_robot_trap', $message );
     }
 
     public function register_urls() {
@@ -180,23 +178,24 @@ class O1_Nofollow_Robot_Trap {
 
         switch ( $nfrt ) {
             case 'block':
-                $this->trigger();
-                exit();
+                $this->trigger( 'block_url' );
+                exit;
 
             case 'allow':
                 $this->generate_allow_page();
-                exit();
+                exit;
 
             case 'nofollow':
                 $this->generate_nofollow_page();
-                exit();
+                exit;
         }
     }
 
     public function protocol_relative( $redirect_url, $requested_url ) {
 
         if ( $this->str_endswith( $requested_url, $this->protocol_relative_url ) ) {
-            $this->trigger();
+            $this->trigger( 'protocol_relative' );
+            exit;
         }
 
         return $redirect_url;
@@ -277,9 +276,7 @@ class O1_Nofollow_Robot_Trap {
 new O1_Nofollow_Robot_Trap();
 
 /* @TODO
-
 - add readme.md
-- trap type: fail2ban, .htaccess, nginx.conf, CloudFlare API, call itsec
 - set cookie for robots -> measure next request frequency -> log
 - different traps?? for: rel nofollow, robots meta, robots.txt, realtive protocol
 */
