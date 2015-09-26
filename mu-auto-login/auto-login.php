@@ -3,7 +3,7 @@
 Plugin Name: Automatically log in MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Just press the Log in button on the empty login page.
-Version: 1.1.0
+Version: 1.2.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
@@ -20,7 +20,9 @@ add_action( 'login_init' , 'o1_auto_login_add_filter' );
  */
 function o1_auto_login_add_filter() {
 
-    add_filter( 'authenticate', 'o1_auto_login', 10, 3 );
+    if ( defined( 'AUTO_LOGIN_USER' ) ) {
+        add_filter( 'authenticate', 'o1_auto_login', 10, 3 );
+    }
 }
 
 /**
@@ -34,11 +36,10 @@ function o1_auto_login( $user, $username, $password ) {
 
     $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : 'login';
 
-    if ( defined( 'AUTO_LOGIN_USER' ) // Auto-user defined
-        && 'login' === $action        // Currently logging in
-        && isset( $_POST['log'] )     // Pressed the login button
-        && empty( $username )         // Empty user name
-        && empty( $password )         //       and password
+    if ( 'login' === $action             // Currently logging in
+        && isset( $_POST['wp-submit'] )  // Pressed the login button
+        && empty( $username )            // Empty user name
+        && empty( $password )            //     and password
     ) {
         $auto_user = get_user_by( 'slug', AUTO_LOGIN_USER );
 

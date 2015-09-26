@@ -14,14 +14,15 @@ add_action( 'wp_dashboard_setup', 'o1_manual_cron_add_widget' );
 function o1_manual_cron_add_widget() {
 
     wp_add_dashboard_widget(
-                 'manual_cron_widget',
-                 'Manual WP-cron',
-                 'o1_manual_cron_output'
+        'manual_cron_widget',
+        'Manual WP-cron',
+        'o1_manual_cron_output'
     );
 }
 
 function o1_manual_cron_output() {
 
+    // In the middle of a PHP is not the nicest place for JavaScript
     $trigger_script = '
 <script>
 (function ($) {

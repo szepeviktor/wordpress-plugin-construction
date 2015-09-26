@@ -1,9 +1,13 @@
 <pre><?php
 /*
-Snippet name: Test mail sender
+Snippet Name: Test default mail sender
+Version: 1.0.0
+Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
+License: The MIT License (MIT)
+Author: Viktor Szépe
 */
 
-test_mail_sender( "viktor@szepe.net" );
+test_mail_sender();
 
 function test_mail_sender( $to = "viktor@szepe.net" ) {
     ini_set( 'display_errors', 1 );

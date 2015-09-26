@@ -6,7 +6,6 @@ Description: Sets up PHP error logging in a protected directory.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
 */
 
 /**

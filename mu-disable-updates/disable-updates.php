@@ -3,66 +3,66 @@
 Plugin Name: Disable Updates and Update HTTP Requests MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Disable core, theme and plugin updates plus the browser nag
-Version: 0.5
+Version: 0.5.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-disable-updates
 */
 
-//FIXME: https://core.trac.wordpress.org/ticket/30855#ticket
-// wp_get_update_data() calls are not pluggable (wp-admin/menu.php ×2)
+// @FIXME https://core.trac.wordpress.org/ticket/30855#ticket
+//        wp_get_update_data() calls are not pluggable (wp-admin/menu.php ×2)
 
 /**
- * Disable Updates and Update HTTP Requests.
+ * Disable Updates and Update HTTP Requests
  *
  * This is a one-class mu-plugin.
- * Enable force-check updates by adding a define to wp-config:
+ * Enable force-check updates by copying this to wp-config.php:
  *
  *     define( 'ENABLE_FORCE_CHECK_UPDATE', true );
  *
  * @package disable-updates
- * @version v0.5
  * @author Viktor Szépe <viktor@szepe.net>
  * @link https://github.com/szepeviktor/wordpress-plugin-construction
  */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    // for fail2ban
-    error_log( 'File does not exist: errorlog_direct_access '
-        . serialize( $_SERVER['REQUEST_URI'] ) );
-
+    error_log( "Break-in attempt detected: wpf2b_mu_direct_access "
+        . addslashes( @$_SERVER['REQUEST_URI'] )
+    );
     ob_get_level() && ob_end_clean();
-    header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.1 403 Forbidden' );
-    exit();
+    if ( ! headers_sent() ) {
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.1 403 Forbidden', true, 403 );
+        header( 'Connection: Close' );
+    }
+    exit;
 }
 
 /**
- * Disable core, theme and plugin updates plus the browser nag.
+ * Disable core, theme and plugin updates plus the browser nag
  *
  * @link https://github.com/Websiteguy/disable-updates-manager/
  * @link http://wordpress.org/plugins/no-browser-nag/
  */
-class Disable_Version_Check_MU {
+class O1_Disable_Version_Check {
 
     /**
-     * Prevent core updates.
+     * Prevent core updates
      * @var bool|true
      */
     private $disable_update_core_action = true;
     /**
-     * Prevent plugin and theme updates.
+     * Prevent plugin and theme updates
      * @var bool|true
      */
     private $disable_update_action = true;
 
     /**
-     * Disable all types of updates after checking for WP-cron.
+     * Disable all types of updates after checking for WP-cron
      */
     public function __construct() {
 
-        // don't block updates when "Check again" is pressed
+        // Don't block updates when "Check again" is pressed
         if ( defined( 'ENABLE_FORCE_CHECK_UPDATE' ) && ENABLE_FORCE_CHECK_UPDATE ) {
 
             $called_script = isset( $_SERVER['SCRIPT_FILENAME'] ) ? basename( $_SERVER['SCRIPT_FILENAME'] ) : '';
@@ -72,15 +72,15 @@ class Disable_Version_Check_MU {
             if ( $is_update_core && ! empty( $_GET['force-check'] ) )
                 return;
 
-            // allow actual updates
+            // Allow actual updates
             $this->disable_update_core_action = ( ! $is_update_core || empty( $_GET['action'] ) );
             $this->disable_update_action = ( ! $is_update || empty( $_GET['action'] ) );
         }
 
-        // would show up on the frontend
+        // Would show up on the frontend
         add_action( 'add_admin_bar_menus', array( $this, 'disable_admin_bar_updates_menu' ) );
 
-        // don't block updates on the frontend, block updates during WP-Cron
+        // Don't block updates on the frontend, block updates during WP-Cron
         $doing_cron = ( defined( 'DOING_CRON' ) && DOING_CRON );
         if ( ! ( is_admin() || $doing_cron ) )
             return;
@@ -92,7 +92,7 @@ class Disable_Version_Check_MU {
     }
 
     /**
-     * Prevent core updates.
+     * Prevent core updates
      *
      * @see last_checked_core() for the returned value
      */
@@ -100,7 +100,7 @@ class Disable_Version_Check_MU {
 
         // wp-includes/update.php:156
         if ( $this->disable_update_core_action ) {
-            // prevent HTTP request too
+            // Prevent HTTP requests too
             if ( isset( $_GET['force-check'] ) )
                 unset( $_GET['force-check'] );
             add_filter( 'pre_site_transient_update_core', array( $this, 'last_checked_core' ) );
@@ -111,7 +111,7 @@ class Disable_Version_Check_MU {
     }
 
     /**
-     * Prevent theme updates.
+     * Prevent theme updates
      *
      * @see last_checked_themes() for the returned value
      */
@@ -129,7 +129,7 @@ class Disable_Version_Check_MU {
     }
 
     /**
-     * Prevent plugin updates.
+     * Prevent plugin updates
      *
      * @see last_checked_plugins() for the returned value
      */
@@ -147,7 +147,7 @@ class Disable_Version_Check_MU {
     }
 
     /**
-     * Prevent browser check.
+     * Prevent browser check
      *
      * @see updated_browser() for the site_transient hook
      */
@@ -160,7 +160,7 @@ class Disable_Version_Check_MU {
     }
 
     /**
-     * Remove the updates menu from the admin bar.
+     * Remove the updates menu from the admin bar
      */
     public function disable_admin_bar_updates_menu() {
 
@@ -170,11 +170,11 @@ class Disable_Version_Check_MU {
     }
 
     /**
-     * Return the current time and WordPress version.
+     * Return the current time and core version
      */
     public function last_checked_core() {
 
-        return (object) array(
+        return (object)array(
             'last_checked'    => time(),
             'updates'         => array(),
             'version_checked' => get_bloginfo( 'version' )
@@ -182,41 +182,41 @@ class Disable_Version_Check_MU {
     }
 
     /**
-     * Return the current time and theme versions.
+     * Return the current time and theme versions
      */
     public function last_checked_themes() {
 
         $current = array();
         $installed_themes = wp_get_themes();
         foreach ( $installed_themes as $theme )
-            $current[$theme->get_stylesheet()] = $theme->get( 'Version' );
+            $current[ $theme->get_stylesheet() ] = $theme->get( 'Version' );
 
-        return (object) array(
-            'last_checked'    => time(),
-            'updates'         => array(),
-            'checked'         => $current
+        return (object)array(
+            'last_checked' => time(),
+            'updates'      => array(),
+            'checked'      => $current
         );
     }
 
     /**
-     * Return the current time and plugin versions.
+     * Return the current time and plugin versions
      */
     public function last_checked_plugins() {
 
         $current = array();
         $plugins = get_plugins();
-        foreach ( $plugins as $file => $p )
-            $current[$file] = $p['Version'];
+        foreach ( $plugins as $file => $plugin )
+            $current[ $file ] = $plugin['Version'];
 
-        return (object) array(
-            'last_checked'    => time(),
-            'updates'         => array(),
-            'checked'         => $current
+        return (object)array(
+            'last_checked' => time(),
+            'updates'      => array(),
+            'checked'      => $current
         );
     }
 
     /**
-     * Hook the transient of the current user's browser.
+     * Hook the transient of the current user's browser
      */
     public function updated_browser() {
 
@@ -226,4 +226,4 @@ class Disable_Version_Check_MU {
     }
 }
 
-new Disable_Version_Check_MU();
+new O1_Disable_Version_Check();

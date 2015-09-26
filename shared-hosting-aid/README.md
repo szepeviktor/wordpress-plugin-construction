@@ -306,33 +306,7 @@ https://github.com/errbit/errbit + https://github.com/airbrake/airbrake-js
 - Google Search Console @weekly
 - PageSpeed, webpagetest.org @weekly
 
-```php
-<?php // ping.php
-$management_server_ip = 'MANAGEMENT_SERVER_IP';
-
-if ( $management_server_ip !== @$_SERVER['REMOTE_ADDR'] ) {
-    error_log( 'Malicious traffic detected: ping_extraneous_access '
-        . addslashes( $_SERVER['REQUEST_URI'] )
-    );
-    ob_get_level() && ob_end_clean();
-    header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.0 403 Forbidden' );
-    exit;
-}
-
-define( 'WP_USE_THEMES', false );
-$wpload_path = dirname( __FILE__ ) . '/wp-load.php';
-require_once( $wpload_path );
-
-global $wpdb;
-$mysql_version_query = "SHOW VARIABLES LIKE 'version'";
-$pong = phpversion() . '|' . $wpdb->get_var( $mysql_version_query, 1 );
-
-//exit( $pong );
-exit( md5( $pong ) );
-```
-
-
+See: shared-hosting-aid/ping.php
 
 ### WordPress cleanup @TODO
 

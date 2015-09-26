@@ -1,6 +1,6 @@
 <?php
 /*
-Name: PHP Post-Mortem Tool
+Snippet name: PHP Post-Mortem Tool
 Version: 2.0
 Usage: Include it from your config file or entry point.
 Source: https://gist.github.com/uuf6429/6719756

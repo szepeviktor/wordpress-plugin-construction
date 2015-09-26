@@ -6,7 +6,6 @@ Description: Unzip WordPress instead of uploading it file-by-file
 Version: 0.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
 */
 
 

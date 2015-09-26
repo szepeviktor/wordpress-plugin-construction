@@ -1,4 +1,11 @@
 <?php
+/*
+Snippet Name: Display extended phpinfo()
+Version: 1.0.0
+Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
+License: The MIT License (MIT)
+Author: Viktor Szépe
+*/
 
 phpinfo();
 $php_configs = array(

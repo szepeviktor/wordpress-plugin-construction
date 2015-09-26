@@ -88,3 +88,6 @@
 [submodule "wp-mailfrom-ii"]
 	path = wp-mailfrom-ii
 	url = https://github.com/benhuson/wp-mailfrom.git
+[submodule "auto-login"]
+	path = auto-login
+	url = git@github.com:szepeviktor/auto-login.git

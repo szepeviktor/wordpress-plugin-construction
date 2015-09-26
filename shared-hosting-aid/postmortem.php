@@ -1,7 +1,7 @@
 <?php
 /*
- Name: PHP Post-Mortem Tool
- Source: https://gist.github.com/uuf6429/6719756
+Snippet name: PHP Post-Mortem Tool
+Source: https://gist.github.com/uuf6429/6719756
 */
 
 function on_shutdown(){

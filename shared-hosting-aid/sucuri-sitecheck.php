@@ -1,6 +1,6 @@
 <?php
 /*
-Show errors and warnings from Sucuri Sitecheck
+Snippet name: Display only errors and warnings from Sucuri Sitecheck
 */
 
 $site_url = "http://domain.tld/";
