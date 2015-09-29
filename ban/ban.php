@@ -22,6 +22,29 @@ class O1_WP_Fail2ban {
                 add_action( 'admin_notices', array( $this, 'broken_symlink_notice' ) );
             }
         }
+
+        if ( class_exists( 'Miniban', false ) ) {
+            // Schedule unban
+            add_action( 'plugins_loaded', array( $this, 'add_schedule' ) );
+            add_action( 'ban/hourly', array( $this, 'unban' ) );
+        }
+    }
+
+    public function add_schedule() {
+
+        if ( false === wp_get_schedule( 'ban/hourly' ) ) {
+            wp_schedule_event( time(), 'daily', 'ban/hourly' );
+        }
+    }
+
+    public function unban() {
+
+        // Missing or uninitialized Miniban
+        if ( ! class_exists( 'Miniban', false ) || empty( Miniban::$config ) ) {
+            return;
+        }
+
+        Miniban::unban();
     }
 
     public static function symlink() {
@@ -64,6 +87,9 @@ class O1_WP_Fail2ban {
     }
 
     public static function unlink() {
+
+        // Clear schedule before file operations
+        wp_clear_scheduled_hook( 'ban/daily' );
 
         $symlink = WPMU_PLUGIN_DIR . self::$symlink_rel;
 
