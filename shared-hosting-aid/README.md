@@ -118,14 +118,14 @@ See wp-config.php
 
 #### Block Bad Requests
 
-`wget -nv https://github.com/szepeviktor/wordpress-fail2ban/raw/master/block-bad-requests/wp-login-bad-request-instant.inc.php`
+`wget -nv https://github.com/szepeviktor/wordpress-fail2ban/raw/master/block-bad-requests/wp-fail2ban-bad-request-instant.inc.php`
 
 
 
 ### Root files
 
 - .htaccess
-- `*htaccess*`
+- \*htaccess\*
 - .user.ini
 - index.html
 - index.php
@@ -134,6 +134,7 @@ See wp-config.php
 - sitemap.xml.gz
 - crossdomain.xml
 - labels.rdf
+- apple-app-site-association (content: `{}`)
 
 https://github.com/h5bp/mobile-boilerplate/blob/master/index.html
 
@@ -142,7 +143,7 @@ https://github.com/h5bp/mobile-boilerplate/blob/master/index.html
 - apple-touch-icon-precomposed.png
 - apple-touch-icon-120x120.png
 - apple-touch-icon-120x120-precomposed.png
-- apple-touch-icon*.png
+- apple-touch-icon*.png ...
 - browserconfig.xml
 
 - http://realfavicongenerator.net/
