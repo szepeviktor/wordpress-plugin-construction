@@ -7,10 +7,6 @@ Please select a folder in the list above to see the plugin's development.
 
 http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 
-### VIP Plugins
-
-https://vip.wordpress.com/plugins/
-
 ### How to add images to a WordPress plugin?
 
 - assets/banner-772x250.png
@@ -20,9 +16,12 @@ https://vip.wordpress.com/plugins/
 
 ### Recommended plugins
 
+- https://vip.wordpress.com/plugins/
+- http://wpgear.org/
+
 - Remove emoji Javascript: `classic-smilies`
 - Email "From:" header: `wp-mailfrom-ii`
-- SMTP settings: mu-smtp-uri/, `smtp-uri`
+- SMTP settings: mu-smtp-uri/, `smtp-uri`, `danielbachhuber/mandrill-wp-mail`
 - Security: wordpress-fail2ban/, `sucuri-scanner`, `custom-sucuri`
 - Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, `obfuscate-email`
 - Redirects: `safe-redirect-manager`
@@ -74,9 +73,10 @@ https://vip.wordpress.com/plugins/
 1. Imaging
     + Cloudinary
     + `my-eyes-are-up-here`
-1. Develop, debug
+1. Develop, debug, monitoring
     + `query-monitor`
-
+    + `p3-profiler`
+    + `error-log-monitor`
 
 ### Manage plugins with composer
 

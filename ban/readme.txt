@@ -1,6 +1,6 @@
 - WordPress fail2ban MU plugin installer -
 
-*Proactive security with Fail2ban* consists of three parts:
+*Proactive security with Fail2ban* consists of five parts:
 
 1. The normal plugin to install the MU plugin
 1. The MU plugin that handles WordPress related malicious traffic
@@ -32,7 +32,7 @@ Other methods can be found in the
 There is even a method that keeps IP address in a WordPress option for cases when
 `.htaccess` banning is not suitable.
 
-To install Miniban copy these lines to your `wp-config.php`:
+To install Miniban copy these lines to the very top of `wp-config.php`:
 
 `
 require_once dirname( __FILE__ ) . '/wp-content/plugins/ban/miniban/wp-miniban-htaccess.inc.php';

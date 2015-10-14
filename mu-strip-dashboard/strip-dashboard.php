@@ -3,10 +3,9 @@
 Plugin Name: Strip the Dashboard MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Remove things visually from the WordPress admin.
-Version: 0.3
+Version: 0.4.0
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-strip-dashboard
 */
 
@@ -17,6 +16,8 @@ class O1_Strip_Dashboard {
         add_action( 'wp_before_admin_bar_render', array( $this, 'remove_admin_bar_links' ) );
         add_action( 'in_admin_footer', array( $this, 'remove_update_footer' ) );
         add_filter( 'admin_footer_text', array( $this, 'online1_webdesign' ) );
+    // '#sidebar-container { display: none !important; }'
+    // '.acf-columns-2 .acf-column-2 { display: none !important; }'
     }
 
     /**
@@ -54,7 +55,7 @@ class O1_Strip_Dashboard {
      */
     public function online1_webdesign( $footer ) {
 
-        return '<span id="footer-thankyou">online1 - web technologies / webes technológiák</span>';
+        return '<span id="footer-thankyou">Szépe Viktor - web technologies / webes technológiák</span>';
     }
 }
 

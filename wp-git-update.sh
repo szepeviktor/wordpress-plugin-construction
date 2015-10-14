@@ -38,7 +38,7 @@ fi
 echo "Here we were:$(git --no-pager log --pretty=format:"%d" -1)"
 
 # Fetch new commits and tags
-git fetch --prune || Error 4 "Fetch failed."
+git fetch --prune --tags || Error 4 "Fetch failed."
 
 LATEST_TAG="$(git tag | tail -n 1)"
 

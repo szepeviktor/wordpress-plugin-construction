@@ -4,9 +4,10 @@ Plugin Name: Image Factory for servers
 
 Advanced image optimization with mozjpeg on your own server.
 
-Compile video on Vultr VPS from spinup till wp runs -wp.install
+Compile video on Vultr VPS from spinup till WP runs -wp.install
 
-apt-get install jpeginfo jpeg-archive optipng socat
+(szepeviktor repo)
+apt-get install -a jpeginfo jpeg-archive optipng socat
 (jpeg-archive depend on mozjpeg)
 
 init script with: script location, user, socket file path
@@ -16,7 +17,7 @@ https://github.com/asaif/socat-init
 
 /usr/bin/socat UNIX-LISTEN:./factory.sock,mode=600,fork EXEC:./wp-media-optimize.sh,pipes,su=phpuser
 
-script: [ -r file ]
+wp-media-optimize.sh script: [ -r file ]
 
 wp-cli option delete: add_post_meta( $attachment_id, '_optimize', $metasize['file'] );
 
@@ -60,6 +61,7 @@ class O1_Image_Factory {
             if ( 0 === $errno ) {
                 // Maximum processing time per size
                 stream_set_timeout( $factory, 3 );
+                // Communicate with server process
                 $write = fwrite( $factory, $filename . "\n" );
                 if ( false === $write ) {
                     error_log( '[image-factory] Socket write error:'

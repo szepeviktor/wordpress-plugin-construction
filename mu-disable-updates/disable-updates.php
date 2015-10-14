@@ -3,7 +3,7 @@
 Plugin Name: Disable Updates and Update HTTP Requests MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Disable core, theme and plugin updates plus the browser nag
-Version: 0.5.1
+Version: 0.5.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-disable-updates
@@ -166,7 +166,8 @@ class O1_Disable_Version_Check {
 
         // wp-includes/class-wp-admin-bar.php:499
         if ( $this->disable_update_core_action )
-            remove_action( 'admin_bar_menu', 'wp_admin_bar_updates_menu', 40 );
+            // 40 -> 50 in WP 4.3.1
+            remove_action( 'admin_bar_menu', 'wp_admin_bar_updates_menu', 50 );
     }
 
     /**

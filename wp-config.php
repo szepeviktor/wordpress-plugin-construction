@@ -31,7 +31,7 @@ ini_set( 'log_errors', 1 );
 //define( 'O1_BAD_REQUEST_ALLOW_CONNECTION_CLOSE', true );
 //define( 'O1_BAD_REQUEST_CDN_HEADERS', 'HTTP_X_AMZ_CF_ID:HTTP_VIA:HTTP_X_FORWARDED_FOR' );
 //require_once dirname( __FILE__ ) . '/wp-miniban-htaccess.inc.php';
-require_once dirname( __FILE__ ) . '/wp-login-bad-request-instant.inc.php';
+require_once dirname( __FILE__ ) . '/wp-fail2ban-bad-request-instant.inc.php';
 
 /** Core */
 
@@ -90,7 +90,7 @@ $table_prefix  = 'wp_';
 
 /** Absolute path to the WordPress directory. */
 if ( ! defined( 'ABSPATH' ) ) {
-    // Change ABSPATH if wp-config is above WordPress root
+    // Change ABSPATH if wp-config is outside WordPress root
     //define( 'ABSPATH', dirname( __FILE__ ) . '/site/' );
     define( 'ABSPATH', dirname( __FILE__ ) . '/' );
 }
