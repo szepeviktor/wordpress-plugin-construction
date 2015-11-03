@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin name: Manual cron
-Plugin URI: https://github.com/szepeviktor/manual-cron
-Description: Triggers wp-cron by an AJAX call and displays possible output.
 Version: 1.0.0
+Description: Triggers wp-cron by an AJAX call and displays possible output.
+Plugin URI: https://github.com/szepeviktor/manual-cron
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/manual-cron

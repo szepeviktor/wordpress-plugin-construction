@@ -7,7 +7,7 @@ Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 /*
-Trace PHP-FPM
+Trace of all PHP-FPM processes
     strace -s 200 -p $(pgrep -u root php5-fpm) -f 2>&1 | tee php-fpm.trc
 */
 
@@ -31,5 +31,5 @@ register_shutdown_function( function () {
 }); // FIXME
 
 
-// How does this called from?
+// Where does this called from?
 echo PHP_EOL . 'Trace: '; var_dump( debug_backtrace() ); exit; // FIXME

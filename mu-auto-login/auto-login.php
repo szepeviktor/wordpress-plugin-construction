@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Automatically log in MU
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+Version: 1.2.1
 Description: Just press the Log in button on the empty login page.
-Version: 1.2.0
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
@@ -28,7 +28,7 @@ function o1_auto_login_add_filter() {
 /**
  * Automatically log in.
  *
- * To set the auto user name copy this line to your wp-config.php:
+ * To set auto user name copy this line to your wp-config.php:
  *
  *     define( 'AUTO_LOGIN_USER', 'username' );
  */

@@ -1,23 +1,25 @@
 <?php
 /*
 Plugin Name: Nofollow Robot Trap MU
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+Version: 0.5.1
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
-Version: 0.5.0
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-nofollow-robot-trap
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Break-in attempt detected: wpf2b_mu_direct_access '
-        . addslashes( @$_SERVER['REQUEST_URI'] )
+    error_log( 'Break-in attempt detected: nfrt_direct_access '
+        . addslashes( isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' )
     );
     ob_get_level() && ob_end_clean();
-    header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.1 403 Forbidden', true, 403 );
-    header( 'Connection: Close' );
-    exit();
+    if ( ! headers_sent() ) {
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.1 403 Forbidden', true, 403 );
+        header( 'Connection: Close' );
+    }
+    exit;
 }
 
 /**
@@ -173,8 +175,9 @@ class O1_Nofollow_Robot_Trap {
         $nfrt = get_query_var( 'nfrt' );
 
         // For performance
-        if ( empty ( $nfrt ) )
+        if ( empty ( $nfrt ) ) {
             return;
+        }
 
         switch ( $nfrt ) {
             case 'block':

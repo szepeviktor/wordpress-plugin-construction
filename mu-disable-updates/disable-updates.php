@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Disable Updates and Update HTTP Requests MU
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+Version: 0.5.3
 Description: Disable core, theme and plugin updates plus the browser nag
-Version: 0.5.2
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-disable-updates
@@ -26,8 +26,8 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
  */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( "Break-in attempt detected: wpf2b_mu_direct_access "
-        . addslashes( @$_SERVER['REQUEST_URI'] )
+    error_log( 'Break-in attempt detected: disable_updates_direct_access '
+        . addslashes( isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' )
     );
     ob_get_level() && ob_end_clean();
     if ( ! headers_sent() ) {
@@ -69,8 +69,9 @@ class O1_Disable_Version_Check {
             $is_update_core = ( 'update-core.php' === $called_script );
             $is_update = ( 'update.php' === $called_script );
 
-            if ( $is_update_core && ! empty( $_GET['force-check'] ) )
+            if ( $is_update_core && ! empty( $_GET['force-check'] ) ) {
                 return;
+            }
 
             // Allow actual updates
             $this->disable_update_core_action = ( ! $is_update_core || empty( $_GET['action'] ) );
@@ -82,8 +83,9 @@ class O1_Disable_Version_Check {
 
         // Don't block updates on the frontend, block updates during WP-Cron
         $doing_cron = ( defined( 'DOING_CRON' ) && DOING_CRON );
-        if ( ! ( is_admin() || $doing_cron ) )
+        if ( ! ( is_admin() || $doing_cron ) ) {
             return;
+        }
 
         $this->disable_core_updates();
         $this->disable_theme_updates();
@@ -101,8 +103,9 @@ class O1_Disable_Version_Check {
         // wp-includes/update.php:156
         if ( $this->disable_update_core_action ) {
             // Prevent HTTP requests too
-            if ( isset( $_GET['force-check'] ) )
+            if ( isset( $_GET['force-check'] ) ) {
                 unset( $_GET['force-check'] );
+            }
             add_filter( 'pre_site_transient_update_core', array( $this, 'last_checked_core' ) );
         }
         // wp-includes/update.php:677-678
@@ -118,8 +121,9 @@ class O1_Disable_Version_Check {
     private function disable_theme_updates() {
 
         // wp-includes/update.php:479
-        if ( $this->disable_update_core_action && $this->disable_update_action )
+        if ( $this->disable_update_core_action && $this->disable_update_action ) {
             add_filter( 'pre_site_transient_update_themes', array( $this, 'last_checked_themes' ) );
+        }
         // wp-includes/update.php:688-692
         remove_action( 'load-themes.php', 'wp_update_themes' );
         remove_action( 'load-update.php', 'wp_update_themes' );
@@ -136,8 +140,9 @@ class O1_Disable_Version_Check {
     private function disable_plugin_updates() {
 
         // wp-includes/update.php:327
-        if ( $this->disable_update_core_action && $this->disable_update_action )
+        if ( $this->disable_update_core_action && $this->disable_update_action ) {
             add_filter( 'pre_site_transient_update_plugins', array( $this, 'last_checked_plugins' ) );
+        }
         // wp-includes/update.php:681-685
         remove_action( 'load-plugins.php', 'wp_update_plugins' );
         remove_action( 'load-update.php', 'wp_update_plugins' );
@@ -153,8 +158,9 @@ class O1_Disable_Version_Check {
      */
     private function disable_browser_nag() {
 
-        if ( empty( $_SERVER['HTTP_USER_AGENT'] ) )
+        if ( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
             return;
+        }
 
         add_action( 'admin_init', array( $this, 'updated_browser' ) );
     }
@@ -165,9 +171,10 @@ class O1_Disable_Version_Check {
     public function disable_admin_bar_updates_menu() {
 
         // wp-includes/class-wp-admin-bar.php:499
-        if ( $this->disable_update_core_action )
-            // 40 -> 50 in WP 4.3.1
+        if ( $this->disable_update_core_action ) {
+            // Line 40 -> 50 in WP 4.3.1
             remove_action( 'admin_bar_menu', 'wp_admin_bar_updates_menu', 50 );
+        }
     }
 
     /**
@@ -175,10 +182,10 @@ class O1_Disable_Version_Check {
      */
     public function last_checked_core() {
 
-        return (object)array(
+        return (object) array(
             'last_checked'    => time(),
             'updates'         => array(),
-            'version_checked' => get_bloginfo( 'version' )
+            'version_checked' => get_bloginfo( 'version' ),
         );
     }
 
@@ -189,13 +196,14 @@ class O1_Disable_Version_Check {
 
         $current = array();
         $installed_themes = wp_get_themes();
-        foreach ( $installed_themes as $theme )
+        foreach ( $installed_themes as $theme ) {
             $current[ $theme->get_stylesheet() ] = $theme->get( 'Version' );
+        }
 
-        return (object)array(
+        return (object) array(
             'last_checked' => time(),
             'updates'      => array(),
-            'checked'      => $current
+            'checked'      => $current,
         );
     }
 
@@ -206,13 +214,14 @@ class O1_Disable_Version_Check {
 
         $current = array();
         $plugins = get_plugins();
-        foreach ( $plugins as $file => $plugin )
+        foreach ( $plugins as $file => $plugin ) {
             $current[ $file ] = $plugin['Version'];
+        }
 
-        return (object)array(
+        return (object) array(
             'last_checked' => time(),
             'updates'      => array(),
-            'checked'      => $current
+            'checked'      => $current,
         );
     }
 

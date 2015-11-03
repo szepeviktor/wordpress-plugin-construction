@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Encode e-mail
-Version: 1.0.0
+Version: 1.0.1
 Description: It encodes e-mail addresses using random mix of urlencode, HTML entities and then generates markup that's as tricky as possible, while remaining valid and parseable by browsers and XML-compliant parsers.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: GPLv2 or later
@@ -21,6 +21,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/
  * - [email2 address="email@addre.ss"]
  * - [email2 link="mailto:email@addre.ss?subject=About the site&message=Hello!"]Contact Us[/email2]
  * - [email2 link="mailto:email@addre.ss?subject=About the site&message=Hello!"]
+ * - <?php echo do_shortcode( '[email2]email@addre.ss[/email2]' ); ?>
  *
  * Don't URL-encode subject or message!
  */
@@ -90,7 +91,7 @@ class O1_Obfuscate_Email {
         );
 
         // If checking again, then the only emails that are left are those in attributes.
-        $content = preg_replace_callback( "#(?mailto:\s*){$this->email_regex}#i",
+        $content = preg_replace_callback( "#(mailto:\s*)?{$this->email_regex}#i",
             array( $this, 'encode' ),
             $content
         );

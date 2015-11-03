@@ -12,7 +12,7 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 - assets/banner-772x250.png
 - assets/icon-128x128.png
 - assets/icon-256x256.png
-- assets/screenshot-1.jpg (532x)
+- assets/screenshot-1.jpg (530px + 1+1 border)
 
 ### Recommended plugins
 
