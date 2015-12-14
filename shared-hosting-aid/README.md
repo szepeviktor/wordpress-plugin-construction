@@ -288,12 +288,12 @@ Consider using [Sendgrid](https://sendgrid.com/pricing) or [Mandrill](https://ma
 # Front-page -exceptions = MD5
 ```
 
-- Visual changes: PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`
-- [pingdom](https://www.pingdom.com/free/)
+- Visual changes: https://visualping.io/ (PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`)
+- [pingdom](https://www.pingdom.com/free/), shared-hosting-aid/ping.php
 - @TODO rbl-watch.sh (also shared-hosting servers)
+- [RBL blacklists monitoring](https://www.rblmon.com/)
 - @TODO detect JavaScript errors, Piwik, http://jserrlog.appspot.com/ , https://github.com/mperdeck/jsnlog.js , https://developers.google.com/analytics/devguides/collection/analyticsjs/exceptions
 https://github.com/errbit/errbit + https://github.com/airbrake/airbrake-js
-- [RBL blacklists monitoring](https://www.rblmon.com/)
 - dns-watch, see: ${D}/monitoring/dns-watch.sh
 - can-send-email @daily, see: ${D}/monitoring/cse/
 - see: shared-hosting-aid/remote-log-watch.sh @*/30
@@ -306,12 +306,3 @@ https://github.com/errbit/errbit + https://github.com/airbrake/airbrake-js
 - Analytics @weekly
 - Google Search Console @weekly
 - PageSpeed, webpagetest.org @weekly
-
-See: shared-hosting-aid/ping.php
-
-### WordPress cleanup @TODO
-
-- old/all transients
-- spam/trash comments
-- old/all cache items
-- optimize db tables

@@ -91,3 +91,9 @@
 [submodule "auto-login"]
 	path = auto-login
 	url = git@github.com:szepeviktor/auto-login.git
+[submodule "image-factory"]
+	path = image-factory
+	url = git@github.com:szepeviktor/image-factory.git
+[submodule "manual-cron"]
+	path = manual-cron
+	url = git@github.com:szepeviktor/manual-cron.git

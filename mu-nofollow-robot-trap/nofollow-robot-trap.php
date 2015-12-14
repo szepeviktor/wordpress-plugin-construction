@@ -22,45 +22,10 @@ if ( ! function_exists( 'add_filter' ) ) {
     exit;
 }
 
-/**
- * Catch malicious robots
- *
- * 1. Add the following line to your style.css.
- *
- *     .nfrt { display: none !important; }
- *
- * 2. Add the allow page and the nofollow page to your sitemap.
- *
- * 3. Optionally add cache exceptions for the four URLs.
- *
- * 4. Flush rules on deletion of this mu-plugin (wp rewrite flush).
- *
- * 5. Don't forget to install WordPress fail2ban MU.
- *
- * Bait pages and links
- *  - invisible link on the front page:
- *      - allow page
- *  - allow page links to:
- *      - nofollow page
- *      - rel=nofollow block URL
- *      - protocol relative URL
- *  - nofollow (meta tag) page links to:
- *      - block URL
- *  - robots.txt contains:
- *      - Disallow: block URL
- *      - Allow: allow page
- *      - Allow: nofollow page
- *  - sitemap contains:
- *      - allow page
- *      - nofollow page
- *  - the immediate block URL
- */
-
 class O1_Nofollow_Robot_Trap {
 
+    // Rewrite rules version
     private $version = '0.4.0';
-
-    private $prefix = 'Break-in attempt detected: ';
 
     private $block_url;
     private $allow_url;
@@ -73,16 +38,16 @@ class O1_Nofollow_Robot_Trap {
     public function __construct() {
 
         // Must-Use plugins don't have activation
-        //register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
-        // Generate URL-s
         /* @TODO
+        // Generate URL-s
         $sprintf('%u', crc32( get_bloginfo( 'url' ) ) . '1' ); 1 for block_url, 2 for allow_url ...
         defined();
-        // options-general.php fieldset
+        // Settings / General fieldset
         get_option();
         */
 
+        // Must have trailing slash
         $this->block_url = 'disallow/';
         $this->allow_url = 'allow/';
         $this->nofollow_url = 'nofollow/';
@@ -102,7 +67,7 @@ class O1_Nofollow_Robot_Trap {
         }
 
         // Add the hidden link to the front page
-        add_action('wp_footer', array( $this, 'add_allow_url' ), 100 );
+        add_action( 'wp_footer', array( $this, 'add_allow_url' ), 100 );
         // Generate output or block
         add_action( 'template_redirect', array( $this, 'generate_pages' ) );
         // Detect protocol relative URL
@@ -133,11 +98,10 @@ class O1_Nofollow_Robot_Trap {
         add_rewrite_rule( '^' . $this->allow_url . '?$', 'index.php?nfrt=allow', 'top' );
         add_rewrite_rule( '^' . $this->nofollow_url . '?$', 'index.php?nfrt=nofollow', 'top' );
 
-        // Rewrite API cannot handle this
-        // See: protocol_relative() below
-        //add_rewrite_rule( '^' . preg_quote( $this->protocol_relative_url ) . '$', 'index.php?nfrt=relprot', 'top' );
+        // Rewrite API cannot handle '^' . preg_quote( $this->protocol_relative_url ) . '$'
+        // @see protocol_relative() below
 
-        add_rewrite_tag( '%nfrt%', '(block|allow|nofollow)');
+        add_rewrite_tag( '%nfrt%', '(block|allow|nofollow)' );
 
         // Flush rules on first run
         if ( ! $activation || $activation !== $this->version ) {
@@ -160,10 +124,11 @@ class O1_Nofollow_Robot_Trap {
 
     public function add_allow_url() {
 
-        if ( ! is_front_page() )
+        if ( ! is_front_page() ) {
             return;
+        }
 
-        printf ( "<div class='%s'><a href='%s'>%s</a></div>%s\n",
+        printf( "<div class='%s'><a href='%s'>%s</a></div>\n",
             $this->hide_class,
             home_url( $this->allow_url ),
             $this->anchor_text
@@ -175,7 +140,7 @@ class O1_Nofollow_Robot_Trap {
         $nfrt = get_query_var( 'nfrt' );
 
         // For performance
-        if ( empty ( $nfrt ) ) {
+        if ( empty( $nfrt ) ) {
             return;
         }
 
@@ -279,7 +244,6 @@ class O1_Nofollow_Robot_Trap {
 new O1_Nofollow_Robot_Trap();
 
 /* @TODO
-- add readme.md
 - set cookie for robots -> measure next request frequency -> log
 - different traps?? for: rel nofollow, robots meta, robots.txt, realtive protocol
 */
