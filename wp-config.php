@@ -4,9 +4,12 @@
 
 /** Shared hosting */
 
-// User home - absolute path without trailing slash
-if ( empty( $_SERVER['HOME'] ) ) { define( '_HOME_DIR', realpath( getenv( 'HOME' ) ) ); }
-else { define( '_HOME_DIR', realpath( $_SERVER['HOME'] ) ); }
+// User home directory, absolute path without trailing slash
+if ( empty( $_SERVER['HOME'] ) ) {
+    define( '_HOME_DIR', realpath( getenv( 'HOME' ) ) );
+} else {
+    define( '_HOME_DIR', realpath( $_SERVER['HOME'] ) );
+}
 
 // Different FTP/PHP UID
 define( 'FS_METHOD', 'direct' );
@@ -67,18 +70,19 @@ define( 'AUTOMATIC_UPDATER_DISABLED', true );
 //define( 'PODS_SESSION_AUTO_START', false );
 //define( 'WPCF7_LOAD_CSS', false );
 //define( 'WPCF7_LOAD_JS', false );
+//define( 'AUTOPTIMIZE_WP_CONTENT_NAME', '/static' );
 define( 'ENABLE_FORCE_CHECK_UPDATE', true );
 //define( 'ITSEC_FILE_CHECK_CRON', true );
 //define( 'ITSEC_BACKUP_CRON', true );
 
 /** DB */
 
-define('DB_NAME', 'database_name_here');
-define('DB_USER', 'username_here');
-define('DB_PASSWORD', 'password_here');
-define('DB_HOST', 'localhost');
-define('DB_CHARSET', 'utf8');
-define('DB_COLLATE', '');
+define( 'DB_NAME', 'database_name_here' );
+define( 'DB_USER', 'username_here' );
+define( 'DB_PASSWORD', 'password_here' );
+define( 'DB_HOST', 'localhost' );
+define( 'DB_CHARSET', 'utf8' );
+define( 'DB_COLLATE', '' );
 $table_prefix  = 'wp_';
 
 /** Salts */

@@ -3,29 +3,35 @@
 Plugin Name: Keep Latin accents MU
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Enables latin accents in WordPress URLs
-Version: 4.0
+Version: 4.0.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-latin-accent-urls
 Idea: Pavel (aka Immortal) Petrov http://www.webbamboo.net/
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-latin-accent-urls
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'File does not exist: errorlog_direct_access ' . $_SERVER['REQUEST_URI'] );
-    header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.1 403 Forbidden' );
-    exit();
+    error_log( 'Break-in attempt detected: errorlog_direct_access '
+        . addslashes( isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' )
+    );
+    ob_get_level() && ob_end_clean();
+    if ( ! headers_sent() ) {
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.1 403 Forbidden', true, 403 );
+        header( 'Connection: Close' );
+    }
+    exit;
 }
 
-add_filter('sanitize_title', 'restore_nonlatin_title', 9, 3);
-//FIXME also in navigation menu classes
+add_filter( 'sanitize_title', 'restore_nonlatin_title', 9, 3 );
+// @FIXME Also in navigation menu classes
 
 /**
  * Restore title with accents
  */
 function restore_nonlatin_title( $title, $raw_title, $context ) {
-    if ( $context == 'save' ) {
+
+    if ( 'save' === $context ) {
         return remove_nonlatin_accents( $raw_title );
     } else {
         return $title;
@@ -37,30 +43,19 @@ function restore_nonlatin_title( $title, $raw_title, $context ) {
  */
 function remove_nonlatin_accents( $string ) {
 
-    if ( !preg_match( '/[\x80-\xff]/', $string ) )
+    if ( ! preg_match( '/[\x80-\xff]/', $string ) ) {
         return $string;
+    }
 
-// FIXME convert: AltGr + (0..Ó, Ő, Ű) -> ''
-/*
+    // @FIXME convert: AltGr + (0..Ó, Ő, Ű) -> ''
+    // § ˇ ˘ ˛ ˙ ´ ˝ ¨ ¸ ÷ ¤
 
-§
-ˇ
-˘
-˛
-˙
-´
-˝
-¨
-¸
-÷
-¤
-
-*/
-
-        if (seems_utf8($string)) {
-                $chars = array(
+    // Copied from core:
+    if ( seems_utf8( $string ) ) {
+        $chars = array(
+        /*
                 // Decompositions for Latin-1 Supplement
-/*              chr(194).chr(170) => 'a', chr(194).chr(186) => 'o',
+                chr(194).chr(170) => 'a', chr(194).chr(186) => 'o',
                 chr(195).chr(128) => 'A', chr(195).chr(129) => 'A',
                 chr(195).chr(130) => 'A', chr(195).chr(131) => 'A',
                 chr(195).chr(132) => 'A', chr(195).chr(133) => 'A',
@@ -160,7 +155,7 @@ function remove_nonlatin_accents( $string ) {
                 // Decompositions for Latin Extended-B
                 chr(200).chr(152) => 'S', chr(200).chr(153) => 's',
                 chr(200).chr(154) => 'T', chr(200).chr(155) => 't',
-*/
+        */
                 // Euro Sign
                 chr(226).chr(130).chr(172) => 'E',
                 // GBP (Pound) Sign

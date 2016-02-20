@@ -34,11 +34,11 @@ see: shared-hosting-aid/php-vars.php
 - Core update
 - Uninstall and update Themes, Plugins
 - Install Classic Smilies plugin
-- Copy wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php into wp-content/mu-plugins/ and set `$trigger_count = 1;`
-- Apache configuration: ${D}/webserver/apache-conf-available/worpress-htaccess/
+- Install WP Mail From II plugin
+- Copy `wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php` into `wp-content/mu-plugins/` and set `$trigger_count = 1;`
+- Apache configuration: `${D}/webserver/apache-conf-available/wordpress-htaccess/`
 
 ```php
-
 // Upload, run and copy output of shared-hosting-aid/enable-logging.php
 // /enable-logging.php?above
 
@@ -55,7 +55,7 @@ if ( '/wp-content/plugins/newsletter/statistics/open.php' === $newsletter_path
 
 // Copy wordpress-fail2ban/block-bad-requests/wp-login-bad-request.inc.php
 define( 'O1_BAD_REQUEST_COUNT', 1 );
-require_once( dirname( __FILE__ ) . '/wp-login-bad-request.inc.php' );
+require_once dirname( __FILE__ ) . '/wp-login-bad-request.inc.php';
 
 define( 'WP_MEMORY_LIMIT', '96M' );
 //define( 'WP_MAX_MEMORY_LIMIT', '384M' );

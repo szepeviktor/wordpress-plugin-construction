@@ -14,14 +14,14 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 - assets/icon-256x256.png
 - assets/screenshot-1.jpg (530px + 1+1 border)
 
-### Recommended plugins
+## Recommended plugins
 
 - https://vip.wordpress.com/plugins/
 - http://wpgear.org/
 
 - Remove emoji Javascript: `classic-smilies`
 - Email "From:" header: `wp-mailfrom-ii`
-- SMTP settings: mu-smtp-uri/, `smtp-uri`, `danielbachhuber/mandrill-wp-mail`
+- SMTP settings: `smtp-uri`, `danielbachhuber/mandrill-wp-mail`
 - Security: wordpress-fail2ban/, `sucuri-scanner`, `custom-sucuri`
 - Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, `obfuscate-email`
 - Redirects: `safe-redirect-manager`
@@ -29,6 +29,21 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 - User roles: `user-role-editor`
 - Comments: `disable-comments`, mu-disable-comments/
 - Post connector: `post-connector`, `posts-to-posts`, `related-posts-for-wp`
+- Multilanguage: `polylang`
+
+### Data structure plugin categories
+
+- CPT (Custom port type)
+- Custom taxonomy
+- Custom post meta
+- Custom taxonomy meta
+- Custom user meta
+- Plugin option page
+- Theme options page
+- Shortcodes
+- Widgets
+- Widget display conditions `widget-context`
+- Search custom contents
 
 ### Content plugin categories
 
@@ -36,8 +51,8 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
     + mu-protect-plugins/
     + `force-featured-image`
     + mu-deny-giant-image-uploads/
-    + `prevent-concurrent-logins`
     + `user-session-control`
+    + `prevent-concurrent-logins`
 1. Fixes
     + mu-shortcode-unautop/
     + `custom-post-type-permalinks`
@@ -45,7 +60,7 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
     + Editor: `tinymce-advanced`
     + Lenghten taxonomy selector boxes, see: content-extras/nav-menu-meta-box-length.php https://core.trac.wordpress.org/ticket/32237
     + Keep category tree in post editor Category Checklist Tree `category-checklist-tree`
-    + mu-strip-dashboard/
+    + mu-cleanup-admin/
     + `wp-solarized`
     + `mark-posts`
     + https://github.com/fusioneng/Unified-Post-Types
@@ -78,40 +93,6 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
     + `p3-profiler`
     + `error-log-monitor`
 
-### Manage plugins with composer
-
-http://wpackagist.org/
-
-### WordPress .gitignore
-
-```
-*.log
-wp-config.php
-wp-content/uploads
-wp-content/cache/
-wp-content/upgrade/
-# _get_dropins()
-wp-content/advanced-cache.php
-wp-content/db.php
-wp-content/db-error.php
-wp-content/install.php
-wp-content/maintenance.php
-wp-content/object-cache.php
-# Plugin data directories
-wp-content/w3tc-config/
-wp-content/updraft/
-wp-content/sucuri/
-
-# What other directories to look for
-#wp-content/some-other-cache/
-#wp-content/uploads/some-cache/
-#wp-content/themes/THEME/some-cache/
-#wp-content/plugins/PLUGIN/some-cache/
-#large-files-in-docroot/
-
-#!dont/exclude.this
-```
-
 ### Revolution Slider fix
 
 ```php
@@ -125,3 +106,46 @@ wp-content/sucuri/
  */
 error_log( 'Break-in attempt detected: ' . 'revslider_update_plugin' );
 ```
+
+## Manage WordPress installation with git
+
+1. Core as submodule at `/company/` with URL `https://github.com/WordPress/WordPress.git`
+1. Theme as submodule with URL `file:///home/user/website/theme.git`
+1. WP.org plugins are gitignore-d.
+1. Non-WP.org plugins as submodules with URL `file:///home/user/website/plugin.git`
+
+### WordPress .gitignore
+
+```
+*.log
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+# From _get_dropins()
+wp-content/advanced-cache.php
+wp-content/db.php
+wp-content/db-error.php
+wp-content/install.php
+wp-content/maintenance.php
+wp-content/object-cache.php
+
+# Plugin data directories
+wp-content/w3tc-config/
+wp-content/updraft/
+wp-content/sucuri/
+
+# What other directories to look for?
+#wp-content/some-other-cache/
+#wp-content/uploads/some-cache/
+#wp-content/themes/THEME/some-cache/
+#wp-content/plugins/PLUGIN/some-cache/
+#large-files-in-docroot/
+
+#!dont/exclude.this
+```
+
+## Manage plugins with composer
+
+http://wpackagist.org/
+

@@ -34,6 +34,5 @@ What db tables WP has?
 integration with other plugin
 - Yoast
 - pods
-- itsec
 - Google XML Sitemaps
 - etc.

@@ -66,9 +66,15 @@ class O1_Protect_Plugins {
 	public function reactivate() {
 
 		add_filter( 'pre_update_option_' . 'active_plugins',
-			array( $this, 'revert_values' ), 10, 2 );
+			array( $this, 'revert_values' ),
+			10,
+			2
+		);
 		add_filter( 'pre_update_site_option_' . 'active_sitewide_plugins',
-			array( $this, 'revert_values' ), 10, 2 );
+			array( $this, 'revert_values' ),
+			10,
+			2
+		);
 	}
 
 	/**
@@ -102,7 +108,6 @@ class O1_Protect_Plugins {
 
 		return $actions;
 	}
-
 }
 
 new O1_Protect_Plugins();

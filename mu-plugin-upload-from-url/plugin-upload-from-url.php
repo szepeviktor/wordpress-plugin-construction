@@ -1,20 +1,25 @@
 <?php
 /*
 Plugin Name: Plugin Upload From URL MU
-Version: 0.1
+Version: 0.1.0
 Description: Enables plugin installation from a URL.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-plugin-upload-from-url
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
 License: GNU General Public License (GPL) version 2
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-plugin-upload-from-url
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
+    error_log( 'Break-in attempt detected: plugin_upload_from_url_mu_direct_access '
+        . addslashes( isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' )
+    );
     ob_get_level() && ob_end_clean();
-    header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.1 403 Forbidden' );
-    exit();
+    if ( ! headers_sent() ) {
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.1 403 Forbidden', true, 403 );
+        header( 'Connection: Close' );
+    }
+    exit;
 }
 
 class O1_Plugin_Upload_From_Url {
@@ -40,7 +45,7 @@ class O1_Plugin_Upload_From_Url {
             wp_die( __( 'You do not have sufficient permissions to install plugins on this site.' ) );
         }
 
-        check_admin_referer('plugin-download');
+        check_admin_referer( 'plugin-download' );
 
         require_once( ABSPATH . 'wp-admin/admin-header.php' );
 
@@ -48,7 +53,7 @@ class O1_Plugin_Upload_From_Url {
 
         // Remove "-master" from GitHub URL-s
         if ( false !== strstr( $download_url, '//github.com/' ) ) {
-            add_filter( 'upgrader_source_selection', array( $this, 'remove_github_master' ), 9, 3 );
+            add_filter( 'upgrader_source_selection', array( $this, 'remove_github_master' ), 9, 1 );
         }
 
         $type  = 'web';
@@ -59,13 +64,14 @@ class O1_Plugin_Upload_From_Url {
         $upgrader = new Plugin_Upgrader( new Plugin_Installer_Skin( compact( 'type', 'title', 'url', 'nonce' ) ) );
         $upgrader->install( $download_url );
 
-        include( ABSPATH . 'wp-admin/admin-footer.php' );
+        include ABSPATH . 'wp-admin/admin-footer.php';
     }
 
 
     public function upload_script_styles( $hook ) {
 
         if (  $this->admin_menu !== $hook ) {
+
             return;
         }
 
@@ -93,8 +99,8 @@ class O1_Plugin_Upload_From_Url {
 <div class="download-plugin upload-plugin">
     <p class="install-help"><?php _e( 'If you have a plugin in a .zip hosted somewhere, you may install it by entering the URL here.' ); ?></p>
     <form method="post" class="download-plugin-form" action="<?php echo self_admin_url( 'update.php?action=download-plugin' ); ?>">
-        <?php wp_nonce_field( 'plugin-download'); ?>
-        <label class="screen-reader-text" for="pluginurl"><?php _e('Plugin URL'); ?></label>
+        <?php wp_nonce_field( 'plugin-download' ); ?>
+        <label class="screen-reader-text" for="pluginurl"><?php _e( 'Plugin URL' ); ?></label>
         <input type="url" id="pluginurl" name="pluginurl" autofocus required />
         <?php submit_button( __( 'Install Now' ), 'button', 'install-download-plugin-submit', false ); ?>
     </form>
@@ -109,7 +115,7 @@ class O1_Plugin_Upload_From_Url {
         $this->admin_menu = add_plugins_page( __( 'Add Plugins' ), 'Upload from URL', 'install_plugins', 'plugin-download', array( $this, 'download_form' ) );
     }
 
-    public function remove_github_master( $source, $remote_source, $that ) {
+    public function remove_github_master( $source ) {
 
         global $wp_filesystem;
 
@@ -118,6 +124,7 @@ class O1_Plugin_Upload_From_Url {
         $new_source = $this->remove_trailing_part( $source, $gh );
 
         if ( $wp_filesystem->move( $source, $new_source ) ) {
+
             return $new_source;
         }
 
@@ -128,20 +135,22 @@ class O1_Plugin_Upload_From_Url {
 
         $length = strlen( $needle );
         if ( 0 === $length ) {
+
             return  $haystack;
         }
 
         if ( substr( $haystack, -$length ) !== $needle ) {
-            // try with a slash
+            // Try with a slash
             if ( substr( $haystack, -$length - 1 ) === $needle . '/' ) {
+
                 return substr( $haystack, 0, -$length - 1 ) . '/';
             }
+
             return  $haystack;
         }
 
         return substr( $haystack, 0, -$length );
     }
-
 }
 
 new O1_Plugin_Upload_From_Url();

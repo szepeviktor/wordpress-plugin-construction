@@ -69,7 +69,7 @@ class O1_Nofollow_Robot_Trap {
         // Add the hidden link to the front page
         add_action( 'wp_footer', array( $this, 'add_allow_url' ), 100 );
         // Generate output or block
-        add_action( 'template_redirect', array( $this, 'generate_pages' ) );
+        add_action( 'template_redirect', array( $this, 'generate_pages' ), 0 );
         // Detect protocol relative URL
         add_filter( 'redirect_canonical', array( $this, 'protocol_relative' ), 1, 2 );
     }
@@ -100,6 +100,7 @@ class O1_Nofollow_Robot_Trap {
 
         // Rewrite API cannot handle '^' . preg_quote( $this->protocol_relative_url ) . '$'
         // @see protocol_relative() below
+// @FIXME Really? template_redirect prio:0
 
         add_rewrite_tag( '%nfrt%', '(block|allow|nofollow)' );
 

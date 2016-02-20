@@ -7,6 +7,7 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-disable-updates
+Options: ENABLE_FORCE_CHECK_UPDATE
 */
 
 // @FIXME https://core.trac.wordpress.org/ticket/30855#ticket

@@ -12,7 +12,7 @@ http://ninjafirewall.com/pro/overview.php
 - Outgoing HTTP traffic monitoring: `snitch`
 - Email traffic checking: ${D}/monitoring/cse/
 - Cron job: shared-hosting-aid/wp-cron-http.sh
-- WordPress database cleanup: `wp-clean-up`
+- WordPress database cleanup: `wp-sweep`
 - Integrity: `exploit-scanner`
 - Security checklist: `gauntlet-security`
 
@@ -47,17 +47,6 @@ put index.php; put srdb.class.php
 
 # rm index.php srdb.class.php; cd ../; rmdir sr/
 ```
-
-#### Search & replace items with wp-cli
-
-`wp search-replace --precise --recurse-objects --all-tables-with-prefix`
-
-1. http://DOMAIN.TLD or https (no trailing slash)
-1. /home/PATH/TO/SITE (no trailing slash)
-1. EMAIL@ADDRESS.ES (all addresses)
-1. DOMAIN.TLD (now without http)
-
-Manual replace constants in `wp-config.php`.
 
 
 
@@ -94,7 +83,7 @@ See: shared-hosting-aid/php-mail-sender.php
 
 ### Security plugin
 
-- sucuri-scanner plugin + sucuri-cleanup
+- sucuri-scanner plugin + ustom-sucuri plugin
 - gauntlet-security plugin
 
 
@@ -143,6 +132,8 @@ https://github.com/h5bp/mobile-boilerplate/blob/master/index.html
 - apple-touch-icon-precomposed.png
 - apple-touch-icon-120x120.png
 - apple-touch-icon-120x120-precomposed.png
+- apple-touch-icon-152x152.png
+- apple-touch-icon-152x152-precomposed.png
 - apple-touch-icon*.png ...
 - browserconfig.xml
 
@@ -240,69 +231,3 @@ jQuery('#wpbody .plugins .plugin-title strong').each(function (){console.log(jQu
 var plungins=[].slice.call(document.querySelectorAll('#wpbody .plugins .plugin-title .deactivate a'));
 plungins.forEach(function(p){console.log(decodeURIComponent(p.search.split('&')[1].split('=')[1]));});
 ```
-
-
-
-### MU plugins
-
-- https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php
-- https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-protect-plugins/protect-plugins.php
-- https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-disable-updates/disable-updates.php
-
-
-
-### SMTP
-
-Use reliable smart host with STARTTLS for email sending.
-
-Consider using [Sendgrid](https://sendgrid.com/pricing) or [Mandrill](https://mandrill.com/signup/) for low volume email traffic.
-
-`wget -nv https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/mu-smtp-uri/smtp-uri.php`
-
-
-
-### Monitoring
-
-....... üzemeltetés @TODO
-....... -----------
-.......
-....... 1. ügyfeleknek szolg leírása en/hu
-....... 2. áttekintés/ütemezés magamnak
-....... 3. setup with snippets and links
-....... 4. routine: pseudo script for copy&pasting
-
-```
-# Static file check
-01 *	* * *	web	/usr/bin/wget -qO- SITE-URL/wp-includes/wlwmanifest.xml|grep -qF '<serviceName>WordPress</serviceName>'
-
-# PHP version and MySQL version check
-01 *	* * *	web	/usr/bin/wget -qO- SITE-URL/ping.php|grep -qFx 'MD5-SUM'
-
-# Front-page fixed string
-# @FIXME Only one request for the front-page.
-02 *	* * *	web	/usr/local/bin/firefox.sh -qO- FRONT-PAGE|grep -q '<h1>Title string'
-
-# Front-page errors
-02 *	* * *	web	/usr/local/bin/firefox.sh -qO- FRONT-PAGE|grep -qEi 'PHP \S+: |MySQL|error|notice|warning|Account.*Suspend'
-
-# Front-page -exceptions = MD5
-```
-
-- Visual changes: https://visualping.io/ (PhantomJS, slimerJS, `compare -metric MAE ???PAE reference.png current.png`)
-- [pingdom](https://www.pingdom.com/free/), shared-hosting-aid/ping.php
-- @TODO rbl-watch.sh (also shared-hosting servers)
-- [RBL blacklists monitoring](https://www.rblmon.com/)
-- @TODO detect JavaScript errors, Piwik, http://jserrlog.appspot.com/ , https://github.com/mperdeck/jsnlog.js , https://developers.google.com/analytics/devguides/collection/analyticsjs/exceptions
-https://github.com/errbit/errbit + https://github.com/airbrake/airbrake-js
-- dns-watch, see: ${D}/monitoring/dns-watch.sh
-- can-send-email @daily, see: ${D}/monitoring/cse/
-- see: shared-hosting-aid/remote-log-watch.sh @*/30
-- @TODO munin-plugin: log size in lines
-- @TODO remote-rotate error.log
-- opcache/apc/memcache control panels @weekly
-- domain name expiry @monthly
-- Safebrowsing, Sucuri, Virustotal check @daily
-- SEO Panel @weekly
-- Analytics @weekly
-- Google Search Console @weekly
-- PageSpeed, webpagetest.org @weekly

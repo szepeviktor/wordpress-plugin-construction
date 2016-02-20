@@ -22,19 +22,19 @@ Error() {
 
 # Go to WP root directory
 WP_WORKING_TREE="$(git rev-parse --show-toplevel)"
-
 if [ $? == 0 ] && [ -n "$WP_WORKING_TREE" ] && [ -d "$WP_WORKING_TREE" ]; then
     cd "$WP_WORKING_TREE"
 else
-    Error 1 "This not a git working-tree"
+    Error 1 "This not a git working-tree ($(pwd))"
 fi
 
 # Is it WordPress from GitHub?
 git config --get remote.origin.url | grep -qFx "https://github.com/WordPress/WordPress.git" \
-    || Error 2 "This is not WP.git"
+    || Error 2 "This is not WordPress/WordPress"
 
 # Detect changes (maybe auto update ran)
 if [ -z "$(git status -s)" ]; then
+    echo "Working-tree is clean, resetting"
     git reset --hard
 else
     git status
@@ -46,23 +46,26 @@ fi
 echo "Here we were: $(git --no-pager log --pretty=format:"%d" -1)"
 
 # Fetch new commits and tags
-git fetch --prune --tags || Error 4 "Fetch failed."
+git fetch --prune --tags || Error 4 "Fetch failed"
 
 LATEST_TAG="$(git tag | tail -n 1)"
 
+echo "Upgrading to ${LATEST_TAG}"
 if ! git checkout "$LATEST_TAG"; then
     Error 5 "Checkout failed"
 fi
 
 # Upgrade database
-cat << EOF | php || Error 6 'Database update failed!'
+cat << EOF | /usr/bin/php || Error 6 "Database upgrade failed"
 <?php // wp --allow-root core update-db
+
 define( 'WP_INSTALLING', true );
 require 'wp-load.php';
 // For wp_guess_url()
 define( 'WP_SITEURL', get_option( 'siteurl' ) );
 require_once 'wp-admin/includes/upgrade.php';
+
 wp_upgrade();
 delete_site_transient( 'update_core' );
-print( 'WordPress database upgraded successfully.' );
+print( "WordPress database upgraded successfully.\n" );
 EOF

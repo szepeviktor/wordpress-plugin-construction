@@ -1,9 +1,6 @@
 [submodule "shared-hosting-aid/update-control"]
 	path = shared-hosting-aid/update-control
 	url = https://github.com/chipbennett/update-control
-[submodule "shared-hosting-aid/wordpress-php-info"]
-	path = shared-hosting-aid/wordpress-php-info
-	url = https://github.com/wp-plugins/wordpress-php-info
 [submodule "shared-hosting-aid/ftptail"]
 	path = shared-hosting-aid/ftptail
 	url = https://github.com/johntdyer/ftptail.git
@@ -97,3 +94,6 @@
 [submodule "manual-cron"]
 	path = manual-cron
 	url = git@github.com:szepeviktor/manual-cron.git
+[submodule "shared-hosting-aid/wp-serverinfo"]
+	path = shared-hosting-aid/wp-serverinfo
+	url = https://github.com/lesterchan/wp-serverinfo.git
