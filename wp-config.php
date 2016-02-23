@@ -67,6 +67,7 @@ define( 'AUTOMATIC_UPDATER_DISABLED', true );
 
 /** Plugins */
 
+//define( 'WP_CACHE_KEY_SALT', 'COMPANY-SHORT_' );
 //define( 'PODS_SESSION_AUTO_START', false );
 //define( 'WPCF7_LOAD_CSS', false );
 //define( 'WPCF7_LOAD_JS', false );

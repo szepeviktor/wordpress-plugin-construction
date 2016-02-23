@@ -19,6 +19,8 @@ class O1_Cleanup_Admin {
         add_action( 'in_admin_footer', array( $this, 'remove_update_footer' ) );
         add_filter( 'admin_footer_text', array( $this, 'footer_content' ) );
 
+// @TODO Hide for everyone WordPress News
+
         //add_action( 'admin_enqueue_scripts', array( $this, 'acf_plugin_css' ), 20 );
 
         //add_action( 'admin_enqueue_scripts', array( $this, 'hide_with_css' ), 20 );

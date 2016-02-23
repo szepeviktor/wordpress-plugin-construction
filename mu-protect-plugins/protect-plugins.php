@@ -36,7 +36,7 @@ class O1_Protect_Plugins {
 	 * @access private
 	 */
 	private $protected_plugins = array(
-		'sucuri-scanner/sucuri.php'
+		'sucuri-scanner/sucuri.php',
 	);
 
 	/**
