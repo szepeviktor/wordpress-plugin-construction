@@ -13,12 +13,14 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 - assets/icon-128x128.png
 - assets/icon-256x256.png
 - assets/screenshot-1.jpg (530px + 1+1 border)
+- http://www.shutterstock.com/cat.mhtml?&searchterm=Flat%20modern%20design%20with%20shadow
 
 ## Recommended plugins
 
 - https://vip.wordpress.com/plugins/
 - http://wpgear.org/
 
+- Bcrypt hashed passwords: https://github.com/roots/wp-password-bcrypt
 - Remove emoji Javascript: `classic-smilies`
 - Email "From:" header: `wp-mailfrom-ii`
 - SMTP settings: `smtp-uri`, `danielbachhuber/mandrill-wp-mail`

@@ -70,9 +70,6 @@
 [submodule "wordpress-fail2ban"]
 	path = wordpress-fail2ban
 	url = git@github.com:szepeviktor/wordpress-fail2ban.git
-[submodule "sucuri-custom"]
-	path = sucuri-custom
-	url = git@github.com:szepeviktor/custom-sucuri.git
 [submodule "resource-versioning"]
 	path = resource-versioning
 	url = git@github.com:szepeviktor/resource-versioning.git
@@ -97,3 +94,6 @@
 [submodule "shared-hosting-aid/wp-serverinfo"]
 	path = shared-hosting-aid/wp-serverinfo
 	url = https://github.com/lesterchan/wp-serverinfo.git
+[submodule "custom-sucuri"]
+	path = custom-sucuri
+	url = git@github.com:szepeviktor/custom-sucuri.git

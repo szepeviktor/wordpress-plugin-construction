@@ -1,7 +1,7 @@
 <?php
 /*
-Snippet Name: Check PHP and MySQL server version
-Version: 1.0.1
+Snippet Name: Check PHP and MySQL server version and server time
+Version: 1.1.0
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
@@ -10,7 +10,7 @@ Author: Viktor Szépe
 $management_server_ip = 'MANAGEMENT_SERVER_IP';
 
 // IP access control
-if ( $management_server_ip !== @$_SERVER['REMOTE_ADDR'] ) {
+if ( $management_server_ip !== $_SERVER['REMOTE_ADDR'] ) {
     if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
         $referer = sprintf( ', referer:%s', addslashes( $_SERVER['HTTP_REFERER'] ) );
     } else {
@@ -34,6 +34,14 @@ if ( $management_server_ip !== @$_SERVER['REMOTE_ADDR'] ) {
     exit;
 }
 
+// Server time check
+if ( isset( $_GET['time'] ) ) {
+    $offset = abs( (int) $_GET['time'] - time() );
+    if ( $offset > 1 ) {
+        exit( 'time!' );
+    }
+}
+
 // Load WordPress
 define( 'WP_USE_THEMES', false );
 $wpload_path = dirname( __FILE__ ) . '/wp-load.php';
@@ -46,5 +54,5 @@ $pong = sprintf( '%s|%s',
     $wpdb->get_var( $mysql_version_query, 1 )
 );
 
-//DGB exit( $pong );
+// DGB exit( $pong );
 exit( md5( $pong ) );

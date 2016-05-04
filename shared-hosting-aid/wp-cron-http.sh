@@ -59,13 +59,16 @@ trap "rm -f '$HEADERS_FIFO' &> /dev/null" EXIT
 wget -q -S -O- --max-redirect=0 --tries=1 --timeout=10 --user-agent="$HTTP_USER_AGENT" \
     "$WPCRON_URL" 2> "$HEADERS_FIFO" &
 
+# Fix WGET_RET=2
+sleep 1
+
 # Die on error or missing headers and report non-200 response
-if head -n 1 "$HEADERS_FIFO" | grep "^  HTTP/" | grep -v "^  HTTP/1\.1 200 OK$" >&2; then
+if grep -m 1 "^  HTTP/" "$HEADERS_FIFO" | grep -vFx "  HTTP/1.1 200 OK" 1>&2; then
     Die 2 "Non-200 HTTP status code during ${WPCRON_URL}"
 fi
 # @FIXME direct wget 2> to a file
 
-wait $!
+wait "$!"
 WGET_RET="$?"
 if [ "$WGET_RET" != 0 ]; then
     # http://www.gnu.org/software/wget/manual/html_node/Exit-Status.html
