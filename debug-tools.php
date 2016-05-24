@@ -17,7 +17,7 @@ echo "<!-- MARK -|-|-|-|- {$var} -->" . PHP_EOL; // FIXME
 
 
 // Is it executed?
-error_log( " -- MARK -- ". serialize( $var ) ); // FIXME
+error_log( " -- MARK -- " . serialize( $var ) ); // FIXME
 
 
 // What files were executed?
@@ -31,5 +31,5 @@ register_shutdown_function( function () {
 }); // FIXME
 
 
-// Where does this called from?
+// Where does this get called from?
 echo PHP_EOL . 'Trace: '; var_dump( debug_backtrace() ); exit; // FIXME

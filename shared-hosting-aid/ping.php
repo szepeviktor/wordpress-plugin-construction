@@ -1,13 +1,13 @@
 <?php
 /*
 Snippet Name: Check PHP and MySQL server version and server time
-Version: 1.1.0
+Version: 1.1.1
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 */
 
-$management_server_ip = 'MANAGEMENT_SERVER_IP';
+$management_server_ip = '@@MANAGEMENT_SERVER_IP@@';
 
 // IP access control
 if ( $management_server_ip !== $_SERVER['REMOTE_ADDR'] ) {

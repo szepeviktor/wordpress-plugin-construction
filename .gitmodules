@@ -97,3 +97,6 @@
 [submodule "custom-sucuri"]
 	path = custom-sucuri
 	url = git@github.com:szepeviktor/custom-sucuri.git
+[submodule "password-bcrypt"]
+	path = password-bcrypt
+	url = git@github.com:szepeviktor/password-bcrypt.git

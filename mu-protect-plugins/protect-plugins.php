@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name:       Protect normal plugins MU
-Plugin URI:        https://github.com/szepeviktor/wordpress-plugin-construction
-Description:       Prevent deletion of normal plugins
 Version:           1.2.0
+Description:       Prevent deletion of normal plugins
+Plugin URI:        https://github.com/szepeviktor/wordpress-plugin-construction
 Author:            Viktor Szépe
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,7 +36,7 @@ class O1_Protect_Plugins {
 	 * @access private
 	 */
 	private $protected_plugins = array(
-		'sucuri-scanner/sucuri.php',
+		'password-bcrypt/wp-password-bcrypt.php',
 	);
 
 	/**

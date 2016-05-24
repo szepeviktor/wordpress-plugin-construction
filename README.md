@@ -20,7 +20,7 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 - https://vip.wordpress.com/plugins/
 - http://wpgear.org/
 
-- Bcrypt hashed passwords: https://github.com/roots/wp-password-bcrypt
+- Bcrypt hashed passwords: https://github.com/roots/wp-password-bcrypt `password-bcrypt`
 - Remove emoji Javascript: `classic-smilies`
 - Email "From:" header: `wp-mailfrom-ii`
 - SMTP settings: `smtp-uri`, `danielbachhuber/mandrill-wp-mail`
