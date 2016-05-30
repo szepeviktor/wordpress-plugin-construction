@@ -6,11 +6,11 @@ Description: Prevent category archive content duplication.
 Plugin URI: http://cheatsheet.davidprog.hu/
 Author: Latkóczy Dávid
 Author URI: http://davidprog.hu/
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/prevent-category-archive-content-duplication
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Options: PCAD_CUSTOM_TAXONOMY
 */
 
-define( 'PCAD_CUSTOM_TAXONOMY', 'termekkategoria' );
+// define( 'PCAD_CUSTOM_TAXONOMY', 'termekkategoria' );
 
 add_action( 'wp', 'prevent_category_archive_duplication' );
 

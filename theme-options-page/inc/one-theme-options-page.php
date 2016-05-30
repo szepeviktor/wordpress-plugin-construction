@@ -5,7 +5,7 @@
  * Common render function, supports several field types, default values, description line, HTML classes
  * Please do *Sanizite input* and Escape output!
  *
- * @version 0.2.0
+ * @version 0.1.0
  * @link https://codex.wordpress.org/Data_Validation
  */
 
@@ -18,11 +18,28 @@ class One_Theme_Options_Page {
     protected $html_title = 'One theme options page';
     private $tabs = array();
     private $sections = array();
+    private $allowed_html_attrs = array(
+        'style',
+        'id',
+        'title',
+        'disabled',
+        'readonly',
+        'required',
+        'placeholder',
+        'tabindex',
+        'autofocus',
+        'onclick',
+        'onfocus',
+        'size',
+        'row',
+        'cols',
+    );
 
     public function __construct() {
 
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         add_action( 'admin_init', array( $this, 'settings_init' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'inline_styles' ), 20 );
     }
 
     /**
@@ -45,11 +62,7 @@ class One_Theme_Options_Page {
      */
     protected function add_settings_tab( $slug, $html_title, $title = '' ) {
 
-// 1 page / tabs `&tab=` / sections / fields
-// produces one option array per tab ?per section
-// add_settings_field(page slug, section id, field id, type, sanitize, label, option, optional:args(elements,class/th,classes,default,description,rows,cols ...))
-// $allowed_HTML_args = array('classes', 'row','cols','autofocus'...)
-// output example as a shortcode [otop-example]: trim, esc_*
+        // FIXME Produces one option array per tab ?per section
 
         if ( empty( $title ) ) {
             $tab_title = $html_title;
@@ -93,10 +106,10 @@ class One_Theme_Options_Page {
 
         $this->sections[ $section ]['fields'][ $id ] = array(
             'type' => $type,
+            // Sanitize type
             'sanitize' => $sanitize,
             'label' => $label,
             'option' => $option,
-            // args(label_for,elements,class/th,classes,default,description,rows,cols ...)
             'args' => $args,
         );
 
@@ -107,6 +120,13 @@ class One_Theme_Options_Page {
         );
         if ( array_key_exists( 'label_for', $args ) ) {
             $extra_args['label_for'] = $id;
+        }
+        if ( array_key_exists( 'required', $args ) ) {
+            if ( array_key_exists( 'class', $args ) ) {
+                $args['class'] .= ' required';
+            } else {
+                $extra_args['class'] = 'required';
+            }
         }
         add_settings_field(
             $id,
@@ -133,7 +153,7 @@ class One_Theme_Options_Page {
         */
         settings_fields( $this->page_slug );
         do_settings_sections( $this->page_slug );
-// TODO Reset button
+        // TODO Reset button
         submit_button();
         print '</form></div>';
     }
@@ -142,8 +162,6 @@ class One_Theme_Options_Page {
      * Display navtab
      */
     public function nav_tab_render() {
-//$this->tabs = array( 'custom-theme-menu-slug' => 'Tab One', 'custom-theme-menu-slug2' => 'Tab Two' );
-//$this->current_tab = 'custom-theme-menu-slug';
 
         print '<h2 class="nav-tab-wrapper">';
         foreach ( $tabs as $slug => $title ) {
@@ -191,14 +209,21 @@ class One_Theme_Options_Page {
         } else {
             $option = '';
         }
-        // HTML classes: regular-text large-text small-text tiny-text code
-        // See: wp-admin/css/forms.css
+        // TODO 'non-empty' 'valid'
         $attrs = isset( $args['classes'] ) ? sprintf( ' class="%s"', $args['classes'] ) : '';
+        foreach ( $args as $attr => $value ) {
+            if ( in_array( $attr, $this->allowed_html_attrs ) ) {
+                $attrs .= sprintf( ' %s', esc_attr( $attr ) );
+                if ( true !== $value ) {
+                    $attrs .= sprintf( '="%s"', esc_attr( $value ) );
+                }
+            }
+        }
 
         switch ( $args['type'] ) {
             case 'text':
                 printf(
-                    '<input id="%s" type="text" name="%s[%s]" value="%s"%s>',
+                    '<input id="%s" type="text" name="%s[%s]" value="%s"%s />',
                     $args['field_id'],
                     $args['option'],
                     $args['field_id'],
@@ -280,7 +305,26 @@ class One_Theme_Options_Page {
                 }
                 print '</select>';
                 break;
-            // TODO New types: post_select with Query, Media, URL(html5), Media+link, loop[] field
+            case 'multiselect':
+                printf( '<select multiple id="%s" name="%s[%s][]"%s>',
+                    $args['field_id'],
+                    $args['option'],
+                    $args['field_id'],
+                    $attrs
+                );
+                foreach ( $args['elements'] as $index => $select ) {
+                    printf( '<option value="%s"%s />%s</option>',
+                        $index,
+                        ( is_array( $option ) && in_array( $index, $option ) ) ? ' selected="selected"' : '',
+                        esc_html( $select )
+                    );
+                }
+                print '</select>';
+                break;
+                // TODO New types
+                // -nothing-selected- select, static html, number, email, password, Google Analytics, YouTube, Vimeo, Wistia, LatLong/maps, Google|font|names
+                // date, time, date-time, timestamp, css color/hex,rbg,rgba,name, css size/px,em...
+                // post_select with Query, tax, user, Media(id,title,alt,desc+preview), Gallery, URL(html5), Media+link, loop[] field
             default:
                 $action = 'otop_render_field_type_' . $args['type'];
                 if ( has_action( $action ) ) {
@@ -296,5 +340,103 @@ class One_Theme_Options_Page {
         if ( isset( $args['description'] ) ) {
             printf( '<p class="description" id="%s-description">%s</p>', $args['field_id'], $args['description'] );
         }
+    }
+
+    /**
+     * Sanitize input
+     */
+    public function sanitize_option( $value ) {
+
+        if ( is_array( $value ) ) {
+            // $value does not contain section ID :(
+            foreach ( $this->sections as $section ) {
+                foreach ( $section['fields'] as $field_id => $field_data ) {
+                    if ( ! array_key_exists( $field_id, $value ) ) {
+                        // Could be an unset checkbox or radio button
+                        continue;
+                    }
+                    if ( ! array_key_exists( 'sanitize', $field_data ) ) {
+                        error_log( sprintf( 'Field definition error (%s)', $field_id ) );
+                        continue;
+                    }
+                    if ( array_key_exists( 'required', $field_data['args'] ) && empty( $value[ $field_id ] ) ) {
+                        // User is cheating, empty value for required field
+                        wp_die(
+                            '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                            '<p>' . __( 'You are not allowed to delete this item.' ) . '</p>',
+                            403
+                        );
+                    }
+                    switch ( $field_data['sanitize'] ) {
+                        case 'fullhtml':
+                            // Everything is allowed
+                            break;
+                        case 'htmltext':
+                            // HTML with no tags, only entities
+                            $value[ $field_id ] = wp_strip_all_tags( $value[ $field_id ] );
+                            break;
+                        case 'url':
+                            // URL
+                            $value[ $field_id ] = esc_url_raw( $value[ $field_id ] );
+                            break;
+                        case 'one':
+                            // '1' only for checkbox
+                            // Loose comparision
+                            if ( 1 != $value[ $field_id ] ) {
+                                unset( $value[ $field_id ] );
+                            }
+                            break;
+                        case 'arrayone':
+                            // array( '1', '1' ) only for checkboxes
+                            if ( ! is_array( $value[ $field_id ] ) ) {
+                                $value[ $field_id ] = array( $value[ $field_id ] );
+                            }
+                            foreach ( $value[ $field_id ] as $index => $one ) {
+                                // Loose comparision
+                                if ( 1 != $one ) {
+                                    unset( $value[ $field_id ][ $index ] );
+                                }
+                            }
+                            break;
+                        case 'elements':
+                            // Only 'elements' indices
+                            if ( ! array_key_exists( $value[ $field_id ], $field_data['args']['elements'] ) ) {
+                                $value[ $field_id ] = '';
+                            }
+                            break;
+                        case 'arrayelements':
+                            // Only an aray of 'elements' indices
+                            if ( ! is_array( $value[ $field_id ] ) ) {
+                                $value[ $field_id ] = array( $value[ $field_id ] );
+                            }
+                            foreach ( $value[ $field_id ] as $index => $element ) {
+                                if ( ! array_key_exists( $element, $field_data['args']['elements'] ) ) {
+                                    unset( $value[ $field_id ][ $index ] );
+                                }
+                            }
+                            break;
+                        default:
+                            error_log( sprintf( 'Invalid sanitization type (%s).', $field_data['sanitize'] ) );
+                            $value[ $field_id ] = '';
+                    }
+                }
+            }
+
+            /**
+             * Custom sanitization
+             */
+            $value = apply_filters( 'otop_sanitize_option', $value );
+        }
+
+        return $value;
+    }
+
+    public function inline_styles() {
+
+        // Floating Submit button, CSS3 position:sticky;
+        // Required asterisk
+        $style = '.wrap #submit { position: fixed !important; bottom: 35px !important; }
+        tr.required label:after { content: "*"; color: crimson; vertical-align: top; margin-left: 2px; }';
+        wp_add_inline_style( 'wp-admin', $style );
     }
 }

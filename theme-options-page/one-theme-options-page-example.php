@@ -4,6 +4,7 @@ require_once 'inc/one-theme-options-page.php';
 
 class Custom_Theme extends One_Theme_Options_Page {
 
+// TODO HTML output example as a shortcode [otop-example]: trim, esc_* ...
     public function settings_init() {
 
         $this->add_settings_tab(
@@ -35,14 +36,34 @@ class Custom_Theme extends One_Theme_Options_Page {
             'htmltext',
             __( 'Text label', 'one_theme_textdomain' ),
             $option,
-            // label_for,elements,class/th,classes,default,description,rows,cols and custom values for custom field types
+            // label_for,elements,class(for <tr>),classes,default,description,rows,cols and custom values for custom field types
             array(
                 'label_for' => true,
                 'default' => 'Some apples are red.',
-                'description' => 'This is a nice descriptive line.',
-                // Witdh classes: tiny-text small-text '' regular-text large-text
+                'placeholder' => 'Apples are ...',
+                'description' => 'Please input apple colors.',
+                // Width classes: tiny-text(35px) small-text(50px) ''(170px) regular-text(25em) all-options(250px) large-text(100%)
                 // Other classes: code
                 'classes' => 'regular-text code',
+                'title' => 'This field is mandatory.',
+                'required' => true,
+            )
+        );
+
+        $this->add_settings_field(
+            $section,
+            'one_theme_text_field_u',
+            'text',
+            // TODO add scroll to the end of current value: onclick="jQuery(this).select();"
+            'url',
+            __( 'URL label', 'one_theme_textdomain' ),
+            $option,
+            array(
+                'label_for' => true,
+                'placeholder' => 'http://',
+                'description' => 'Please enter a URL.',
+                'classes' => 'regular-text code',
+                'onfocus' => 'this.scrollLeft=this.scrollWidth;',
             )
         );
 
@@ -55,8 +76,12 @@ class Custom_Theme extends One_Theme_Options_Page {
             $option,
             array(
                 'label_for' => true,
-                'default' => 'Can U see me?',
+                'default' => 'This is a read-only field',
                 'classes' => 'large-text',
+                // A readonly element is just not editable, but gets sent when the according form submits.
+                // A disabled element isn't editable and isn't sent on submit.
+                // Another difference is that readonly elements can be focused while disabled elements can't.
+                'readonly' => true,
             )
         );
 
@@ -78,7 +103,7 @@ class Custom_Theme extends One_Theme_Options_Page {
             $section,
             'one_theme_checkbox_field_1m',
             'multi_checkbox',
-            'elementindex',
+            'arrayone',
             __( 'Multi checkbox label', 'one_theme_textdomain' ),
             $option,
             array(
@@ -98,7 +123,7 @@ class Custom_Theme extends One_Theme_Options_Page {
             $section,
             'one_theme_radio_field_2',
             'radio',
-            'elementkey',
+            'elements',
             __( 'Radio label', 'one_theme_textdomain' ),
             $option,
             array(
@@ -114,7 +139,7 @@ class Custom_Theme extends One_Theme_Options_Page {
             $section,
             'one_theme_select_field_3',
             'select',
-            'elementkey',
+            'elements',
             __( 'Select label', 'one_theme_textdomain' ),
             $option,
             array(
@@ -124,6 +149,27 @@ class Custom_Theme extends One_Theme_Options_Page {
                     'key_5' => 'Name5',
                     'key_6' => 'Name6',
                 ),
+                'style' => 'min-width: 364px;',
+            )
+        );
+
+        $this->add_settings_field(
+            $section,
+            'one_theme_select_field_3m',
+            'multiselect',
+            'arrayelements',
+            __( 'Multiselect label', 'one_theme_textdomain' ),
+            $option,
+            array(
+                'label_for' => true,
+                'elements' => array(
+                    'key_4' => 'Name4',
+                    'key_5' => 'Name5',
+                    'key_6' => 'Name6',
+                    'key_7' => 'Name7',
+                ),
+                'size' => '2',
+                'style' => 'min-width: 364px;',
             )
         );
 
@@ -138,27 +184,9 @@ class Custom_Theme extends One_Theme_Options_Page {
                 'label_for' => true,
                 'cols' => 40,
                 'rows' => 5,
-                'classes' => 'large-text',
+                'style' => 'width: 25em; resize: none;',
             )
         );
-    }
-
-    // TODO Sanitize array( field => type ) from private registry <- add_settings_field()
-    public function sanitize_option( $value ) {
-
-        if ( is_array( $value ) ) {
-            // Sanitize a URL
-            if ( isset( $value['one_theme_text_field_0'] ) ) {
-                $value['one_theme_text_field_0'] = esc_url_raw( $value['one_theme_text_field_0'] );
-            }
-            // Sanitize HTML text (no tags)
-            if ( isset( $value['one_theme_text_field_0'] ) ) {
-                $value['one_theme_text_field_4'] = wp_strip_all_tags( $value['one_theme_text_field_4'] );
-            }
-            $value = apply_filters( 'otop_sanitize_option', $value );
-        }
-
-        return $value;
     }
 }
 
