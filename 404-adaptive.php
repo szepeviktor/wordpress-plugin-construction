@@ -6,11 +6,12 @@
  *
  * @package    Adaptive 404
  * @author     Viktor Szépe <viktor@szepe.net>
- * @version    0.1.0
+ * @version    0.1.1
  * @link       https://github.com/mathiasbynens/small
  */
 
 new Adaptive_404();
+// or new Adaptive_404( $custom_404_page );
 
 class Adaptive_404 {
 
@@ -20,6 +21,10 @@ class Adaptive_404 {
     public function __construct( $custom_html ) {
 
         $this->set_html( $custom_html );
+
+        if ( '/robots.txt' === $_SERVER['REQUEST_URI'] ) {
+            $this->respond( "User-agent: *\nDisallow: /\n", 'text/plain' );
+        }
 
         // Detect AJAX requests
         if ( $this->is_ajax() ) {
@@ -115,6 +120,7 @@ class Adaptive_404 {
         $nocache_headers = array(
             // 'Status' for proxy servers
             'Status' => '404 Not Found',
+            // Stolen from WordPress core
             'Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT',
             'Cache-Control' => 'no-cache, must-revalidate, max-age=0',
             'Pragma' => 'no-cache',
