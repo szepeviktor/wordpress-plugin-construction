@@ -1,4 +1,5 @@
 tool
+----
 
 idea: wp-clean-up, https://github.com/ruhanirabin/WP-Optimize
 
@@ -36,3 +37,5 @@ integration with other plugin
 - pods
 - Google XML Sitemaps
 - etc.
+
++ https://plugins.svn.wordpress.org/wp-db-booster/trunk/admin/class-wp-db-booster-helper.php

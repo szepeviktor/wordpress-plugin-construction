@@ -47,7 +47,7 @@ class O1_Plugin_Upload_From_Url {
 
         check_admin_referer( 'plugin-download' );
 
-        require_once( ABSPATH . 'wp-admin/admin-header.php' );
+        require_once ABSPATH . 'wp-admin/admin-header.php';
 
         $download_url = esc_url_raw( $_REQUEST['pluginurl'] );
 

@@ -2,7 +2,7 @@
 /*
 Plugin Name: Extra User Meta
 Description: Adds an extra field to user profiles. <code>define( 'EXTRA_USER_META' , 'wc_extra_price_list|Price list|css_class|Price list code (0-7)' );</code>
-Version: 0.1
+Version: 0.1.0
 */
 
 class O1_User_Meta {

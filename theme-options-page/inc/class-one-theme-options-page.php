@@ -2,10 +2,10 @@
 /**
  * One theme option page for themes
  *
- * Common render function, supports several field types, default values, description line, HTML classes
- * Please do *Sanizite input* and Escape output!
+ * Common render and sanitization functions, supports several field types, default values, description, HTML classes
+ * Please properly *Sanizite input* and *Escape output*!
  *
- * @version 0.1.0
+ * @version 0.2.0
  * @link https://codex.wordpress.org/Data_Validation
  */
 
@@ -14,9 +14,9 @@
  */
 class One_Theme_Options_Page {
 
-    protected $page_slug = 'one-theme-menu-slug';
-    protected $html_title = 'One theme options page';
-    private $tabs = array();
+    private $page_slug = '';
+    private $page_title = '';
+    private $html_title = '';
     private $sections = array();
     private $allowed_html_attrs = array(
         'style',
@@ -35,17 +35,18 @@ class One_Theme_Options_Page {
         'cols',
     );
 
-    public function __construct() {
-
-        add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
-        add_action( 'admin_init', array( $this, 'settings_init' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'inline_styles' ), 20 );
-    }
-
     /**
      * Register one page
      */
-    public function add_admin_menu() {
+    protected function add_admin_menu( $slug, $title, $html_title = '' ) {
+
+        if ( empty( $html_title ) ) {
+            $html_title = $title;
+        }
+
+        $this->page_slug = $slug;
+        $this->page_title = $title;
+        $this->html_title = $html_title;
 
         // WordPress core translates 'Theme Options'
         add_theme_page(
@@ -58,27 +59,11 @@ class One_Theme_Options_Page {
     }
 
     /**
-     * Register tabs
+     * Register options
      */
-    protected function add_settings_tab( $slug, $html_title, $title = '' ) {
+    protected function register_option( $option ) {
 
-        // FIXME Produces one option array per tab ?per section
-
-        if ( empty( $title ) ) {
-            $tab_title = $html_title;
-        } else {
-            $tab_title = $title;
-        }
-
-        $this->tabs[ $slug ] = array(
-            'title' => $tab_title,
-            'html_title' => $html_title,
-        );
-
-        // @FIXME It is NOT complete!
-        // To be removed
-        $this->page_slug = $slug;
-        $this->html_title = $html_title;
+        register_setting( $this->page_slug, $option, array( $this, 'sanitize_option' ) );
     }
 
     /**
@@ -106,7 +91,6 @@ class One_Theme_Options_Page {
 
         $this->sections[ $section ]['fields'][ $id ] = array(
             'type' => $type,
-            // Sanitize type
             'sanitize' => $sanitize,
             'label' => $label,
             'option' => $option,
@@ -139,40 +123,24 @@ class One_Theme_Options_Page {
     }
 
     /**
-     * Display option page, one tab of it
+     * Display option page
      */
     public function page_render() {
 
-        printf( '<div class="wrap"><form method="post" action="options.php"><h1>%s</h1>',
-            esc_html( $this->html_title )
+        print '<div class="wrap">';
+        do_action( 'otop_before_form' );
+
+        printf( '<form method="post" action="options.php"><h1>%s</h1>',
+            esc_html( $this->page_title )
         );
-        /*
-        if ( is_array( $this->tabs ) && count( $this->tabs ) > 1 ) {
-            $this->nav_tab_render();
-        }
-        */
         settings_fields( $this->page_slug );
         do_settings_sections( $this->page_slug );
         // TODO Reset button
-        submit_button();
-        print '</form></div>';
-    }
+        submit_button( __( 'Save Settings' ), 'primary', 'submit', true, array( 'id' => 'one-theme-submit' ) );
+        print '</form>';
 
-    /**
-     * Display navtab
-     */
-    public function nav_tab_render() {
-
-        print '<h2 class="nav-tab-wrapper">';
-        foreach ( $tabs as $slug => $title ) {
-            $active = ( $current_tab === $slug ) ? ' nav-tab-active' : '';
-            printf( '<a class="nav-tab%s" href="?page=%s">%s</a>',
-                $active,
-                $slug,
-                esc_html( $title )
-            );
-        }
-        print '</h2>';
+        do_action( 'otop_after_form' );
+        print '</div>';
     }
 
     /**
@@ -188,7 +156,7 @@ class One_Theme_Options_Page {
     }
 
     /**
-     * Display any field
+     * Display field
      */
     public function field_render( $args ) {
 
@@ -209,7 +177,8 @@ class One_Theme_Options_Page {
         } else {
             $option = '';
         }
-        // TODO 'non-empty' 'valid'
+
+        // HTML class and attributes
         $attrs = isset( $args['classes'] ) ? sprintf( ' class="%s"', $args['classes'] ) : '';
         foreach ( $args as $attr => $value ) {
             if ( in_array( $attr, $this->allowed_html_attrs ) ) {
@@ -322,9 +291,12 @@ class One_Theme_Options_Page {
                 print '</select>';
                 break;
                 // TODO New types
-                // -nothing-selected- select, static html, number, email, password, Google Analytics, YouTube, Vimeo, Wistia, LatLong/maps, Google|font|names
+                // -nothing-selected- select option, static html, number, email, password
+                // Google Analytics, YouTube, Vimeo, Wistia, LatLong/maps, Google|font|names
                 // date, time, date-time, timestamp, css color/hex,rbg,rgba,name, css size/px,em...
-                // post_select with Query, tax, user, Media(id,title,alt,desc+preview), Gallery, URL(html5), Media+link, loop[] field
+                // post_select with Query, tax, user, Media(id,title,alt,desc+preview)
+                // Gallery, wp-link-input, URL(html5), Media+URL, loop[] field
+                // https://codex.wordpress.org/Javascript_Reference/wp.media
             default:
                 $action = 'otop_render_field_type_' . $args['type'];
                 if ( has_action( $action ) ) {
@@ -360,7 +332,7 @@ class One_Theme_Options_Page {
                         continue;
                     }
                     if ( array_key_exists( 'required', $field_data['args'] ) && empty( $value[ $field_id ] ) ) {
-                        // User is cheating, empty value for required field
+                        // User is cheating: empty value for required field
                         wp_die(
                             '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
                             '<p>' . __( 'You are not allowed to delete this item.' ) . '</p>',
@@ -369,10 +341,10 @@ class One_Theme_Options_Page {
                     }
                     switch ( $field_data['sanitize'] ) {
                         case 'fullhtml':
-                            // Everything is allowed
+                            // Any content is allowed
                             break;
                         case 'htmltext':
-                            // HTML with no tags, only entities
+                            // No HTML tags, only entities
                             $value[ $field_id ] = wp_strip_all_tags( $value[ $field_id ] );
                             break;
                         case 'url':
@@ -381,7 +353,7 @@ class One_Theme_Options_Page {
                             break;
                         case 'one':
                             // '1' only for checkbox
-                            // Loose comparision
+                            // Loose comparison
                             if ( 1 != $value[ $field_id ] ) {
                                 unset( $value[ $field_id ] );
                             }
@@ -392,8 +364,10 @@ class One_Theme_Options_Page {
                                 $value[ $field_id ] = array( $value[ $field_id ] );
                             }
                             foreach ( $value[ $field_id ] as $index => $one ) {
-                                // Loose comparision
-                                if ( 1 != $one ) {
+                                // Loose comparison
+                                if ( 1 != $one
+                                    || ! array_key_exists( $index, $field_data['args']['elements'] )
+                                ) {
                                     unset( $value[ $field_id ][ $index ] );
                                 }
                             }
@@ -431,12 +405,12 @@ class One_Theme_Options_Page {
         return $value;
     }
 
-    public function inline_styles() {
+    public function inline_style() {
 
-        // Floating Submit button, CSS3 position:sticky;
-        // Required asterisk
-        $style = '.wrap #submit { position: fixed !important; bottom: 35px !important; }
-        tr.required label:after { content: "*"; color: crimson; vertical-align: top; margin-left: 2px; }';
+        // Asterisk for required fields
+        $style = '.wrap tr.required label:after { content: "*"; color: crimson; vertical-align: top; margin-left: 2px; }';
+        $style = apply_filters( 'otop_inline_style', $style );
+
         wp_add_inline_style( 'wp-admin', $style );
     }
 }

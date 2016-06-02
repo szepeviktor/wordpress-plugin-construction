@@ -82,6 +82,8 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
     + Advanced Image Styles `advanced-image-styles`
     + `unattach`
 1. Content
+    + `CMB2`
+    + https://github.com/jtsternberg/Shortcode_Button
     + `custom-content-shortcode`
     + `column-shortcodes`
     + `tablepress`
