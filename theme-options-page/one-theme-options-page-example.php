@@ -1,6 +1,6 @@
 <?php
 
-require_once 'inc/class-one-theme-options-page.php';
+require_once 'includes/class-one-theme-options-page.php';
 
 class Custom_Theme extends One_Theme_Options_Page {
 
@@ -30,6 +30,25 @@ class Custom_Theme extends One_Theme_Options_Page {
          */
         $option = 'one_theme_settings';
         $this->register_option( $option );
+
+        /**
+         * Missing option notice
+         */
+        if ( false === get_option( $option ) ) {
+            add_action( 'admin_notices', function () {
+
+                // 'admin_init' is early to get current screen ID
+                $screen = get_current_screen();
+                if ( $this->wp_hook_suffix !== $screen->id ) {
+                    return;
+                }
+
+                // See: wp-admin/css/common.css
+                printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
+                    esc_html( __( 'Please save settings to initialize values!', 'otop_textdomain' ) )
+                );
+            } );
+        }
 
         /**
          * Current section ID
@@ -258,7 +277,7 @@ class Custom_Theme extends One_Theme_Options_Page {
     public function input_scrollend() {
 
         // Show the end of input content (file name of URL-s)
-        $script = '<script>jQuery(".wrap input[type=text]").each(function () {this.scrollLeft = this.scrollWidth;});</script>';
+        $script = '<script>jQuery(".one-theme-page input[type=text]").each(function () {this.scrollLeft = this.scrollWidth;});</script>';
 
         print $script;
     }
@@ -266,7 +285,7 @@ class Custom_Theme extends One_Theme_Options_Page {
     public function floating_submit( $style ) {
 
         // Floating submit button, CSS3 { position:sticky; }
-        $style .= '.wrap #one-theme-submit { position: fixed !important; bottom: 35px !important; }';
+        $style .= '.one-theme-page #submit { position: fixed !important; bottom: 35px !important; }';
 
         return $style;
     }

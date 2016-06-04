@@ -4,8 +4,9 @@
  *
  * Common render and sanitization functions, supports several field types, default values, description, HTML classes
  * Please properly *Sanizite input* and *Escape output*!
+ * Note: Page/Section/Field ID-s are trusted thus not escaped.
  *
- * @version 0.2.0
+ * @version 0.2.1
  * @link https://codex.wordpress.org/Data_Validation
  */
 
@@ -14,9 +15,6 @@
  */
 class One_Theme_Options_Page {
 
-    private $page_slug = '';
-    private $page_title = '';
-    private $html_title = '';
     private $sections = array();
     private $allowed_html_attrs = array(
         'style',
@@ -31,9 +29,13 @@ class One_Theme_Options_Page {
         'onclick',
         'onfocus',
         'size',
-        'row',
+        'rows',
         'cols',
     );
+    private $page_slug = '';
+    private $page_title = '';
+    private $html_title = '';
+    protected $wp_hook_suffix = '';
 
     /**
      * Register one page
@@ -49,7 +51,7 @@ class One_Theme_Options_Page {
         $this->html_title = $html_title;
 
         // WordPress core translates 'Theme Options'
-        add_theme_page(
+        $this->wp_hook_suffix = add_theme_page(
             $this->html_title,
             __( 'Theme Options' ),
             'manage_options',
@@ -102,9 +104,11 @@ class One_Theme_Options_Page {
             'field_id' => $id,
             'type' => $type,
         );
+        // Link label to input
         if ( array_key_exists( 'label_for', $args ) ) {
             $extra_args['label_for'] = $id;
         }
+        // It's "required"
         if ( array_key_exists( 'required', $args ) ) {
             if ( array_key_exists( 'class', $args ) ) {
                 $args['class'] .= ' required';
@@ -127,7 +131,10 @@ class One_Theme_Options_Page {
      */
     public function page_render() {
 
-        print '<div class="wrap">';
+        print '<div class="wrap one-theme-page">';
+        /**
+         * Run just before the form
+         */
         do_action( 'otop_before_form' );
 
         printf( '<form method="post" action="options.php"><h1>%s</h1>',
@@ -136,9 +143,12 @@ class One_Theme_Options_Page {
         settings_fields( $this->page_slug );
         do_settings_sections( $this->page_slug );
         // TODO Reset button
-        submit_button( __( 'Save Settings' ), 'primary', 'submit', true, array( 'id' => 'one-theme-submit' ) );
+        submit_button();
         print '</form>';
 
+        /**
+         * Run just after the form
+         */
         do_action( 'otop_after_form' );
         print '</div>';
     }
@@ -151,7 +161,7 @@ class One_Theme_Options_Page {
         $description = $this->sections[ $section_args['id'] ]['description'];
 
         if ( ! empty( $description ) ) {
-            printf( '<p>%s</p>', esc_html( $description ) );
+            printf( '<p class="section-description">%s</p>', esc_html( $description ) );
         }
     }
 
@@ -201,10 +211,8 @@ class One_Theme_Options_Page {
                 );
                 break;
             case 'textarea':
-                $attrs .= isset( $args['rows'] ) ? sprintf( ' rows="%s"', $args['rows'] ) : '';
-                $attrs .= isset( $args['cols'] ) ? sprintf( ' cols="%s"', $args['cols'] ) : '';
                 printf(
-                    '<textarea id="%s" type="text" name="%s[%s]"%s>%s</textarea>',
+                    '<textarea id="%s" name="%s[%s]"%s>%s</textarea>',
                     $args['field_id'],
                     $args['option'],
                     $args['field_id'],
@@ -213,8 +221,7 @@ class One_Theme_Options_Page {
                 );
                 break;
             case 'checkbox':
-                printf( '<label><input id="%s" type="checkbox" name="%s[%s]" %s value="1"%s />
-                    %s</label>',
+                printf( '<label><input id="%s" type="checkbox" name="%s[%s]" %s value="1"%s />&nbsp;%s</label>',
                     $args['field_id'],
                     $args['option'],
                     $args['field_id'],
@@ -227,8 +234,7 @@ class One_Theme_Options_Page {
                 print '<fieldset>';
                 foreach ( $args['elements'] as $index => $checkbox ) {
                     $this_value = ( is_array( $option ) && isset( $option[ $index ] ) ) ? $option[ $index ] : '0';
-                    printf( '<label><input id="%s_%s" type="checkbox" name="%s[%s][%s]" %s value="1"%s />
-                            %s</label><br />',
+                    printf( '<label><input id="%s_%s" type="checkbox" name="%s[%s][%s]" %s value="1"%s />&nbsp;%s</label><br />',
                         $args['field_id'],
                         $index,
                         $args['option'],
@@ -244,8 +250,7 @@ class One_Theme_Options_Page {
             case 'radio':
                 print '<fieldset>';
                 foreach ( $args['elements'] as $index => $radio ) {
-                    printf( '<label><input id="%s_%s" type="radio" name="%s[%s]" %s value="%s"%s />
-                            %s</label><br />',
+                    printf( '<label><input id="%s_%s" type="radio" name="%s[%s]" %s value="%s"%s />&nbsp;%s</label><br />',
                         $args['field_id'],
                         $index,
                         $args['option'],
@@ -266,7 +271,7 @@ class One_Theme_Options_Page {
                     $attrs
                 );
                 foreach ( $args['elements'] as $index => $select ) {
-                    printf( '<option value="%s" %s />%s</option>',
+                    printf( '<option value="%s"%s>%s</option>',
                         $index,
                         selected( $option, $index, false ),
                         esc_attr( $select )
@@ -282,7 +287,7 @@ class One_Theme_Options_Page {
                     $attrs
                 );
                 foreach ( $args['elements'] as $index => $select ) {
-                    printf( '<option value="%s"%s />%s</option>',
+                    printf( '<option value="%s"%s>%s</option>',
                         $index,
                         ( is_array( $option ) && in_array( $index, $option ) ) ? ' selected="selected"' : '',
                         esc_html( $select )
@@ -309,9 +314,16 @@ class One_Theme_Options_Page {
                 }
         }
 
+        // Description
         if ( isset( $args['description'] ) ) {
-            printf( '<p class="description" id="%s-description">%s</p>', $args['field_id'], $args['description'] );
+            printf( '<p class="description" id="%s-description">%s</p>',
+                $args['field_id'],
+                esc_html( $args['description'] )
+            );
         }
+
+        // Aid debugging
+        print "\n";
     }
 
     /**
@@ -408,7 +420,10 @@ class One_Theme_Options_Page {
     public function inline_style() {
 
         // Asterisk for required fields
-        $style = '.wrap tr.required label:after { content: "*"; color: crimson; vertical-align: top; margin-left: 2px; }';
+        $style = '.one-theme-page tr.required label:after { content: "*"; color: crimson; vertical-align: top; margin-left: 2px; }';
+        /**
+         * Custom inline styles
+         */
         $style = apply_filters( 'otop_inline_style', $style );
 
         wp_add_inline_style( 'wp-admin', $style );

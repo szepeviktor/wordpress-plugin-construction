@@ -1,8 +1,8 @@
 <?php
 
-require_once 'inc/class-one-theme-options-page.php';
+require_once 'includes/class-one-theme-options-page.php';
 
-class Custom_Theme_Minimal extends One_Theme_Options_Page {
+class Custom_Theme_Minimal_Options_Page extends One_Theme_Options_Page {
 
     public function __construct() {
 
@@ -48,4 +48,4 @@ class Custom_Theme_Minimal extends One_Theme_Options_Page {
     }
 }
 
-new Custom_Theme_Minimal();
+new Custom_Theme_Minimal_Options_Page();
