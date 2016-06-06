@@ -6,7 +6,7 @@
  * Please properly *Sanizite input* and *Escape output*!
  * Note: Page/Section/Field ID-s are trusted thus not escaped.
  *
- * @version 0.2.1
+ * @version 0.2.2
  * @link https://codex.wordpress.org/Data_Validation
  */
 
@@ -344,10 +344,10 @@ class One_Theme_Options_Page {
                         continue;
                     }
                     if ( array_key_exists( 'required', $field_data['args'] ) && empty( $value[ $field_id ] ) ) {
-                        // User is cheating: empty value for required field
+                        // User is cheating: empty value submitted for required field
                         wp_die(
                             '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
-                            '<p>' . __( 'You are not allowed to delete this item.' ) . '</p>',
+                                '<p>' . __( 'You are not allowed to delete this item.' ) . '</p>',
                             403
                         );
                     }
@@ -413,6 +413,12 @@ class One_Theme_Options_Page {
              */
             $value = apply_filters( 'otop_sanitize_option', $value );
         }
+        // @TODO Set error messages https://codex.wordpress.org/Function_Reference/add_settings_error
+
+        // Prevent multiple messages
+        if ( empty( get_settings_errors( 'one-theme-page' ) ) ) {
+            add_settings_error( 'one-theme-page', 'settings_updated', __( 'Settings saved.' ), 'updated' );
+        }
 
         return $value;
     }
@@ -427,5 +433,11 @@ class One_Theme_Options_Page {
         $style = apply_filters( 'otop_inline_style', $style );
 
         wp_add_inline_style( 'wp-admin', $style );
+    }
+
+    public function admin_notices() {
+
+        do_action( 'otop_admin_notices' );
+        settings_errors( 'one-theme-page' );
     }
 }

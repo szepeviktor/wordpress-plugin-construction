@@ -6,9 +6,15 @@ class Custom_Theme extends One_Theme_Options_Page {
 
     public function __construct() {
 
+        if ( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+
+            return;
+        }
+
         add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'settings_init' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'inline_style' ), 20 );
+        add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 
         add_action( 'otop_after_form', array( $this, 'input_scrollend' ) );
         add_filter( 'otop_inline_style', array( $this, 'floating_submit' ) );
@@ -35,17 +41,12 @@ class Custom_Theme extends One_Theme_Options_Page {
          * Missing option notice
          */
         if ( false === get_option( $option ) ) {
-            add_action( 'admin_notices', function () {
-
-                // 'admin_init' is early to get current screen ID
-                $screen = get_current_screen();
-                if ( $this->wp_hook_suffix !== $screen->id ) {
-                    return;
-                }
-
-                // See: wp-admin/css/common.css
-                printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
-                    esc_html( __( 'Please save settings to initialize values!', 'otop_textdomain' ) )
+            add_action( 'otop_admin_notices', function () {
+                add_settings_error(
+                    'one-theme-page',
+                    'missing',
+                    __( 'Please save theme options to initialize values!', 'otop_textdomain' ),
+                    'notice-warning'
                 );
             } );
         }

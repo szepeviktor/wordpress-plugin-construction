@@ -6,6 +6,11 @@ class Custom_Theme_Minimal_Options_Page extends One_Theme_Options_Page {
 
     public function __construct() {
 
+        if ( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+
+            return;
+        }
+
         add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'settings_init' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'inline_style' ), 20 );
