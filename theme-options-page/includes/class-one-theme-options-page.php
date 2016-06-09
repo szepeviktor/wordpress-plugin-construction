@@ -6,7 +6,7 @@
  * Please properly *Sanizite input* and *Escape output*!
  * Note: Page/Section/Field ID-s are trusted thus not escaped.
  *
- * @version 0.2.2
+ * @version 0.2.3
  * @link https://codex.wordpress.org/Data_Validation
  */
 
@@ -17,18 +17,22 @@ class One_Theme_Options_Page {
 
     private $sections = array();
     private $allowed_html_attrs = array(
+        'required',
         'style',
         'id',
         'title',
         'disabled',
         'readonly',
-        'required',
         'placeholder',
         'tabindex',
         'autofocus',
         'onclick',
         'onfocus',
         'size',
+        'minlength',
+        'maxlength',
+        'min',
+        'max',
         'rows',
         'cols',
     );
@@ -200,9 +204,42 @@ class One_Theme_Options_Page {
         }
 
         switch ( $args['type'] ) {
+            case 'statichtml':
+                printf( '<div class="otop_statichtml">%s</div>', $args['content'] );
+                break;
             case 'text':
                 printf(
                     '<input id="%s" type="text" name="%s[%s]" value="%s"%s />',
+                    $args['field_id'],
+                    $args['option'],
+                    $args['field_id'],
+                    esc_attr( $option ),
+                    $attrs
+                );
+                break;
+            case 'password':
+                printf(
+                    '<input id="%s" type="password" name="%s[%s]" value="%s"%s />',
+                    $args['field_id'],
+                    $args['option'],
+                    $args['field_id'],
+                    esc_attr( $option ),
+                    $attrs
+                );
+                break;
+            case 'email':
+                printf(
+                    '<input id="%s" type="email" name="%s[%s]" value="%s"%s />',
+                    $args['field_id'],
+                    $args['option'],
+                    $args['field_id'],
+                    esc_attr( $option ),
+                    $attrs
+                );
+                break;
+            case 'number':
+                printf(
+                    '<input id="%s" type="number" min="0" step="1" name="%s[%s]" value="%s"%s />',
                     $args['field_id'],
                     $args['option'],
                     $args['field_id'],
@@ -230,7 +267,7 @@ class One_Theme_Options_Page {
                     esc_html( $args['elements'][0] )
                 );
                 break;
-            case 'multi_checkbox':
+            case 'multicheckbox':
                 print '<fieldset>';
                 foreach ( $args['elements'] as $index => $checkbox ) {
                     $this_value = ( is_array( $option ) && isset( $option[ $index ] ) ) ? $option[ $index ] : '0';
@@ -271,11 +308,18 @@ class One_Theme_Options_Page {
                     $attrs
                 );
                 foreach ( $args['elements'] as $index => $select ) {
-                    printf( '<option value="%s"%s>%s</option>',
-                        $index,
-                        selected( $option, $index, false ),
-                        esc_attr( $select )
-                    );
+                    if ( false === $select ) {
+                        // -- Please select --
+                        printf( '<option>%s</option>',
+                            esc_html( $index )
+                        );
+                    } else {
+                        printf( '<option value="%s"%s>%s</option>',
+                            $index,
+                            selected( $option, $index, false ),
+                            esc_html( $select )
+                        );
+                    }
                 }
                 print '</select>';
                 break;
@@ -296,7 +340,6 @@ class One_Theme_Options_Page {
                 print '</select>';
                 break;
                 // TODO New types
-                // -nothing-selected- select option, static html, number, email, password
                 // Google Analytics, YouTube, Vimeo, Wistia, LatLong/maps, Google|font|names
                 // date, time, date-time, timestamp, css color/hex,rbg,rgba,name, css size/px,em...
                 // post_select with Query, tax, user, Media(id,title,alt,desc+preview)
@@ -335,22 +378,30 @@ class One_Theme_Options_Page {
             // $value does not contain section ID :(
             foreach ( $this->sections as $section ) {
                 foreach ( $section['fields'] as $field_id => $field_data ) {
+                    // An unset checkbox or radio button
                     if ( ! array_key_exists( $field_id, $value ) ) {
-                        // Could be an unset checkbox or radio button
                         continue;
                     }
+
                     if ( ! array_key_exists( 'sanitize', $field_data ) ) {
-                        error_log( sprintf( 'Field definition error (%s)', $field_id ) );
+                        add_settings_error(
+                            'one-theme-page',
+                            'invalid_fieldid',
+                            sprintf( 'Field definition error (%s)', $field_id ),
+                            'error'
+                        );
                         continue;
                     }
+
+                    // User is cheating: empty value submitted for required field
                     if ( array_key_exists( 'required', $field_data['args'] ) && empty( $value[ $field_id ] ) ) {
-                        // User is cheating: empty value submitted for required field
                         wp_die(
                             '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
                                 '<p>' . __( 'You are not allowed to delete this item.' ) . '</p>',
                             403
                         );
                     }
+
                     switch ( $field_data['sanitize'] ) {
                         case 'fullhtml':
                             // Any content is allowed
@@ -359,9 +410,17 @@ class One_Theme_Options_Page {
                             // No HTML tags, only entities
                             $value[ $field_id ] = wp_strip_all_tags( $value[ $field_id ] );
                             break;
+                        case 'integer':
+                            // URL
+                            $value[ $field_id ] = absint( $value[ $field_id ] );
+                            break;
                         case 'url':
                             // URL
                             $value[ $field_id ] = esc_url_raw( $value[ $field_id ] );
+                            break;
+                        case 'email':
+                            // Email
+                            $value[ $field_id ] = sanitize_email( $value[ $field_id ] );
                             break;
                         case 'one':
                             // '1' only for checkbox
@@ -402,8 +461,13 @@ class One_Theme_Options_Page {
                             }
                             break;
                         default:
-                            error_log( sprintf( 'Invalid sanitization type (%s).', $field_data['sanitize'] ) );
                             $value[ $field_id ] = '';
+                            add_settings_error(
+                                'one-theme-page',
+                                'invalid_sanitize',
+                                sprintf( 'Invalid sanitization type (%s).', $field_data['sanitize'] ),
+                                'error'
+                            );
                     }
                 }
             }
@@ -413,7 +477,7 @@ class One_Theme_Options_Page {
              */
             $value = apply_filters( 'otop_sanitize_option', $value );
         }
-        // @TODO Set error messages https://codex.wordpress.org/Function_Reference/add_settings_error
+        // TODO Set error messages https://codex.wordpress.org/Function_Reference/add_settings_error
 
         // Prevent multiple messages
         if ( empty( get_settings_errors( 'one-theme-page' ) ) ) {

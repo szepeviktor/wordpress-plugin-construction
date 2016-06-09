@@ -16,8 +16,8 @@ class Custom_Theme extends One_Theme_Options_Page {
         add_action( 'admin_enqueue_scripts', array( $this, 'inline_style' ), 20 );
         add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 
-        add_action( 'otop_after_form', array( $this, 'input_scrollend' ) );
         add_filter( 'otop_inline_style', array( $this, 'floating_submit' ) );
+        add_action( 'otop_after_form', array( $this, 'input_scrollend' ) );
     }
 
     public function add_settings_page() {
@@ -133,7 +133,7 @@ class Custom_Theme extends One_Theme_Options_Page {
         $this->add_settings_field(
             $section,
             'one_theme_checkbox_field_1m',
-            'multi_checkbox',
+            'multicheckbox',
             'arrayone',
             __( 'Multi checkbox label', 'otop_textdomain' ),
             $option,
@@ -168,6 +168,34 @@ class Custom_Theme extends One_Theme_Options_Page {
 
         $this->add_settings_field(
             $section,
+            'one_theme_select_clientnum',
+            'number',
+            'integer',
+            __( 'Client number', 'otop_textdomain' ),
+            $option,
+            array(
+                'label_for' => true,
+                'classes' => 'code regular-text',
+            )
+        );
+
+        $this->add_settings_field(
+            $section,
+            'one_theme_select_pwd',
+            'password',
+            'htmltext',
+            __( 'XYZ API key', 'otop_textdomain' ),
+            $option,
+            array(
+                'label_for' => true,
+                'required' => true,
+                'classes' => 'regular-text code',
+                'minlength' => 16,
+            )
+        );
+
+        $this->add_settings_field(
+            $section,
             'one_theme_select_field_3',
             'select',
             'elements',
@@ -176,6 +204,7 @@ class Custom_Theme extends One_Theme_Options_Page {
             array(
                 'label_for' => true,
                 'elements' => array(
+                    '-- Please select --' => false,
                     'key_4' => 'Name4',
                     'key_5' => 'Name5',
                     'key_6' => 'Name6',
@@ -260,7 +289,6 @@ class Custom_Theme extends One_Theme_Options_Page {
             $section,
             'two_theme_text_field_u',
             'text',
-            // TODO add scroll to the end of current value: onclick="jQuery(this).select();"
             'url',
             __( '2. URL label', 'otop_textdomain' ),
             $option,
@@ -278,7 +306,8 @@ class Custom_Theme extends One_Theme_Options_Page {
     public function input_scrollend() {
 
         // Show the end of input content (file name of URL-s)
-        $script = '<script>jQuery(".one-theme-page input[type=text]").each(function () {this.scrollLeft = this.scrollWidth;});</script>';
+        $script = '<script>jQuery(".one-theme-page input[type=text]").each(function ()
+            {this.scrollLeft = this.scrollWidth;});</script>';
 
         print $script;
     }
