@@ -6,7 +6,7 @@
  * Please properly *Sanizite input* and *Escape output*!
  * Note: Page/Section/Field ID-s are trusted thus not escaped.
  *
- * @version 0.2.3
+ * @version 0.2.4
  * @link https://codex.wordpress.org/Data_Validation
  */
 

@@ -107,7 +107,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
             'one_theme_text_field_t',
             'text',
             'htmltext',
-            __( 'Tiny label', 'otop_textdomain' ),
+            __( 'Large label', 'otop_textdomain' ),
             $option,
             array(
                 'label_for' => true,
@@ -117,6 +117,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                 // A disabled element isn't editable and isn't sent on submit.
                 // Another difference is that readonly elements can be focused while disabled elements can't.
                 'readonly' => true,
+                'description' => 'May not be edited but its value is saved.',
             )
         );
 
@@ -131,6 +132,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                 'elements' => array(
                     'NameA',
                 ),
+                'description' => 'This is an on/off switch.',
             )
         );
 
@@ -167,6 +169,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                     'key_2' => 'Name5',
                     'key_3' => 'Name6',
                 ),
+                'description' => 'Pick one!',
             )
         );
 
@@ -180,6 +183,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
             array(
                 'label_for' => true,
                 'classes' => 'code regular-text',
+                'description' => 'Integers only.',
             )
         );
 
@@ -188,13 +192,14 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
             'one_theme_select_pwd',
             'password',
             'htmltext',
-            __( 'XYZ API key', 'otop_textdomain' ),
+            __( 'API key', 'otop_textdomain' ),
             $option,
             array(
                 'label_for' => true,
                 'required' => true,
                 'classes' => 'regular-text code',
                 'minlength' => 16,
+                'description' => 'A password field.',
             )
         );
 
@@ -214,6 +219,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                     'key_6' => 'Name6',
                 ),
                 'style' => 'min-width: 364px;',
+                'description' => 'Drop-down list.',
             )
         );
 
@@ -232,6 +238,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                     'order' => 'ASC',
                 ),
                 'style' => 'min-width: 364px;',
+                'description' => 'List of Contact Form 7 forms.',
             )
         );
 
@@ -252,6 +259,19 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                 ),
                 'size' => '2',
                 'style' => 'min-width: 364px;',
+                'description' => 'You may select multiple items.',
+            )
+        );
+
+        $this->add_settings_field(
+            $section,
+            'one_theme_justhtml',
+            'statichtml',
+            null,
+            __( 'WARNING!', 'otop_textdomain' ),
+            'static',
+            array(
+                'content' => '<p>This is plain old <strong>static</strong> content. <span style="color: green;">No inputs.</span></p>'
             )
         );
 
@@ -267,6 +287,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                 'cols' => 40,
                 'rows' => 5,
                 'style' => 'width: 26em; resize: none;',
+                'description' => 'Enter multiline text.',
             )
         );
 
@@ -286,7 +307,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
         $this->add_settings_section(
             $section,
             __( 'Multilingual section title H2', 'otop_textdomain' ),
-            __( 'Language dependent section description P', 'otop_textdomain' )
+            __( 'Language dependent section description P', 'otop_textdomain' ) . ' ' . $this->current_language()
         );
 
         $this->add_settings_field(
@@ -294,7 +315,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
             'two_theme_text_field_0',
             'text',
             'htmltext',
-            __( '2. Trimmed text label', 'otop_textdomain' ),
+            __( '2. Text label', 'otop_textdomain' ),
             $option,
             // label_for,elements,class(for <tr>),classes,default,description,rows,cols and custom values for custom field types
             array(
@@ -307,7 +328,6 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
                 'classes' => 'regular-text code',
                 'title' => __( 'This field is mandatory.', 'otop_textdomain' ),
                 'required' => true,
-                //'trim' => true,
             )
         );
 
@@ -321,7 +341,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
             array(
                 'label_for' => true,
                 'placeholder' => 'http://',
-                'description' => __( 'Please enter target URL.', 'otop_textdomain' ) . '/' . $option,
+                'description' => __( 'Please enter target URL.', 'otop_textdomain' ),
                 'classes' => 'regular-text code',
                 'onfocus' => 'this.scrollLeft=this.scrollWidth;',
             )
@@ -333,7 +353,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
 
         // Show the end of input content (file name of URL-s)
         $script = '<script>jQuery(".one-theme-page input[type=text]").each(function ()
-            {this.scrollLeft = this.scrollWidth;});</script>';
+            { this.scrollLeft = this.scrollWidth; });</script>';
 
         print $script;
     }
@@ -362,3 +382,5 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
 }
 
 new Custom_Theme_Options_Page();
+
+// In templates: Custom_Theme()->print_2_field( 'two_theme_text_field_u' );
