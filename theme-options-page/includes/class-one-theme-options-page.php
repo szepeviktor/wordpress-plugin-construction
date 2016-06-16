@@ -307,12 +307,11 @@ class One_Theme_Options_Page {
                     $args['field_id'],
                     $attrs
                 );
+                $selected = ( '' === $option ) ? ' selected' : '';
                 foreach ( $args['elements'] as $index => $select ) {
                     if ( false === $select ) {
-                        // -- Please select --
-                        printf( '<option>%s</option>',
-                            esc_html( $index )
-                        );
+                        // - Please select -
+                        printf( '<option value disabled%s>%s</option>', $selected, esc_html( $index ) );
                     } else {
                         printf( '<option value="%s"%s>%s</option>',
                             $index,
@@ -320,6 +319,23 @@ class One_Theme_Options_Page {
                             esc_html( $select )
                         );
                     }
+                }
+                print '</select>';
+                break;
+            case 'post':
+                printf( '<select id="%s" name="%s[%s]"%s>',
+                    $args['field_id'],
+                    $args['option'],
+                    $args['field_id'],
+                    $attrs
+                );
+                $posts = get_posts( $args['query'] );
+                foreach ( $posts as $post ) {
+                    printf( '<option value="%s"%s>%s</option>',
+                        $post->ID,
+                        selected( $option, $post->ID, false ),
+                        esc_html( $post->post_title )
+                    );
                 }
                 print '</select>';
                 break;
@@ -342,7 +358,7 @@ class One_Theme_Options_Page {
                 // TODO New types
                 // Google Analytics, YouTube, Vimeo, Wistia, LatLong/maps, Google|font|names
                 // date, time, date-time, timestamp, css color/hex,rbg,rgba,name, css size/px,em...
-                // post_select with Query, tax, user, Media(id,title,alt,desc+preview)
+                // tax, user, Media(id,title,alt,desc+preview)
                 // Gallery, wp-link-input, URL(html5), Media+URL, loop[] field
                 // https://codex.wordpress.org/Javascript_Reference/wp.media
             default:
@@ -378,37 +394,34 @@ class One_Theme_Options_Page {
             // $value does not contain section ID :(
             foreach ( $this->sections as $section ) {
                 foreach ( $section['fields'] as $field_id => $field_data ) {
-                    // An unset checkbox or radio button
                     if ( ! array_key_exists( $field_id, $value ) ) {
+                        // Could be an unset checkbox or radio button
                         continue;
                     }
-
                     if ( ! array_key_exists( 'sanitize', $field_data ) ) {
-                        add_settings_error(
-                            'one-theme-page',
-                            'invalid_fieldid',
-                            sprintf( 'Field definition error (%s)', $field_id ),
-                            'error'
-                        );
+                        error_log( sprintf( 'Field definition error (%s)', $field_id ) );
                         continue;
                     }
-
-                    // User is cheating: empty value submitted for required field
                     if ( array_key_exists( 'required', $field_data['args'] ) && empty( $value[ $field_id ] ) ) {
+                        // User is cheating: empty value submitted for required field
                         wp_die(
                             '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
                                 '<p>' . __( 'You are not allowed to delete this item.' ) . '</p>',
                             403
                         );
                     }
-
                     switch ( $field_data['sanitize'] ) {
                         case 'fullhtml':
-                            // Any content is allowed
+                            // KSES
+                            $value[ $field_id ] = wp_kses_post( $value[ $field_id ] );
                             break;
                         case 'htmltext':
                             // No HTML tags, only entities
                             $value[ $field_id ] = wp_strip_all_tags( $value[ $field_id ] );
+                            break;
+                        case 'slug':
+                            // Slug (machine name)
+                            $value[ $field_id ] = sanitize_title( $value[ $field_id ] );
                             break;
                         case 'integer':
                             // URL
@@ -461,13 +474,8 @@ class One_Theme_Options_Page {
                             }
                             break;
                         default:
+                            error_log( sprintf( 'Invalid sanitization type (%s).', $field_data['sanitize'] ) );
                             $value[ $field_id ] = '';
-                            add_settings_error(
-                                'one-theme-page',
-                                'invalid_sanitize',
-                                sprintf( 'Invalid sanitization type (%s).', $field_data['sanitize'] ),
-                                'error'
-                            );
                     }
                 }
             }

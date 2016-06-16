@@ -1,15 +1,19 @@
 <?php
 
+/*
+// In functions.php
+if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+    require_once 'includes/class-one-theme-options-page.php';
+    require_once 'includes/one-theme-options-page-example.php';
+    new Custom_Theme_Options_Page();
+}
+*/
+
 require_once 'includes/class-one-theme-options-page.php';
 
-class Custom_Theme extends One_Theme_Options_Page {
+class Custom_Theme_Options_Page extends One_Theme_Options_Page {
 
     public function __construct() {
-
-        if ( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-
-            return;
-        }
 
         add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'settings_init' ) );
@@ -58,7 +62,7 @@ class Custom_Theme extends One_Theme_Options_Page {
         $this->add_settings_section(
             $section,
             __( 'One theme section title H2', 'otop_textdomain' ),
-            __( 'One theme section description p', 'otop_textdomain' )
+            __( 'One theme section description P', 'otop_textdomain' )
         );
 
         $this->add_settings_field(
@@ -204,10 +208,28 @@ class Custom_Theme extends One_Theme_Options_Page {
             array(
                 'label_for' => true,
                 'elements' => array(
-                    '-- Please select --' => false,
+                    '&ndash; Please select &ndash;' => false,
                     'key_4' => 'Name4',
                     'key_5' => 'Name5',
                     'key_6' => 'Name6',
+                ),
+                'style' => 'min-width: 364px;',
+            )
+        );
+
+        $this->add_settings_field(
+            $section,
+            'one_theme_select_field_p',
+            'post',
+            'integer',
+            __( 'WPCF7 form', 'otop_textdomain' ),
+            $option,
+            array(
+                'label_for' => true,
+                'query' => array(
+                    'post_type' => 'wpcf7_contact_form',
+                    'nopaging' => true,
+                    'order' => 'ASC',
                 ),
                 'style' => 'min-width: 364px;',
             )
@@ -249,19 +271,22 @@ class Custom_Theme extends One_Theme_Options_Page {
         );
 
         /**
-         * Current option name
+         * Multilingual option name
+         *
+         * Custom_Theme()->pll_get_field( 'two_theme_settings', 'two_theme_text_field_u' )
          */
         $option = 'two_theme_settings';
+        $option .= '_' . $this->current_language();
         $this->register_option( $option );
 
         /**
-         * Current section ID
+         * Multilingual section ID
          */
         $section = 'two_theme_page_section';
         $this->add_settings_section(
             $section,
-            __( 'two theme section title H2', 'otop_textdomain' ),
-            __( 'two theme section description p', 'otop_textdomain' )
+            __( 'Multilingual section title H2', 'otop_textdomain' ),
+            __( 'Language dependent section description P', 'otop_textdomain' )
         );
 
         $this->add_settings_field(
@@ -269,19 +294,20 @@ class Custom_Theme extends One_Theme_Options_Page {
             'two_theme_text_field_0',
             'text',
             'htmltext',
-            __( '2. Text label', 'otop_textdomain' ),
+            __( '2. Trimmed text label', 'otop_textdomain' ),
             $option,
             // label_for,elements,class(for <tr>),classes,default,description,rows,cols and custom values for custom field types
             array(
                 'label_for' => true,
                 'default' => 'Some apples are red.',
-                'placeholder' => 'Apples are ...',
-                'description' => 'Please input apple colors.',
+                'placeholder' => __( 'Apples are ...', 'otop_textdomain' ),
+                'description' => __( 'Please input apple colors.', 'otop_textdomain' ),
                 // Width classes: tiny-text(35px) small-text(50px) ''(170px) regular-text(25em) all-options(250px) large-text(100%)
                 // Other classes: code
                 'classes' => 'regular-text code',
-                'title' => 'This field is mandatory.',
+                'title' => __( 'This field is mandatory.', 'otop_textdomain' ),
                 'required' => true,
+                //'trim' => true,
             )
         );
 
@@ -295,7 +321,7 @@ class Custom_Theme extends One_Theme_Options_Page {
             array(
                 'label_for' => true,
                 'placeholder' => 'http://',
-                'description' => 'Please enter a URL.',
+                'description' => __( 'Please enter target URL.', 'otop_textdomain' ) . '/' . $option,
                 'classes' => 'regular-text code',
                 'onfocus' => 'this.scrollLeft=this.scrollWidth;',
             )
@@ -319,6 +345,20 @@ class Custom_Theme extends One_Theme_Options_Page {
 
         return $style;
     }
+
+    private function current_language() {
+
+        if ( function_exists( 'pll_current_language' ) ) {
+            $current_language = pll_current_language( 'locale' );
+            if ( false === $current_language ) {
+                $current_language = pll_default_language( 'locale' );
+            }
+        } else {
+            $current_language = get_locale();
+        }
+
+        return $current_language;
+    }
 }
 
-new Custom_Theme();
+new Custom_Theme_Options_Page();

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: No mail MU
-Version: 0.1.0
+Version: 0.1.1
 Description: Log emails instead of sending them
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -36,7 +36,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     $phpmailer->CharSet = apply_filters( 'wp_mail_charset', $charset );
     do_action_ref_array( 'phpmailer_init', array( &$phpmailer ) );
 
-    error_log( sprintf( 'Email not sent To: %s Subject: %s',
+    error_log( sprintf( 'Email NOT sent To: %s Subject: %s',
         implode( ', ', $to ),
         $subject
     ) );

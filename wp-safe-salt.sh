@@ -1,3 +1,7 @@
+#!/bin/bash
+
+which apg &> /dev/null || exit 99
+
 wp_safe_salt() {
     apg -a 1 -n 1 -m 64 -M SNCL -E "'\"\\"
 }
