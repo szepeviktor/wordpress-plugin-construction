@@ -3,8 +3,8 @@
 /*
 // In functions.php
 if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-    require_once 'includes/class-one-theme-options-page.php';
-    require_once 'includes/one-theme-options-page-example.php';
+    require_once get_template_directory() . '/includes/class-one-theme-options-page.php';
+    require_once get_template_directory() . '/includes/one-theme-options-page-example.php';
     new Custom_Theme_Options_Page();
 }
 */

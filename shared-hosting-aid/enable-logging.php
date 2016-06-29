@@ -1,7 +1,7 @@
 <?php
 /*
 Snippet Name: Enable PHP error logging
-Version: 0.3.1
+Version: 0.3.2
 Description: Sets up PHP error logging in a protected directory.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -44,9 +44,9 @@ Author: Viktor Szépe
 ini_set( 'display_errors', '1' );
 ini_set( 'display_startup_errors', '1' );
 
-$this_dir = dirname( __FILE__ );
-$errorlog_file = "error.log";
-$htaccess_content = "
+$this_dir = __DIR__;
+$errorlog_file = 'error.log';
+$htaccess_content = '
 # Apache < 2.3
 <IfModule !mod_authz_core.c>
   Order allow,deny
@@ -57,52 +57,56 @@ $htaccess_content = "
 <IfModule mod_authz_core.c>
   Require all denied
 </IfModule>
-";
+';
 
 if ( isset( $_GET['above'] ) ) {
-    // Place log directory above document root.
-    $dir_name = empty( $_GET['above'] ) ? "log" : $_GET['above'];
-    $errorlog_dir = dirname( $this_dir ) . "/" . $dir_name;
+    // Place log directory above document root
+    $dir_name = empty( $_GET['above'] ) ? 'log' : $_GET['above'];
+    $errorlog_dir = dirname( $this_dir ) . '/' . $dir_name;
 } else {
-    // Place log directory under document root.
-    // .htaccess will block access to it.
+    // Place log directory under document root
+    // .htaccess will block access to it
     $secret_dir = md5( time() );
-    $errorlog_dir = $this_dir . "/" . $secret_dir;
+    $errorlog_dir = $this_dir . '/' . $secret_dir;
 }
 
-$errorlog_path = $errorlog_dir . "/" . $errorlog_file;
+$errorlog_path = $errorlog_dir . '/' . $errorlog_file;
 
 // Check error_log
 $old_errorlog = ini_set( 'error_log', $errorlog_path );
 $new_errorlog = ini_get( 'error_log' );
 if ( false !== $old_errorlog && $new_errorlog === $errorlog_path ) {
-    if ( ! mkdir( $errorlog_dir, 0700 ) )
+    if ( ! mkdir( $errorlog_dir, 0700 ) ) {
         die( "Couldn't create log dir!" );
+    }
 
     if ( isset( $_GET['above'] )
-        && ! file_put_contents( $errorlog_dir . "/.htaccess", $htaccess_content ) )
+        && ! file_put_contents( $errorlog_dir . '/.htaccess', $htaccess_content )
+    ) {
         die( "Couldn't create .htaccess!" );
+    }
 }
 
-if ( ! touch( $new_errorlog ) )
+if ( ! touch( $new_errorlog ) ) {
     die( "Couldn't touch error log!" );
+}
 
-print "
+printf( "
 /*
  This script has deleted itself.
 
- Current error.log path: '{$new_errorlog}'
+ Current error.log path: '%s'
  Copy this into your wp-config or settings file:
 */
-<p id='iniset'>ini_set( 'error_log', '{$new_errorlog}' );
+<p id='iniset'>ini_set( 'error_log', '%s' );
 ini_set( 'log_errors', 1 );</p>
-";
+", $new_errorlog, $new_errorlog );
 
-// delete self
+// Delete self
 unlink( __FILE__ );
 
 ?>
-</pre></body>
+</pre>
 <script>
 (function () {
     var range, selection,
@@ -122,5 +126,5 @@ unlink( __FILE__ );
         selection.addRange(range);
     }
 }())
-</script>
+</script></body>
 </html>
