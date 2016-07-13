@@ -35,3 +35,6 @@ add_filter( 'gua_extra_javascript', function ( $js ) {
     return $js;
 });
 ```
+
+
++ https://developers.google.com/tag-manager/quickstart

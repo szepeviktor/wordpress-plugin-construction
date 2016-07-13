@@ -1,18 +1,20 @@
 <?php
+/**
+ * Change WordPress table prefix.
+ *
+ * wp eval-file wordpress-db-change-prefix.php
+ */
 
-/*
-// Execute with WP-CLI
-//     wp eval-file wordpress-db-change-prefix.php
+$new_prefix = 'NEWPREFIX_'
 
-$prefix_change_error = wpdb_change_prefix( 'newPrefix_' );
+$prefix_change_error = wpdb_change_prefix( $new_prefix );
 if ( false !== $prefix_change_error ) {
-    print 'Error: ' . $prefix_change_error;
+    print 'Error: ' . $prefix_change_error . PHP_EOL;
 } else {
     print 'Change $table_prefix in wp-config.php to ' . $new_prefix . PHP_EOL;
     // $wp_config_regex = '/(\$table_prefix\s*=\s*)([\'"]).+?\\2(\s*;)/';
     // $config = preg_replace( $wp_config_regex, "\${1}'$new_prefix'\${3}", $config );
 }
-*/
 
 function wpdb_change_prefix( $new_prefix = 'wp_' ) {
 

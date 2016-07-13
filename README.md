@@ -3,6 +3,10 @@
 A playground where WordPress plugin development goes on.
 Please select a folder in the list above to see the plugin's development.
 
+### Two programmers
+
+https://en.wikipedia.org/wiki/Pair_programming
+
 ### An article about code quality
 
 http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
@@ -20,18 +24,19 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 - https://vip.wordpress.com/plugins/
 - http://wpgear.org/
 
-- Bcrypt hashed passwords: https://github.com/roots/wp-password-bcrypt `password-bcrypt`
-- Remove emoji Javascript: `classic-smilies`
-- Email "From:" header: `wp-mailfrom-ii`
-- SMTP settings: `smtp-uri`, `danielbachhuber/mandrill-wp-mail`
 - Security: wordpress-fail2ban/, `sucuri-scanner`, `custom-sucuri`
+- Bcrypt hashed passwords: https://github.com/roots/wp-password-bcrypt `password-bcrypt`
+- SMTP settings: `smtp-uri`, `danielbachhuber/mandrill-wp-mail`
+- Email "From:" header: `wp-mailfrom-ii`
+- Remove emoji Javascript: `classic-smilies`
+
+- Comments: `disable-comments`, mu-disable-comments/
 - Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, `obfuscate-email`
-- Redirects: `safe-redirect-manager`
 - Audit: `simple-history`
 - User roles: `user-role-editor`
-- Comments: `disable-comments`, mu-disable-comments/
-- Post connector: `post-connector`, `posts-to-posts`, `related-posts-for-wp`
+- Redirects: `safe-redirect-manager`
 - Multilanguage: `polylang`
+- Post connector: `post-connector`, `posts-to-posts`, `related-posts-for-wp`
 
 ### Data structure plugin categories
 

@@ -72,30 +72,29 @@ add_action( 'wp_enqueue_scripts', function () {
 
 ```php
 /**
- * Introduce this script to WordPress as a localized script.
+ * Introduce this script to WordPress by wp_add_inline_script().
  *
  * This will be placed BEFORE the $footer_handle script in the footer.
  * FIXME Will it be printed in the footer with a header script's handle?
  *
  * @FIXRES
  */
-function fixres_callback_01( $buffer ) {
+function fixres_RESOURCE-NAME'( $buffer ) {
     global $wp_scripts;
     $name = 'NAME-inline-script';
     $footer_handle = 'HANDLE';
-    //$buffer = str_replace( '<script type="text/javascript">', '', $buffer );
-    //$buffer = str_replace( '</script>', '', $buffer );
+    //$buffer = trim( preg_replace( '#<script[^>]*>(.*)</script>#is', '$1', $buffer ) );
     $fix_res_banner = "/* RELOCATED {$name} */\n";
-    $fix_res_data = $wp_scripts->get_data( $footer_handle, 'data' )
-        . $fix_res_banner . $buffer;
-    $wp_scripts->add_data( $footer_handle, 'after', $fix_res_data );
+    wp_add_inline_script( $footer_handle, $fix_res_banner . $buffer );
     return "<!-- FIXRES {$name} optimized -->\n";
 }
 
 // Wrap inline script printing
 // @FIXRES
-ob_start( 'fixres_callback_01' );
-    // echo $inline_script;
+ob_start( 'fixres_RESOURCE-NAME' );
+
+    echo "<script> ...
+
 ob_end_flush();
 // @FIXRES - END
 ```

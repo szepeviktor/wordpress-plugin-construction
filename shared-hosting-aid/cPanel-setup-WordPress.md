@@ -10,9 +10,8 @@
 - Email Account Forwarders
 - Email Authentication
 - Spamassassin
-- Optimize Website https://github.com/szepeviktor/hosting-check/blob/master/templates/cpanel-mime.txt
 - Web analytics
-- Cron Jobs
+- Cron Jobs: WP-cron + `/home/USER/bin/siteprotection.sh`
 - PHP Version / Options / Extensions
 
 ```
@@ -25,44 +24,34 @@ short_open_tag      Off
 upload_max_filesize 32M
 ```
 
-### Check PHP vars
+### Apache config
 
-see: shared-hosting-aid/php-vars.php
+h5bp: https://github.com/h5bp/server-configs-apache/blob/master/dist/.htaccess
+compression, caching, security -> shared-hosting-aid/.htaccess
+
+debian-server-tools/webserver/apache-conf-available/wordpress-htaccess/
+// Custom entry points
+
+everything from Skeleton-site-ssl.conf
+
+### PHP config
+
+See /shared-hosting-aid/php-vars.php
+
+// Upload, run and copy output of shared-hosting-aid/enable-logging.php
+// Browse to /enable-logging.php?above
 
 ### WordPress maintenance
 
+- Set up wp-config.php
 - Core update
 - Uninstall and update Themes, Plugins
 - Install Classic Smilies plugin
 - Install WP Mail From II plugin
-- Copy `wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php` into `wp-content/mu-plugins/` and set `$trigger_count = 1;`
-- Apache configuration: `${D}/webserver/apache-conf-available/wordpress-htaccess/`
 
-```php
-// Upload, run and copy output of shared-hosting-aid/enable-logging.php
-// /enable-logging.php?above
+// WordPress Fail2ban + Miniban (custom entry points exceptions)
+// Copy `wordpress-fail2ban/mu-plugin/wp-fail2ban-mu.php` into `wp-content/mu-plugins/` and set `$trigger_count = 1;`
 
-/*
-// Enable email opens
-$newsletter_path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-if ( '/wp-content/plugins/newsletter/statistics/open.php' === $newsletter_path
-    || '/wp-content/plugins/newsletter/statistics/link.php' === $newsletter_path
-) {
-    // UA hack for old email clients.
-    $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 ' . $_SERVER['HTTP_USER_AGENT'];
-}
-*/
-
-// Copy wordpress-fail2ban/block-bad-requests/wp-login-bad-request.inc.php
-define( 'O1_BAD_REQUEST_COUNT', 1 );
-require_once dirname( __FILE__ ) . '/wp-login-bad-request.inc.php';
-
-define( 'WP_MEMORY_LIMIT', '96M' );
-//define( 'WP_MAX_MEMORY_LIMIT', '384M' );
-define( 'WP_POST_REVISIONS', 10 );
-define( 'WP_USE_EXT_MYSQL', false );
-define( 'DISALLOW_FILE_EDIT', true );
-```
 
 ### WordPress settings
 

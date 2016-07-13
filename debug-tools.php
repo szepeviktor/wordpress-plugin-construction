@@ -1,7 +1,7 @@
 <?php
 /*
 Snippet Name: Code blocks for debugging
-Version: 0.1.0
+Version: 0.1.1
 Description: Use these blocks to find errors in PHP code.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
@@ -13,23 +13,23 @@ Trace of all PHP-FPM processes
 
 
 // Is it executed?
-echo "<!-- MARK -|-|-|-|- {$var} -->" . PHP_EOL; // FIXME
+echo "<!-- MARK -|-|- {$var} -->" . PHP_EOL; // FIXME
 
 
 // Is it executed?
-error_log( " -- MARK -- " . serialize( $var ) ); // FIXME
+error_log( ' -- MARK -- ' . serialize( $var ) ); // FIXME
 
 
 // What files were executed?
 register_shutdown_function( function () {
-    echo '<!-- ' . PHP_EOL;
+    echo "<!-- \n";
     foreach ( get_included_files() as $i => $path ) {
-        printf( '%04d: %s%s', $i, $path, PHP_EOL );
+        printf( '%04d: %s%s', $i, $path, "\n" );
     }
-    echo ' -->' . PHP_EOL;
+    echo " -->\n";
     ob_flush();
 }); // FIXME
 
 
 // Where does this get called from?
-echo PHP_EOL . 'Trace: '; var_dump( debug_backtrace() ); exit; // FIXME
+echo "\nTrace: "; var_dump( debug_backtrace() ); exit; // FIXME
