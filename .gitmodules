@@ -100,3 +100,6 @@
 [submodule "password-bcrypt"]
 	path = password-bcrypt
 	url = git@github.com:szepeviktor/password-bcrypt.git
+[submodule "shared-hosting-aid/tripwire-original"]
+	path = shared-hosting-aid/tripwire-original
+	url = https://github.com/lucanos/Tripwire.git

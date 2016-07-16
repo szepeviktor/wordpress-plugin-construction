@@ -19,23 +19,32 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 - assets/screenshot-1.jpg (530px + 1+1 border)
 - http://www.shutterstock.com/cat.mhtml?&searchterm=Flat%20modern%20design%20with%20shadow
 
+### One-class file comment
+
+```php
+<?php
+/**
+ * Administration API: WP_Internal_Pointers class
+ *
+ * @package WordPress
+ * @subpackage Administration
+ * @since 4.4.0
+ */
+
+/**
+ * Core class used to implement an internal admin pointers API.
+ *
+ * @since 3.3.0
+ */
+final class WP_Internal_Pointers {
+```
+
 ## Recommended plugins
 
 - https://vip.wordpress.com/plugins/
 - http://wpgear.org/
 
-- Security: wordpress-fail2ban/, `sucuri-scanner`, `custom-sucuri`
-- Bcrypt hashed passwords: https://github.com/roots/wp-password-bcrypt `password-bcrypt`
-- SMTP settings: `smtp-uri`, `danielbachhuber/mandrill-wp-mail`
-- Email "From:" header: `wp-mailfrom-ii`
-- Remove emoji Javascript: `classic-smilies`
 
-- Comments: `disable-comments`, mu-disable-comments/
-- Additional security: mu-nofollow-robot-trap/, contact-form-7-robot-trap/, `obfuscate-email`
-- Audit: `simple-history`
-- User roles: `user-role-editor`
-- Redirects: `safe-redirect-manager`
-- Multilanguage: `polylang`
 - Post connector: `post-connector`, `posts-to-posts`, `related-posts-for-wp`
 
 ### Data structure plugin categories
@@ -54,16 +63,13 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 
 ### Content plugin categories
 
-1. Forcing
-    + mu-protect-plugins/
+1. Content Forcing
     + `force-featured-image`
     + mu-deny-giant-image-uploads/
-    + `user-session-control`
-    + `prevent-concurrent-logins`
-1. Fixes
+1. Content Fixes
     + mu-shortcode-unautop/
     + `custom-post-type-permalinks`
-1. UI tuning / bulk edit aid
+1. UI tuning / Bulk edit aid
     + Editor: `tinymce-advanced`
     + Lenghten taxonomy selector boxes, see: content-extras/nav-menu-meta-box-length.php https://core.trac.wordpress.org/ticket/32237
     + Keep category tree in post editor Category Checklist Tree `category-checklist-tree`
@@ -86,9 +92,10 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
     + `advanced-excerpt`
     + Advanced Image Styles `advanced-image-styles`
     + `unattach`
-1. Content
+1. Content representation
     + `CMB2`
-    + https://github.com/jtsternberg/Shortcode_Button
+    + https://github.com/jtsternberg/Shortcode_Button with CMB2
+    + `shortcode-ui`
     + `custom-content-shortcode`
     + `column-shortcodes`
     + `tablepress`
@@ -97,24 +104,9 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 1. Imaging
     + Cloudinary
     + `my-eyes-are-up-here`
-1. Develop, debug, monitoring
-    + `query-monitor`
-    + `p3-profiler`
-    + `error-log-monitor`
-
-### Revolution Slider fix
-
-```php
-/*
- * Trigger fail2ban on Revolution Slider upload attempt.
- *
- * @revslider/revslider_admin.php:389
- *     case "update_plugin":
- * Comment out
- *     //self::updatePlugin(self::DEFAULT_VIEW);
- */
-error_log( 'Break-in attempt detected: ' . 'revslider_update_plugin' );
-```
+1. Tracking
+    + google-universal-analytics/
+    + .
 
 ## Manage WordPress installation with git
 
