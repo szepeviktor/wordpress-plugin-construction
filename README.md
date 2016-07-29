@@ -43,8 +43,7 @@ final class WP_Internal_Pointers {
 
 - https://vip.wordpress.com/plugins/
 - http://wpgear.org/
-
-
+- http://themehybrid.com/plugins
 - Post connector: `post-connector`, `posts-to-posts`, `related-posts-for-wp`
 
 ### Data structure plugin categories
@@ -96,6 +95,7 @@ final class WP_Internal_Pointers {
     + `CMB2`
     + https://github.com/jtsternberg/Shortcode_Button with CMB2
     + `shortcode-ui`
+    + https://github.com/alleyinteractive/wordpress-fieldmanager
     + `custom-content-shortcode`
     + `column-shortcodes`
     + `tablepress`

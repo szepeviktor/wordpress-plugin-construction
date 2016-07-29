@@ -5,7 +5,10 @@
  * wp eval-file wordpress-db-change-prefix.php
  */
 
-$new_prefix = 'NEWPREFIX_'
+
+// @TODO Compare with https://github.com/iandunn/wp-cli-rename-db-prefix/blob/master/wp-cli-rename-db-prefix.php
+
+$new_prefix = 'NEWPREFIX_';
 
 $prefix_change_error = wpdb_change_prefix( $new_prefix );
 if ( false !== $prefix_change_error ) {
@@ -83,7 +86,7 @@ function wpdb_change_prefix( $new_prefix = 'wp_' ) {
      * 4. Update wp_usermeta table
      */
     $usermeta_results = $wpdb->get_results( $wpdb->prepare(
-        sprintf(  'SELECT * FROM `%susermeta`', $new_prefix ) . ' WHERE meta_key LIKE %s',
+        sprintf( 'SELECT * FROM `%susermeta`', $new_prefix ) . ' WHERE meta_key LIKE %s',
         $wpdb->base_prefix . '%'
     ) );
     foreach ( $usermeta_results as $meta ) {
