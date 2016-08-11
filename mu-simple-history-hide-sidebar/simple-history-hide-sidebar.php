@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Custom settings for Simple History
-Description: Hide sidebar on admin page.
+Plugin Name: Custom settings for Simple History (MU)
 Version: 1.0.0
+Description: Hide sidebar on admin page.
 Author: Viktor Szépe
 License: GNU General Public License (GPL) version 2
 */

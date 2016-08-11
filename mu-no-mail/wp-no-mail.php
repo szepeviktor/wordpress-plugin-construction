@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: No mail MU
+Plugin Name: No mail (MU)
 Version: 0.1.1
-Description: Log emails instead of sending them
+Description: Log emails instead of sending them.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe

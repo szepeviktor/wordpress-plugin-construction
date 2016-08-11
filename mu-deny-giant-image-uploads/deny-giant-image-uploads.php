@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Deny Giant Image Uploads MU
+Plugin Name: Deny Giant Image Uploads (MU)
 Version: 1.2
 Description: Prevents Uploads of images greater than 3.2MP
 Author: TJNowell

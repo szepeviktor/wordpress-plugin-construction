@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Disallow crawling
+Plugin Name: Disallow crawling (MU)
 Version: 0.2.0
 Description: Prevent blog_public from being "1" and add X-Robots header.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction

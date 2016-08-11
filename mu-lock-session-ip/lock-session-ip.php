@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Lock Session IP
+Plugin Name: Lock Session IP (MU)
 Version: 1.0.0
 Description: Log out user when his IP address changes.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
@@ -31,7 +31,7 @@ function o1_check_session_ip( $user_id ) {
         ) {
             // User's IP address has changed, log him out
             add_action( 'init', 'wp_destroy_current_session', 0 );
-            error_log( 'Destroy session for user #' . $user_id );
+            error_log( 'Destroying session for user #' . $user_id );
         }
     }
 

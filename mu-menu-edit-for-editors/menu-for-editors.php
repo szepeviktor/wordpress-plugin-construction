@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Menu edit for Editors
+Plugin Name: Menu management for Editors (MU)
 Version: 0.1.2
 Description: Show Menus page for Editors.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction

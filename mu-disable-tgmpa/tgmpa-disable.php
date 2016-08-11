@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Disable TGM Plugin Activation
+Plugin Name: Disable TGM Plugin Activation (MU)
 Version: 0.1.0
 Description: https://github.com/TGMPA/TGM-Plugin-Activation
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction

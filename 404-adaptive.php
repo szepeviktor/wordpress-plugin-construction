@@ -18,7 +18,7 @@ class Adaptive_404 {
     private $headers = array();
     private $html = '';
 
-    public function __construct( $custom_html ) {
+    public function __construct( $custom_html = '' ) {
 
         $this->set_html( $custom_html );
 

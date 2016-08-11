@@ -1,24 +1,31 @@
 <?php
 /*
-Plugin Name: WordPress Bug #14050 Hotfix MU
-Plugin URI: http://core.trac.wordpress.org/ticket/14050
+Plugin Name: WordPress Bug #14050 Hotfix (MU)
+Version: 1.0.1
 Description: Improves the big monster shortcode_unautop() regular expression, which is causing all the ruckus
+Plugin URI: http://core.trac.wordpress.org/ticket/14050
 Author: Leho Kraav
 Author URI: http://leho.kraav.com
-Version: 1.0
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-shortcode-unautop
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    // for fail2ban
-    error_log( 'File does not exist: errorlog_direct_access ' . $_SERVER['REQUEST_URI'] );
-    header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.1 403 Forbidden' );
-    exit();
+    error_log( 'Break-in attempt detected: shortcode_unautop_direct_access '
+        . addslashes( isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' )
+    );
+    ob_get_level() && ob_end_clean();
+    if ( ! headers_sent() ) {
+        header( 'Status: 403 Forbidden' );
+        header( 'HTTP/1.1 403 Forbidden', true, 403 );
+        header( 'Connection: Close' );
+    }
+    exit;
 }
 
-// frontend only
-if ( is_admin() ) return;
+// Frontend only
+if ( is_admin() ) {
+    return;
+}
 
 /**
  * Don't auto-p wrap shortcodes that stand alone
@@ -33,7 +40,7 @@ if ( is_admin() ) return;
 function wp14050_shortcode_unautop( $pee ) {
     global $shortcode_tags;
 
-    if ( empty( $shortcode_tags ) || !is_array( $shortcode_tags ) ) {
+    if ( empty( $shortcode_tags ) || ! is_array( $shortcode_tags ) ) {
         return $pee;
     }
 
@@ -78,13 +85,13 @@ function wp14050_shortcode_unautop( $pee ) {
 }
 
 # wp-includes/default-filters.php
-foreach ( array( "term_description" ) as $filter ) {
-    remove_filter( $filter, "shortcode_unautop" );
-    add_filter( $filter, "wp14050_shortcode_unautop" );
+foreach ( array( 'term_description' ) as $filter ) {
+    remove_filter( $filter, 'shortcode_unautop' );
+    add_filter( $filter, 'wp14050_shortcode_unautop' );
 }
 
-remove_filter( "the_content", "shortcode_unautop" );
-add_filter( "the_content", "wp14050_shortcode_unautop" );
+remove_filter( 'the_content', 'shortcode_unautop' );
+add_filter( 'the_content', 'wp14050_shortcode_unautop' );
 
-remove_filter( "the_excerpt", "shortcode_unautop" );
-add_filter( "the_excerpt", "wp14050_shortcode_unautop" );
+remove_filter( 'the_excerpt', 'shortcode_unautop' );
+add_filter( 'the_excerpt', 'wp14050_shortcode_unautop' );

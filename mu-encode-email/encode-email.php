@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Encode e-mail
+Plugin Name: Encode e-mail (MU)
 Version: 1.0.1
 Description: It encodes e-mail addresses using random mix of urlencode, HTML entities and then generates markup that's as tricky as possible, while remaining valid and parseable by browsers and XML-compliant parsers.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
@@ -8,7 +8,7 @@ License: GPLv2 or later
 Author: Viktor Szépe
 Upstream: https://github.com/pornel/hCardValidator/blob/master/encode/index.php
 Upstream: https://wordpress.org/plugins/obfuscate-email/developers/
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-encode-email
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 /**

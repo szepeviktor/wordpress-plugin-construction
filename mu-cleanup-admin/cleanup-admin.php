@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Clean up WP admin MU
+Plugin Name: Clean up WP admin (MU)
 Version: 0.4.0
 Description: Remove things visually from the WordPress admin.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction

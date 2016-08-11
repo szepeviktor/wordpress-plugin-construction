@@ -1,12 +1,12 @@
 <?php
 /*
-Plugin Name: Nofollow Robot Trap MU
+Plugin Name: Nofollow Robot Trap (MU)
 Version: 0.5.1
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-nofollow-robot-trap
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 if ( ! function_exists( 'add_filter' ) ) {

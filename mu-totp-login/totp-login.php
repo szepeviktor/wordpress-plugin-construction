@@ -1,18 +1,24 @@
 <?php
 /*
 Plugin Name: Forced TOTP login
-Version: 1.0.0
-Description: Log in with your username and a TOTP.
+Version: 1.0.1
+Description: Log in with your username and a TOTP without your password.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
+// @TODO Store TOTP-s in a transients for 2 minutes to prevent a replay attack
+//       append to: set_transient( 'totp_used_' . $user->user_login, $password, 2 * MINUTE_IN_SECONDS );
+//       and check before checkTotp()
+
 remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
 remove_action( 'edit_user_created_user', 'wp_send_new_user_notifications', 10 );
-add_action( 'register_new_user', 'o1_totp_register_new_user' );
-add_action( 'edit_user_created_user', 'o1_totp_register_new_user' );
+//add_action( 'register_new_user', 'o1_totp_register_new_user' );
+//add_action( 'edit_user_created_user', 'o1_totp_register_new_user' );
+add_action( 'user_register', 'o1_totp_register_new_user' );
+
 remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
 add_filter( 'authenticate', 'o1_authenticate_totp', 10, 3 );
 
@@ -28,7 +34,7 @@ function o1_totp_register_new_user( $user_id ) {
 
     $secret = Otp\GoogleAuthenticator::generateRandom();
     $meta_added = add_user_meta( $user_id, 'totp_secret_code', $secret, true );
-    // ??? if ( ! $meta_added ) {
+    // @FIXME if ( ! $meta_added ) {
     $blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
     $user = get_user_by( 'ID', $user_id );
     $qr_url = Otp\GoogleAuthenticator::getQrCodeUrl( 'totp', 'WordPress site ' . $blogname , $secret );
@@ -42,6 +48,7 @@ function o1_totp_register_new_user( $user_id ) {
     $message .= 'Android app: https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2' . "\r\n";
     $message .= 'iPhone app: https://itunes.apple.com/us/app/google-authenticator/id388497605' . "\r\n";
     $message .= 'Windows Phone app: https://www.microsoft.com/hu-hu/store/apps/authenticator/9wzdncrfj3rj' . "\r\n";
+    $message .= 'KeePass plugin: https://bitbucket.org/devinmartin/keeotp/wiki/Home' . "\r\n";
 
     wp_mail( $user->user_email, sprintf( '[%s] Your username and secret code', $blogname ), $message );
 }
@@ -52,11 +59,13 @@ function o1_totp_register_new_user( $user_id ) {
 function o1_authenticate_totp( $user, $username, $password ) {
 
     if ( $user instanceof WP_User ) {
+
         return $user;
     }
 
     if ( empty( $username ) || empty( $password ) ) {
         if ( is_wp_error( $user ) ) {
+
             return $user;
         }
 
@@ -76,6 +85,7 @@ function o1_authenticate_totp( $user, $username, $password ) {
     $user = get_user_by( 'login', $username );
 
     if ( ! $user ) {
+
         return new WP_Error( 'invalid_username',
             __( '<strong>ERROR</strong>: Invalid username.' )
             . ' <a href="' . wp_lostpassword_url() . '">'
@@ -93,11 +103,13 @@ function o1_authenticate_totp( $user, $username, $password ) {
      */
     $user = apply_filters( 'totp_authenticate_user', $user, $password );
     if ( is_wp_error( $user ) ) {
+
         return $user;
     }
 
     $totp_secret_code = get_user_meta( $user->ID, 'totp_secret_code', true );
     if ( empty( $totp_secret_code ) ) {
+
         // TOTP secret code not available
         return $user;
     }
@@ -106,17 +118,16 @@ function o1_authenticate_totp( $user, $username, $password ) {
     require_once 'includes/Otp.php';
     require_once 'includes/GoogleAuthenticator.php';
     require_once 'includes/Base32.php';
+
     $totp = new Otp\Otp();
 
     if ( ! $totp->checkTotp( Base32\Base32::decode( $totp_secret_code ), $password ) ) {
+
         return new WP_Error( 'incorrect_password',
             sprintf(
                 __( '<strong>ERROR</strong>: The password you entered for the username %s is incorrect.' ),
                 '<strong>' . $username . '</strong>'
             )
-            . ' <a href="' . wp_lostpassword_url() . '">'
-            . __( 'Lost your password?' )
-            . '</a>'
         );
     }
 

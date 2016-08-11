@@ -1,23 +1,23 @@
 <?php
 /*
-Plugin Name:       Protect normal plugins MU
+Plugin Name:       Protect normal plugins (MU)
 Version:           1.2.0
 Description:       Prevent deletion of normal plugins
 Plugin URI:        https://github.com/szepeviktor/wordpress-plugin-construction
 Author:            Viktor Szépe
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-protect-plugins
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Malicious traffic detected: protect_plugins_direct_access '
-        . addslashes( $_SERVER['REQUEST_URI'] )
-    );
-    ob_get_level() && ob_end_clean();
-    header( 'Status: 403 Forbidden' );
-    header( 'HTTP/1.0 403 Forbidden' );
-    exit();
+	error_log( 'Malicious traffic detected: protect_plugins_direct_access '
+		. addslashes( $_SERVER['REQUEST_URI'] )
+	);
+	ob_get_level() && ob_end_clean();
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.0 403 Forbidden' );
+	exit();
 }
 
 class O1_Protect_Plugins {
@@ -48,7 +48,7 @@ class O1_Protect_Plugins {
 	 */
 	public function __construct() {
 
-        //FIXME Is it faster this way? add_filter( 'pre_option_active_plugins', array( $this, 'fix_protected' ) );
+		// @FIXME Is it faster this way? add_filter( 'pre_option_active_plugins', array( $this, 'fix_protected' ) );
 		foreach ( $this->protected_plugins as $protected ) {
 			// reactivate on deactivation
 			add_action( 'deactivate_' . $protected, array( $this, 'reactivate' ) );

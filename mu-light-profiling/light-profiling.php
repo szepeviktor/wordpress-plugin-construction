@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Light Profiling MU
+Plugin Name: Light Profiling (MU)
 Version: 0.1.0
 Description: Log execution times.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
@@ -84,10 +84,11 @@ class Light_Profiling {
 
     public function postthemesetup() {
 
-        // Move these debug lines any function
+        // Move these debug lines to any method
         //echo '<pre>'; global $wp_actions; var_export($wp_actions);
         //echo '<pre>'; var_export( array_slice( get_included_files(), $this->file_count ) ); exit;
-        // And move this to the previous function
+
+        // And move this to the previous method
         //$this->file_count = count( get_included_files() );
 
         $this->time_postthemesetup = microtime( true );

@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Keep Latin accents MU
+Plugin Name: Keep Latin accents (MU)
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Enables latin accents in WordPress URLs
 Version: 4.0.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
 Idea: Pavel (aka Immortal) Petrov http://www.webbamboo.net/
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-latin-accent-urls
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
@@ -23,16 +23,16 @@ if ( ! function_exists( 'add_filter' ) ) {
     exit;
 }
 
-add_filter( 'sanitize_title', 'restore_nonlatin_title', 9, 3 );
+add_filter( 'sanitize_title', 'o1_restore_nonlatin_title', 9, 3 );
 // @FIXME Also in navigation menu classes
 
 /**
  * Restore title with accents
  */
-function restore_nonlatin_title( $title, $raw_title, $context ) {
+function o1_restore_nonlatin_title( $title, $raw_title, $context ) {
 
     if ( 'save' === $context ) {
-        return remove_nonlatin_accents( $raw_title );
+        return o1_remove_nonlatin_accents( $raw_title );
     } else {
         return $title;
     }
@@ -41,7 +41,7 @@ function restore_nonlatin_title( $title, $raw_title, $context ) {
 /**
  * Remove non-Latin accents
  */
-function remove_nonlatin_accents( $string ) {
+function o1_remove_nonlatin_accents( $string ) {
 
     if ( ! preg_match( '/[\x80-\xff]/', $string ) ) {
         return $string;
