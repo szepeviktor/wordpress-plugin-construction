@@ -1,7 +1,7 @@
 <?php
 /*
-Plugin Name: Forced TOTP login
-Version: 1.0.1
+Plugin Name: TOTP login
+Version: 1.0.2
 Description: Log in with your username and a TOTP without your password.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -13,27 +13,38 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 //       append to: set_transient( 'totp_used_' . $user->user_login, $password, 2 * MINUTE_IN_SECONDS );
 //       and check before checkTotp()
 
-remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
-remove_action( 'edit_user_created_user', 'wp_send_new_user_notifications', 10 );
-//add_action( 'register_new_user', 'o1_totp_register_new_user' );
-//add_action( 'edit_user_created_user', 'o1_totp_register_new_user' );
-add_action( 'user_register', 'o1_totp_register_new_user' );
+add_action( 'init', 'o1_totp_init' );
 
-remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
-add_filter( 'authenticate', 'o1_authenticate_totp', 10, 3 );
+function o1_totp_init() {
+
+    // Core hooks
+    remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
+    remove_action( 'edit_user_created_user', 'wp_send_new_user_notifications', 10 );
+    remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
+
+    // Old hooks
+    //add_action( 'register_new_user', 'o1_totp_register_new_user' );
+    //add_action( 'edit_user_created_user', 'o1_totp_register_new_user' );
+    add_action( 'user_register', 'o1_totp_register_new_user' );
+    add_filter( 'authenticate', 'o1_authenticate_totp', 10, 3 );
+
+    if ( defined( 'WP_CLI' ) && WP_CLI ) {
+        require_once dirname( __FILE__ ) . '/includes/class-totp-cli-command.php';
+    }
+}
 
 /**
  * Authenticate a user, confirming the username and TOTP are valid.
  */
 function o1_totp_register_new_user( $user_id ) {
 
-    require_once 'includes/OtpInterface.php';
-    require_once 'includes/Otp.php';
-    require_once 'includes/GoogleAuthenticator.php';
-    require_once 'includes/Base32.php';
+    require_once dirname( __FILE__ ) . '/includes/OtpInterface.php';
+    require_once dirname( __FILE__ ) . '/includes/Otp.php';
+    require_once dirname( __FILE__ ) . '/includes/GoogleAuthenticator.php';
+    require_once dirname( __FILE__ ) . '/includes/Base32.php';
 
-    $secret = Otp\GoogleAuthenticator::generateRandom();
-    $meta_added = add_user_meta( $user_id, 'totp_secret_code', $secret, true );
+    $secret = Otp\GoogleAuthenticator::generateRandom( 32 );
+    $meta_added = update_user_meta( $user_id, '_totp_login_secret_code', $secret );
     // @FIXME if ( ! $meta_added ) {
     $blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
     $user = get_user_by( 'ID', $user_id );
@@ -107,7 +118,7 @@ function o1_authenticate_totp( $user, $username, $password ) {
         return $user;
     }
 
-    $totp_secret_code = get_user_meta( $user->ID, 'totp_secret_code', true );
+    $totp_secret_code = get_user_meta( $user->ID, '_totp_login_secret_code', true );
     if ( empty( $totp_secret_code ) ) {
 
         // TOTP secret code not available

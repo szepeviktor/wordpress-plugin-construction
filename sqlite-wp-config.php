@@ -8,9 +8,9 @@
 
     Installation steps
 
-    wget -q -O- https://wordpress.org/latest.tar.gz | tar -xz
+    wget -nv -O- https://wordpress.org/latest.tar.gz | tar -xz
     cd wordpress/wp-content/plugins/
-    wget https://downloads.wordpress.org/plugin/sqlite-integration.zip
+    wget -nv https://downloads.wordpress.org/plugin/sqlite-integration.zip
     unzip sqlite-integration.zip
     cp sqlite-integration/db.php ../
 */
