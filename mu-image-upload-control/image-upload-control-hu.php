@@ -81,8 +81,8 @@ final class Image_Upload_Control {
 
         $blacklist = '/'
             .'^[^0-9a-z]' // Begins with non-alpha
-            .'|^DSC' // Camera image
-            .'|^IMG' // Numbered image
+            .'|^.?DSC' // Camera image
+            .'|^.?IMG' // Numbered image
             .'|Screen.*Shot.*[0-9]+' // Screenshot
             .'|[0-9]{2,}x[0-9]{2,}' // Size in name "100x200"
             .'/i' // Case-insensitive
