@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Image upload control
+Plugin Name: Image upload control - Hungarian (MU)
 Version: 0.1.1
 Description: Help users to keep image file names clean and descriptive.
 Author: Viktor Szépe
@@ -71,12 +71,12 @@ final class Image_Upload_Control {
 
         // File name too short
         if ( strlen( $file['name'] ) < 14 ) {
-            return 'Please rename the image to a descriptive name before uploading to make it possible to be recognized only by its name.';
+            return 'Kérem nevezze át feltöltés előtt a képet beszédes nevűre, hogy csak a neve alapján is lehessen tudni, melyik kép az.';
         }
 
         // File name contains ".."
         if ( strpos( $file['name'], '..' ) ) {
-            return 'Please remove multiple dots from the file name before uploading.';
+            return 'Kérem távolítsa el a fájl nevéből az egymás melletti pontokat feltöltés előtt.';
         }
 
         $blacklist = '/'
@@ -95,12 +95,12 @@ final class Image_Upload_Control {
          */
         $blacklist = apply_filters( 'cmu_filename_blacklist_regex', $blacklist, $file );
         if ( 1 === preg_match( $blacklist, $file['name'] ) ) {
-            return 'Please rename the image to a descriptive name before uploading, start with a letter or a digit and exclude its dimensions.';
+            return 'Kérem nevezze át a képet beszédes nevűre, betűvel vagy számmal kezdődjön és ne tartalmazza a kép méreteit.';
         }
 
         // Cannot get image size
         if ( false === $imageinfo ) {
-            return 'This is a faulty image. Please regenerate it if it is not the original image.';
+            return 'Ez a kép hibás. Kérem újra állítsa elő, ha ez nem az eredeti.';
         }
 
         /**
@@ -115,7 +115,7 @@ final class Image_Upload_Control {
         $pixel_max = apply_filters( 'cmu_pixel_max', 2173600, $imageinfo, $file );
         $pixels = $imageinfo[0] * $imageinfo[1];
         if ( $pixels > $pixel_max ) {
-            return 'Please resize the image before uploading at most to FullHD (1920×1080)';
+            return 'Kérem méretezze át ezt a képet feltöltés előtt legfeljebb FullHD (1920×1080) meretűre.';
         }
 
         /**
@@ -127,7 +127,7 @@ final class Image_Upload_Control {
          */
         $pixel_min = apply_filters( 'cmu_pixel_min', 1024, $imageinfo, $file );
         if ( $pixels < $pixel_min ) {
-            return 'Please upload images with at least 32 pixels in both dimensions.';
+            return 'Kérem legalább 32 pixel széles és magas képet töltsön csak fel.';
         }
 
         // The image is OK.
