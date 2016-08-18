@@ -78,7 +78,8 @@ class O1_Plugin_Upload_From_Url {
         $style = '.plugins_page_plugin-download .download-plugin-form {
             background: none repeat scroll 0 0 #fafafa; border: 1px solid #e5e5e5;
             margin: 30px auto; max-width: 380px; padding: 30px; text-align: right; }
-            #pluginurl { width: 100%; margin-bottom: 10px; }';
+            #pluginurl { width: 100%; margin-bottom: 10px; }
+        ';
 
         wp_add_inline_style( 'wp-admin', $style );
     }
