@@ -92,15 +92,15 @@ final class WP_Internal_Pointers {
     + Advanced Image Styles `advanced-image-styles`
     + `unattach`
 1. Content representation
+    + https://github.com/alleyinteractive/wordpress-fieldmanager
     + `CMB2`
     + https://github.com/jtsternberg/Shortcode_Button with CMB2
     + `shortcode-ui`
-    + https://github.com/alleyinteractive/wordpress-fieldmanager
     + `custom-content-shortcode`
     + `column-shortcodes`
     + `tablepress`
     + Map `wp-geo`
-    + `ankyler`
+    + `ankyler` widget
 1. Imaging
     + Cloudinary
     + `my-eyes-are-up-here`

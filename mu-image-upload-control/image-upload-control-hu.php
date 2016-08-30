@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Image upload control - Hungarian (MU)
-Version: 0.1.1
+Version: 0.1.2
 Description: Help users to keep image file names clean and descriptive.
 Author: Viktor Szépe
 Idea: TJNowell http://tomjn.com/
@@ -25,11 +25,13 @@ final class Image_Upload_Control {
      */
     public function __construct() {
 
-        add_filter( 'wp_handle_upload_prefilter', array( $this, 'examine_image' ) );
+        add_filter( 'wp_handle_upload_prefilter', array( $this, 'process_image' ) );
     }
 
     /**
-     * Examine only images and replace underscores in file names.
+     * Examine only images.
+     *
+     * Replaces underscores in file names without condition.
      *
      * It runs in the `wp_handle_upload_prefilter` filter.
      *
@@ -37,7 +39,7 @@ final class Image_Upload_Control {
      *
      * @return array Possibly modified file data.
      */
-    public function examine_image( $file ) {
+    public function process_image( $file ) {
 
         $type = explode( '/', $file['type'] );
 
@@ -80,12 +82,14 @@ final class Image_Upload_Control {
         }
 
         $blacklist = '/'
-            .'^[^0-9a-z]' // Begins with non-alpha
-            .'|^.?DSC' // Camera image
-            .'|^.?IMG' // Numbered image
-            .'|Screen.*Shot.*[0-9]+' // Screenshot
-            .'|[0-9]{2,}x[0-9]{2,}' // Size in name "100x200"
-            .'/i' // Case-insensitive
+            . '^[^0-9a-z]' // Begins with non-alpha
+            . '|^.?DSC' // Camera image
+            . '|^.?IMG' // Numbered image
+            . '|Screen.*Shot.*[0-9]+' // Screenshot
+            . '|[0-9]{2,}x[0-9]{2,}' // Size in name "100x200"
+            . '|[0-9]{8,}_[0-9]{8,}' // Codes in name "13882215_994913560607005"
+            . '|\.php' // PHP-generated image "image.php.jpg"
+            . '/i' // Case-insensitive
         ;
         /**
          * Filters the file name blacklist regex string.
