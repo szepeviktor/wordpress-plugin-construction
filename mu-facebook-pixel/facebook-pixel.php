@@ -22,7 +22,6 @@ t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 document,'script','//connect.facebook.net/%s/fbevents.js');
 fbq('init', '%s');
 %s
-fbq('track', 'PageView');
 </script>
 <noscript><img height='1' width='1' style='display:none'
 src='https://www.facebook.com/tr?id=%s&amp;ev=PageView&amp;noscript=1'
@@ -93,7 +92,7 @@ src='https://www.facebook.com/tr?id=%s&amp;ev=PageView&amp;noscript=1'
         $this->snippet = sprintf( $this->snippet_template,
             $lang,
             $pid,
-            apply_filters( 'fbp_extra_javascript', '' ),
+            apply_filters( 'fbp_extra_javascript', "fbq('track', 'PageView');" ),
             $pid
         );
 

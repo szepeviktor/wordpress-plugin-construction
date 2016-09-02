@@ -10,11 +10,15 @@
 
 ### `FBP_DISABLE`
 
-Disables the tracking code. Define it as `true` in `wp-config`
+Disables the tracking code.
+Define it as `true` in `wp-config`.
+By default the tracking code is enabled.
 
 ### `FBP_FACEBOOK_RECOMMENDATION`
 
-Inserts the tracking code before the ending `</head>` tag. Defaults is before the closing `</body>` tag.
+Inserts the tracking code before the ending `</head>` tag.
+Define it as `true` in `wp-config`.
+Default is before the closing `</body>` tag.
 
 ## Filters
 
@@ -24,7 +28,7 @@ Disable for users with this capability. Defaults to `edit_pages`
 
 ### `fbp_extra_javascript`
 
-Add extra JavaScript code before `fbq('track', "PageView");`. Defaults to an empty string.
+Track custom event instead of page view. Defaults to `fbq('track', 'PageView');`.
 
 ## Examples
 
@@ -33,9 +37,9 @@ Adding extra JavaScript.
 ```php
 // Analytics.js Field Reference
 // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference
-add_filter( 'gua_extra_javascript', function ( $js ) {
-    $js .= "ga('set', 'anonymizeIp', true);\n";
-    $js .= "ga('set', 'forceSSL', true);\n";
+add_filter( 'fbp_extra_javascript', function ( $js ) {
+
+    $js = sprintf( "fbq('track', 'Purchase', {currency: 'EUR', value: %.2f});", $cart_total );
 
     return $js;
 });
@@ -44,7 +48,7 @@ add_filter( 'gua_extra_javascript', function ( $js ) {
 Adding a Dynamic Event.
 
 ```js
-( typeof fbq === 'function' ) &&  fbq('track', 'Lead' {
+( typeof fbq === 'function' ) && fbq('track', 'Lead' {
     content_name: 'Main Contact Form submit',
     referrer: document.referrer,
     userAgent: navigator.userAgent,
@@ -54,6 +58,6 @@ Adding a Dynamic Event.
 
 ## Remarks
 
-
-
 On development sites the tracking code is not enabled, when `WP_ENV` is not `production`.
+
+[API Reference](https://developers.facebook.com/docs/facebook-pixel/api-reference)
