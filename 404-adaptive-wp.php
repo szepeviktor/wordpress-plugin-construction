@@ -1,6 +1,6 @@
 <?php
 /**
- * Adaptive 404 response
+ * Adaptive 404 response before WordPress theme's 404.php
  *
  * PHP version 5.4+
  *
@@ -11,15 +11,28 @@
  * @link       https://github.com/mathiasbynens/small
  */
 
+/*
+// Copy this into WordPress theme's functions.php
+function adaptive_404() {
+
+    if ( ! is_404() ) {
+        return;
+    }
+
+    require get_template_directory() . '/inc/404-adaptive-wp.php';
+    new Adaptive_404();
+}
+add_action( 'template_redirect', 'adaptive_404' );
+
+// Or these two lines at the top of your 404.php
+require get_template_directory() . '/inc/404-adaptive-wp.php';
+new Adaptive_404();
+*/
+
 /**
  * Send adaptive response when content is not found.
  */
 class Adaptive_404 {
-
-    /**
-     * HTML response body
-     */
-    private $html = '';
 
     /**
      * Determine response type and send it.
@@ -28,9 +41,7 @@ class Adaptive_404 {
      *
      * @return void
      */
-    public function __construct( $custom_html = '' ) {
-
-        $this->set_html( $custom_html );
+    public function __construct() {
 
         if ( '/robots.txt' === $_SERVER['REQUEST_URI'] ) {
             $this->respond( "User-agent: *\nDisallow: /\n", 'text/plain' );
@@ -104,16 +115,11 @@ class Adaptive_404 {
                 $this->respond( '404 - Not Found', 'text/plain' );
             */
 
-            // HTML
-            case 'html':
-            case 'htm':
-            case 'php':
-                $this->respond( $this->html );
-
             // Could be a SEF URL
             default:
                 if ( $this->accept_html() ) {
-                    $this->respond( $this->html );
+                    // WordPress will handle HTML
+                    return;
                 } else {
                     $this->respond( '404', 'text/plain' );
                 }
@@ -175,31 +181,7 @@ class Adaptive_404 {
             header( sprintf( '%s: %s', $name, $value ), true );
         }
 
+        // Don't run WordPress 404.php
         exit( $response_content );
-    }
-
-    /**
-     * Set custom of default HTML reponse body.
-     *
-     * @param string $custom_html HTML reponse body
-     *
-     * @return void
-     */
-    private function set_html( $custom_html ) {
-
-        // Apache's default 404 page
-        $default_html_tpl = '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<html><head>
-<title>404 Not Found</title>
-</head><body>
-<h1>Not Found</h1>
-<p>The requested URL %s was not found on this server.</p>
-</body></html>';
-
-        if ( empty( $custom_html ) ) {
-            $this->html = sprintf( $default_html_tpl, htmlspecialchars( urldecode( $_SERVER['REQUEST_URI'] ) ) );
-        } else {
-            $this->html = $custom_html;
-        }
     }
 }
