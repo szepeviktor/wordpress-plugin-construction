@@ -44,8 +44,14 @@ ga('send', 'pageview');
 
     public function __construct() {
 
-        // Disable during development
+        // Disable on development sites
         if ( ( defined( 'WP_ENV' ) && 'production' !== WP_ENV ) ) {
+
+            return;
+        }
+
+        // WP-Cron has no visitors to track
+        if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 
             return;
         }
@@ -57,17 +63,12 @@ ga('send', 'pageview');
             return;
         }
 
-        if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
-
-            return;
-        }
-
         add_action( 'init', array( $this, 'init' ) );
     }
 
     public function init() {
 
-        // Disable for administrators and editors
+        // Disable for users with this capability
         $capability = apply_filters( 'gua_capability', 'edit_pages' );
         if ( current_user_can( $capability ) ) {
 
@@ -76,20 +77,26 @@ ga('send', 'pageview');
 
         $ua = get_option( 'gua_tracking_id' );
 
+        // Verify ID
         if ( false === $ua || ! preg_match( '/^UA-[0-9]{3,9}-[0-9]{1,4}$/', $ua ) ) {
 
             return;
         }
 
+        // Render template
         $this->snippet = sprintf( $this->snippet_template,
             $ua,
             apply_filters( 'gua_extra_javascript', '' )
         );
 
+        if ( defined( 'GUA_DISABLE' ) && GUA_DISABLE ) {
+            return;
+        }
+
         if ( defined( 'GUA_GOOGLE_RECOMMENDATION' ) && GUA_GOOGLE_RECOMMENDATION ) {
             // Google: before the closing </head> tag
             add_action( 'wp_head', array( $this, 'print_script' ), 20 );
-        } elseif ( ! ( defined( 'GUA_DISABLE' ) && GUA_DISABLE ) ) {
+        } else {
             // Speed: before the closing </body> tag
             add_action( 'wp_footer', array( $this, 'print_script' ) );
         }
@@ -149,9 +156,9 @@ ga('send', 'pageview');
     }
 }
 
-function GUA() {
+function gua() {
 
     return GUA::instance();
 }
 
-GUA();
+gua();

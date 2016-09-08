@@ -1,5 +1,16 @@
 # @TODO - Google Universal Analytics for WordPress
 
+add_inline to jquery-core
+
+    // Track basic JavaScript errors - http://davidwalsh.name/track-errors-google-analytics
+    window.addEventListener('error', function (e) {
+        ga('send', 'exception', {'exDescription':e.message, 'exFatal':true, 'line':e.filename + ':  ' + e.lineno});
+    });
+    // Track AJAX errors
+    jQuery(document).ajaxError(function (e, request, settings) {
+        ga('send', 'exception', {'exDescription':'AJAX error', 'exFatal':true, 'url':settings.url, 'result':e.result});
+    });
+
 How it works... in "General Settings"
 
 + obfuscate UA number

@@ -1,5 +1,18 @@
 # WordPress website setup on cPanel
 
+### Hawk Host
+
+Features
+
+1. LiteSpeed webserver with HTTP/2
+1. (180 seconds long) PHP opcache
+1. Memcached for WordPress object-cache
+1. Fast disk
+1. MariaDB version 10 database engine
+1. Modern cPanel with SSH access thus you can use WP-CLI
+1. [European location](https://www.hawkhost.com/our-hosting-network/amsterdam)
+1. Stability of SoftLayer, an IBM company
+
 ### cPanel settings
 
 - Contact Information ×2
@@ -23,6 +36,11 @@
 
 ```bash
 nano .bashrc
+#     umask 022
+#     export TZ=UTC0
+#     export LANG=en_US.UTF-8
+#     export LC_ALL=en_US.UTF-8
+#     export MC_SKIN=dark
 
 # C-x C-r
 nano ~/.inputrc
@@ -48,7 +66,7 @@ bash mc-user-rpm.sh
 ### S3CMD and pip
 
 ```bash
-wget https://bootstrap.pypa.io/get-pip.py|python2
+wget -nv https://bootstrap.pypa.io/get-pip.py
 python2 get-pip.py --user
 rm -f get-pip.py
 ln -sv ../.local/bin/pip2 bin/
@@ -68,7 +86,7 @@ Set up S3 bucket.
 wget -O bin/wp https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x bin/wp
 wget -qO- https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash >> ~/.bashrc
-wget https://github.com/szepeviktor/debian-server-tools/blob/master/webserver/wp-cli.yml
+wget https://github.com/szepeviktor/debian-server-tools/raw/master/webserver/wp-cli.yml
 nano wp-cli.yml
 ```
 
@@ -78,7 +96,7 @@ See `.htaccess`
 
 See debian-server-tools/webserver/apache-conf-available/wordpress-htaccess/
 
-### PHP configuration check
+### PHP configuration check and logging
 
 ```bash
 cd ~/public_html/
@@ -89,8 +107,6 @@ wget https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/sha
 Browse to `/enable-logging.php?above`
 
 ### WordPress website
-
-See debian-server-tools/webserver/webserver/WordPress.md
 
 ```bash
 cd ~/public_html/
@@ -104,6 +120,8 @@ wp option set blog_public "0"
 DB import
 wp core update && wp core update-db
 ```
+
+See debian-server-tools/webserver/webserver/WordPress.md
 
 Uninstall and update Themes, Plugins
 

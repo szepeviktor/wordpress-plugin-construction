@@ -10,7 +10,7 @@ final class Custom_Theme {
      */
     protected static $_instance = null;
 
-    public $version = '1.0.0';
+    public $version = '1.0.1';
 
     private $current_language = null;
 
@@ -48,15 +48,23 @@ final class Custom_Theme {
     }
 
     /**
-     * Print one field from a specific option.
+     * Print one field from a specific option as HTML.
      */
     public function print_option2( $field ) {
 
-        esc_html_e( $this->get_option2( $field ) );
+        print esc_html( $this->get_option2( $field ) );
     }
 
     /**
-     * Get field from a specific multilingual option.
+     * Print one email field from a specific option as obfuscated HTML.
+     */
+    public function print_email_option2( $field ) {
+
+        print antispambot( $this->get_option2( $field ) );
+    }
+
+    /**
+     * Return the value of one field from a specific multilingual option.
      */
     public function get_option2( $field ) {
 

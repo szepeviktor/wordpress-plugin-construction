@@ -28,9 +28,19 @@ Disable for users with this capability. Defaults to `edit_pages`
 
 ### `fbp_extra_javascript`
 
-Track custom event instead of page view. Defaults to `fbq('track', 'PageView');`.
+Track custom event instead of page view. Defaults to `fbq('track', 'PageView');`
 
 ## Examples
+
+Custom usage in your theme.
+
+```php
+// In wp-config
+define( 'FBP_DISABLE', true );
+
+// In the theme
+print fbp()->get_code();
+```
 
 Adding extra JavaScript.
 
@@ -48,7 +58,7 @@ add_filter( 'fbp_extra_javascript', function ( $js ) {
 Adding a Dynamic Event.
 
 ```js
-( typeof fbq === 'function' ) && fbq('track', 'Lead' {
+( typeof fbq === 'function' ) && fbq('track', 'Lead', {
     content_name: 'Main Contact Form submit',
     referrer: document.referrer,
     userAgent: navigator.userAgent,
