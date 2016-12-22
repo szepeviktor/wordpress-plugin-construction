@@ -3,7 +3,7 @@
 Snippet Name: Create a user from hardcoded data and log in to WordPress.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Unzip WordPress instead of uploading it file-by-file
-Version: 0.2.1
+Version: 0.2.2
 License: The MIT License (MIT)
 Author: Viktor Szépe
 */
@@ -30,9 +30,9 @@ $wcu_userdata = (object)array(
     'user_pass'         => "12345"
 );
 
-$wcu_html = '
-<!DOCTYPE html>
+$wcu_html = '<!DOCTYPE html>
 <html>
+<meta charset="UTF-8">
 <title>Create new WordPress user and log in</title>
 <body>
 <pre style="background:white; color:blue;">%s</pre>

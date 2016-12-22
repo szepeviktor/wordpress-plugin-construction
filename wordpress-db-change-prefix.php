@@ -73,7 +73,7 @@ function wpdb_change_prefix( $new_prefix = 'wp_' ) {
      * 3. Update wp_options table
      */
     $update_option_query = $wpdb->query( $wpdb->prepare(
-        sprintf( 'UPDATE `%soptions`', $new_prefix ) . 'SET option_name = %s WHERE option_name = %s LIMIT 1',
+        sprintf( 'UPDATE `%soptions`', $new_prefix ) . 'SET `option_name` = %s WHERE `option_name` = %s LIMIT 1',
         $new_prefix . 'user_roles',
         $wpdb->base_prefix . 'user_roles'
     ) );

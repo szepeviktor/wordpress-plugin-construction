@@ -107,6 +107,9 @@ final class WP_Internal_Pointers {
 1. Tracking
     + google-universal-analytics/
     + .
+1. CDN
+    + https://github.com/markjaquith/WP-Stack/blob/master/WordPress-Dropins/wp-stack-cdn.php
+    + .
 
 ## Manage WordPress installation with git
 

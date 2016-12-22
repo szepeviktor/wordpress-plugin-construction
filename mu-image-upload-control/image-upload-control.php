@@ -1,7 +1,7 @@
 <?php
 /*
-Plugin Name: Image upload control
-Version: 0.1.2
+Plugin Name: Image upload control (MU)
+Version: 0.1.3
 Description: Help users to keep image file names clean and descriptive.
 Author: Viktor Szépe
 Idea: TJNowell http://tomjn.com/
@@ -44,7 +44,11 @@ final class Image_Upload_Control {
 
         $type = explode( '/', $file['type'] );
 
-        if ( $file['type'] && 0 === strpos( $file['type'], 'image/' ) && function_exists( 'getimagesize' ) ) {
+        if ( $file['type']
+            && 0 === strpos( $file['type'], 'image/' )
+            && 'image/svg+xml' !== $file['type']
+            && function_exists( 'getimagesize' )
+        ) {
             $imageinfo = getimagesize( $file['tmp_name'] );
             $result = $this->image_problems( $file, $imageinfo );
             if ( is_string( $result ) ) {
@@ -85,6 +89,7 @@ final class Image_Upload_Control {
         $blacklist = '/'
             . '^[^0-9a-z]' // Begins with non-alpha
             . '|^.?DSC' // Camera image
+            . '|^.?CAM[0-9]{4,}' // Camera image
             . '|^.?IMG' // Numbered image
             . '|Screen.*Shot.*[0-9]+' // Screenshot
             . '|[0-9]{2,}x[0-9]{2,}' // Size in name "100x200"
