@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Disable Updates and Update HTTP Requests (MU)
-Version: 0.5.3
+Version: 0.5.4
 Description: Disable core, theme and plugin updates plus the browser nag
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -181,7 +181,7 @@ class O1_Disable_Version_Check {
     /**
      * Return the current time and core version
      */
-    public function last_checked_core() {
+    public function last_checked_core( $transient ) {
 
         return (object) array(
             'last_checked'    => time(),
@@ -193,7 +193,7 @@ class O1_Disable_Version_Check {
     /**
      * Return the current time and theme versions
      */
-    public function last_checked_themes() {
+    public function last_checked_themes( $transient ) {
 
         $current = array();
         $installed_themes = wp_get_themes();
@@ -211,7 +211,7 @@ class O1_Disable_Version_Check {
     /**
      * Return the current time and plugin versions
      */
-    public function last_checked_plugins() {
+    public function last_checked_plugins( $transient ) {
 
         $current = array();
         $plugins = get_plugins();
