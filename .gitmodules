@@ -112,3 +112,9 @@
 [submodule "minit/minit"]
 	path = minit/minit
 	url = https://github.com/kasparsd/minit.git
+[submodule "blokk"]
+	path = blokk
+	url = git@github.com:blokk-people/blokk.git
+[submodule "blokk-registry"]
+	path = blokk-registry
+	url = git@github.com:blokk-people/Shortcake-UI-registry.git

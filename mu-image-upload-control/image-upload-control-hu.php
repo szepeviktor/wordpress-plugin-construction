@@ -4,7 +4,7 @@ Plugin Name: Image upload control - Hungarian (MU)
 Version: 0.1.3
 Description: Help users to keep image file names clean and descriptive.
 Author: Viktor Szépe
-Idea: TJNowell http://tomjn.com/
+Idea: TJNowell http://tomjn.com/164/clients-who-upload-huge-camera-photos-decompression-bombs/
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
