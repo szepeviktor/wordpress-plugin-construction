@@ -10,7 +10,7 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 /**
- * Image upload control
+ * Image upload control English version.
  *
  * @package image-upload-control
  */
@@ -64,7 +64,7 @@ final class Image_Upload_Control {
     }
 
     /**
-     * Check for problems.
+     * Check for image problems.
      *
      * @param array $file Details of file being uploaded.
      * @param array $imageinfo Image size data.
@@ -98,7 +98,7 @@ final class Image_Upload_Control {
             . '/i' // Case-insensitive
         ;
         /**
-         * Filters the file name blacklist regex string.
+         * Filters the file name blacklist.
          *
          * @param string $blacklist File name blacklist regex.
          * @param string $file      The file data.
@@ -114,7 +114,7 @@ final class Image_Upload_Control {
         }
 
         /**
-         * Filters the upper limit of image's pixel size.
+         * Filters the upper limit of number of pixels.
          *
          *                          Default value is 2173600, FullHD resolution 1920 × 1080
          *                          + 100 000 as sometimes there are more rows/columns
@@ -129,7 +129,7 @@ final class Image_Upload_Control {
         }
 
         /**
-         * Filters the lower limit of image's pixel size.
+         * Filters the lower limit of number of pixels.
          *
          *                          Default value is 1024, 32 × 32 pixels.
          * @param string $imageinfo Minimum pixel size.

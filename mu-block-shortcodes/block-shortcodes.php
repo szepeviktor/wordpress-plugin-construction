@@ -1,13 +1,12 @@
 <?php
 /*
 Plugin Name: Block Shortcodes (MU)
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Description: Wrap any content in <code>div</code> elements thus enabling content styling with CSS
 Version: 0.2.0
+Description: Wrap any content in <code>div</code> elements thus enabling content styling with CSS
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
-Author URI: http://www.online1.hu/webdesign/
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-block-shortcodes
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 if ( ! function_exists( 'add_filter' ) ) {
