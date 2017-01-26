@@ -34,7 +34,6 @@ final class O1_Send_Message {
         }
 
         add_action( 'init', array( $this, 'init' ) );
-
     }
 
     public function init() {
