@@ -2,7 +2,6 @@
 # https://github.com/h5bp/server-configs-apache/raw/master/dist/.htaccess
 # Shrink: sed -i -e 's|\s\+| |g' -e '/^\s*$/d' .htaccess
 #
-# 
 <IfModule mod_rewrite.c>
  RewriteEngine On
  # Block direct access to plugins and themes

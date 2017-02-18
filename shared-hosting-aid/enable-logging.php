@@ -1,7 +1,7 @@
 <?php
 /*
 Snippet Name: Enable PHP error logging
-Version: 0.3.2
+Version: 0.3.3
 Description: Sets up PHP error logging in a protected directory.
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -44,7 +44,6 @@ Author: Viktor Szépe
 ini_set( 'display_errors', '1' );
 ini_set( 'display_startup_errors', '1' );
 
-$this_dir = __DIR__;
 $errorlog_file = 'error.log';
 $htaccess_content = '
 # Apache < 2.3
@@ -62,12 +61,12 @@ $htaccess_content = '
 if ( isset( $_GET['above'] ) ) {
     // Place log directory above document root
     $dir_name = empty( $_GET['above'] ) ? 'log' : $_GET['above'];
-    $errorlog_dir = dirname( $this_dir ) . '/' . $dir_name;
+    $errorlog_dir = dirname( __DIR__ ) . '/' . $dir_name;
 } else {
     // Place log directory under document root
     // .htaccess will block access to it
     $secret_dir = md5( time() );
-    $errorlog_dir = $this_dir . '/' . $secret_dir;
+    $errorlog_dir = __DIR__ . '/' . $secret_dir;
 }
 
 $errorlog_path = $errorlog_dir . '/' . $errorlog_file;
@@ -80,10 +79,10 @@ if ( false !== $old_errorlog && $new_errorlog === $errorlog_path ) {
         die( "Couldn't create log dir!" );
     }
 
-    if ( isset( $_GET['above'] )
-        && ! file_put_contents( $errorlog_dir . '/.htaccess', $htaccess_content )
-    ) {
-        die( "Couldn't create .htaccess!" );
+    if ( ! isset( $_GET['above'] ) {
+        if ( ! file_put_contents( $errorlog_dir . '/.htaccess', $htaccess_content ) {
+            die( "Couldn't create .htaccess!" );
+        }
     }
 }
 

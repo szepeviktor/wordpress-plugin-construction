@@ -104,3 +104,5 @@ function Custom_Theme() {
 
     return Custom_Theme::instance();
 }
+
+// In templates: Custom_Theme()->print_option2( 'two_theme_text_field_u' );

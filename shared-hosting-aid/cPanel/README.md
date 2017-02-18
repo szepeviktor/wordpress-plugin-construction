@@ -27,7 +27,7 @@ Features
 - Cron Jobs: WP-cron
 - Cron Jobs: `/home/USER/bin/siteprotection.sh`
 - 7 × cron Jobs: `${HOME}/bin/s3cmd sync -q --no-mime-magic -e --delete-removed --delete-after "--exclude=WPCORE/*" "--exclude=SOMETHING/*" ${HOME}/public_html s3://BUCKET/0/`
-- PHP Selector extensions, see `php.ini`
+- PHP Selector extensions, see `/PathInfo.php`
 - PHP Selector options, see `.user.ini`
 - Let's Encrypt
 - SSH
@@ -100,6 +100,7 @@ See debian-server-tools/webserver/apache-conf-available/wordpress-htaccess/
 
 ```bash
 cd ~/public_html/
+wget https://github.com/szepeviktor/debian-server-tools/raw/master/webserver/PathInfo.php
 wget https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/shared-hosting-aid/php-vars.php
 wget https://github.com/szepeviktor/wordpress-plugin-construction/raw/master/shared-hosting-aid/enable-logging.php
 ```
@@ -117,7 +118,7 @@ wp core install --url= --title=WP --admin_user=viktor --admin_email=viktor@szepe
 wp option set blog_public "0"
 
 # Migrate
-DB import
+wp db import dump.sql
 wp core update && wp core update-db
 ```
 
@@ -125,7 +126,7 @@ See debian-server-tools/webserver/webserver/WordPress.md
 
 Uninstall and update Themes, Plugins
 
-- WordPress Fail2ban + Miniban (custom entry points exceptions)
+- WordPress Fail2ban + Miniban (+custom entry points exceptions)
 - Miniban https://github.com/szepeviktor/wordpress-fail2ban/tree/master/miniban
 
 ### WordPress settings

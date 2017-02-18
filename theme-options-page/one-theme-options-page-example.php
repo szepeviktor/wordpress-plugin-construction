@@ -3,13 +3,11 @@
 /*
 // In functions.php
 if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-    require_once get_template_directory() . '/includes/class-one-theme-options-page.php';
-    require_once get_template_directory() . '/includes/one-theme-options-page-example.php';
+    require_once get_template_directory() . '/inc/class-one-theme-options-page.php';
+    require_once get_template_directory() . '/inc/one-theme-options-page-example.php';
     new Custom_Theme_Options_Page();
 }
 */
-
-require_once 'includes/class-one-theme-options-page.php';
 
 class Custom_Theme_Options_Page extends One_Theme_Options_Page {
 
@@ -27,6 +25,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
     public function add_settings_page() {
 
         $this->add_admin_menu(
+            // EDIT
             'one-theme-menu-slug',
             __( 'One theme options page H1', 'otop_textdomain' ),
             __( 'HTML title', 'otop_textdomain' )
@@ -38,6 +37,7 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
         /**
          * Current option name
          */
+        // EDIT
         $option = 'one_theme_settings';
         $this->register_option( $option );
 
@@ -58,15 +58,18 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
         /**
          * Current section ID
          */
+        // EDIT
         $section = 'one_theme_page_section';
         $this->add_settings_section(
             $section,
+            // EDIT
             __( 'One theme section title H2', 'otop_textdomain' ),
             __( 'One theme section description P', 'otop_textdomain' )
         );
 
         $this->add_settings_field(
             $section,
+            // EDIT
             'one_theme_text_field_0',
             'text',
             'htmltext',
@@ -380,7 +383,3 @@ class Custom_Theme_Options_Page extends One_Theme_Options_Page {
         return $current_language;
     }
 }
-
-new Custom_Theme_Options_Page();
-
-// In templates: Custom_Theme()->print_2_field( 'two_theme_text_field_u' );

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Leho's speedbike (MU)
-Version: 0.1.1
+Version: 0.1.2
 Description: Log WordPress runtime.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -15,6 +15,11 @@ function leho_lap_time() {
 
     $duration = timer_stop();
 
+    // Don't run on WP-CLI
+    if ( defined( 'WP_CLI' ) && WP_CLI ) {
+        return;
+    }
+
     // Error log
     if ( isset( $_SERVER['REQUEST_URI'] ) ) {
         error_log( sprintf( 'Lap time: %ss Request: %s %s',
@@ -24,9 +29,9 @@ function leho_lap_time() {
         ) );
     }
 
-    // DOING_AJAX is defined late on file uploads (async-upload.php).
-    if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-        || ( defined( 'DOING_CRON' ) && DOING_CRON )
+    // DOING_AJAX is defined late on file uploads (async-upload.php)
+    if ( ( defined( 'DOING_CRON' ) && DOING_CRON )
+        || ( defined( 'DOING_AJAX' ) && DOING_AJAX )
         || ( ABSPATH . 'wp-admin/async-upload.php' === $_SERVER['SCRIPT_FILENAME'] )
         || ( defined( 'REST_REQUEST' ) && REST_REQUEST )
     ) {
