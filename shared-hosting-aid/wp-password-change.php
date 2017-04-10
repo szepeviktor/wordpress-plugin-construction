@@ -1,19 +1,28 @@
 <pre><?php
 /*
 Snippet name: Reset your own WordPress password
-Version: 1.0.0
+Version: 1.0.1
 Description: Copy this file to the WordPress root and load it in your browser
 Snippet URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Author: Viktor Szépe
 */
 
 /**
- * 1. load it in your browser to see user names
- * 2. change login name below to the selected user ($user)
+ * 1. Load it in your browser to see user names
+ * 2. Change login name below to the selected user ($user)
  *        + set password ($plain_pass)
  *        + comment out `die;`
- * 3. reload it to set password
+ * 3. Reload it to set password
  */
+
+
+/***------EDIT HERE----------***/
+
+$user = 'viktor';
+$plain_pass = '12345';
+
+/***------EDIT HERE----------***/
+
 
 ini_set( 'display_errors', 1 );
 error_reporting( E_ALL );
@@ -26,14 +35,11 @@ require_once( dirname( __FILE__ ) . '/wp-load.php' );
 var_dump( $wpdb->get_col( "SELECT user_login FROM $wpdb->users", 0 ) );
 var_dump( $wpdb->get_col( "SELECT user_pass FROM $wpdb->users", 0 ) );
 
-// comment out in the second run
-die;
-
 
 /***------EDIT HERE----------***/
 
-$user = 'viktor';
-$plain_pass = '12345';
+// Comment out in the second run
+die;
 
 /***------EDIT HERE----------***/
 

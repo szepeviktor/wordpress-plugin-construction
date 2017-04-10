@@ -92,6 +92,7 @@ final class WP_Internal_Pointers {
     + Advanced Image Styles `advanced-image-styles`
     + `unattach`
 1. Content representation
+    + Pods
     + https://github.com/alleyinteractive/wordpress-fieldmanager
     + `CMB2`
     + https://github.com/jtsternberg/Shortcode_Button with CMB2

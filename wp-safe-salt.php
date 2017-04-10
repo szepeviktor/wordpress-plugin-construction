@@ -13,7 +13,7 @@ function wp_safe_salt() {
     $salt_array = array();
 
     while ( true !== $crypto_strong || count( $salt_array ) < 64 ) {
-        $rnd_string = openssl_random_pseudo_bytes ( 256, $crypto_strong );
+        $rnd_string = openssl_random_pseudo_bytes( 256, $crypto_strong );
         $rnd_array = str_split( $rnd_string );
         $salt_array = array_intersect( $rnd_array, $chars_array );
     }

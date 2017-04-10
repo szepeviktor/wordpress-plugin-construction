@@ -2,7 +2,7 @@
 /*
 Plugin Name: KeePass keeps your passwords secure (MU)
 Version: 0.1.0
-Description: Add a nice KeePass link to the login form.
+Description: Add a nice KeePass website link to the login form.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Author: Viktor Szépe
 License: The MIT License (MIT)

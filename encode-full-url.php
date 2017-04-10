@@ -8,6 +8,7 @@
  * c) url_encode the parts which need encoding (relative protocol, IDN, accents, query)
  * d) re-build the url
  * e) ??? only then -> pass it on to wp_redirect()
+ * +1) IDN in home and siteurl?
  *
  * @param string any URL
  * @var string encoded URL
