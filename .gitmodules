@@ -118,3 +118,6 @@
 [submodule "blokk-registry"]
 	path = blokk-registry
 	url = git@github.com:blokk-people/Shortcake-UI-registry.git
+[submodule "tiny-cdn"]
+	path = tiny-cdn
+	url = git@github.com:szepeviktor/tiny-cdn.git
