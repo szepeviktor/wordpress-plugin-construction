@@ -3,7 +3,7 @@
 Plugin Name: Menu editor meta box length
 Description: Add URL column to the Media list page with autoselect.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Version: 0.2.0
+Version: 0.2.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/content-extras
@@ -22,7 +22,7 @@ function o1_nav_menu_meta_box_length( $meta_box_object ) {
 
     // https://core.trac.wordpress.org/ticket/32237
     $object_types = defined( 'O1_NAV_MENU_METABOX_TYPE' ) ?
-        explode( ',' O1_NAV_MENU_METABOX_TYPE ) : array( 'post' );
+        explode( ',', O1_NAV_MENU_METABOX_TYPE ) : array( 'post' );
 
     if ( property_exists( $meta_box_object, 'name' )
         && in_array( $meta_box_object->name, $object_types )
@@ -30,7 +30,7 @@ function o1_nav_menu_meta_box_length( $meta_box_object ) {
         $per_page = defined( 'O1_NAV_MENU_METABOX_PER_PAGE' ) ?
             O1_NAV_MENU_METABOX_PER_PAGE : 200;
         $post_type_name = $meta_box_object->name;
-        $pagenum = isset( $_REQUEST[$post_type_name . '-tab'] ) && isset( $_REQUEST['paged'] ) ?
+        $pagenum = ( isset( $_REQUEST[ $post_type_name . '-tab' ] ) && isset( $_REQUEST['paged'] ) ) ?
             absint( $_REQUEST['paged'] ) : 1;
         $offset = 0 < $pagenum ?
             $per_page * ( $pagenum - 1 ) : 0;
