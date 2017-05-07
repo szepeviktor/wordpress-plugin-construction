@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Cookie Consent
-Description: The most popular solution to the EU cookie law
+Description: The most popular solution to the EU cookie law.
 Version: 0.1.0
 Plugin URI: https://cookieconsent.insites.com/download/
 */

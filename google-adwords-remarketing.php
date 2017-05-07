@@ -1,9 +1,14 @@
 <?php
+/*
+Plugin Name: Google Adwords Remarketing
+Description: Tag your site for remarketing.
+Version: 0.1.0
+Plugin URI: https://support.google.com/adwords/answer/3103357
+*/
 
-// Google Adwords Remarketing
 add_action( 'wp_enqueue_scripts', function () {
 
-    global $google_conversion_id;
+    global $_google_conversion_id;
 
     // EDIT
     $_google_conversion_id = 000000000;
