@@ -2,7 +2,7 @@
 /*
 Plugin name: Tiny cache.
 Description: Cache HTML during the_content() calls.
-Version: 0.1.0
+Version: 0.2.0
 Plugin URI: https://developer.wordpress.org/reference/functions/the_content/
 */
 
@@ -16,13 +16,20 @@ Usage example
     the_content();
     endif;
 
+Replace the_content(); instances
+--------------------------------
+
+    $ find -type f -name "*.php" | xargs -r -L 1 sed -i -e 's|\bthe_content();|the_content_cached();|g'
 */
 
+/**
+ * Serve cached content or serve and save the content to the object cache.
+ */
 function the_content_cached( $more_link_text = null, $strip_teaser = false ) {
 
     $post_id = get_the_ID();
-    // Not possible to tie content to post ID
-    if ( ! $post_id ) {
+    // Not possible to tie content to post ID or user logged in
+    if ( ! $post_id || is_user_logged_in() ) {
         the_content( $more_link_text, $strip_teaser );
         return;
     }
@@ -30,9 +37,22 @@ function the_content_cached( $more_link_text = null, $strip_teaser = false ) {
     $cached = wp_cache_get( $post_id, 'the_content' );
     // Cache miss
     if ( ! $cached ) {
-        add_filter( 'the_content', 'tiny_cache_save_the_content', PHP_INT_MAX );
+        $save_to_cache = false;
+        $post = get_post( $post_id );
+        // Existing post
+        if ( true === is_object( $post ) ) {
+            if ( 'publish' === $post->post_status && empty( $post->post_password ) ) {
+                $save_to_cache = true;
+            }
+        }
+        // Save the content
+        if ( true === $save_to_cache ) {
+            add_filter( 'the_content', 'tiny_cache_save_the_content', PHP_INT_MAX );
+        }
         the_content( $more_link_text, $strip_teaser );
-        remove_filter( 'the_content', 'tiny_cache_save_the_content', PHP_INT_MAX );
+        if ( true === $save_to_cache ) {
+            remove_filter( 'the_content', 'tiny_cache_save_the_content', PHP_INT_MAX );
+        }
         return;
     }
 
@@ -43,7 +63,45 @@ function the_content_cached( $more_link_text = null, $strip_teaser = false ) {
     printf( $message_tpl, $timestamp );
 }
 
-// Save the content to the object cache
+/**
+ * Hook cache delete actions.
+ */
+add_action( 'init', function () {
+    // Post ID is received
+    add_action( 'publish_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'publish_phone', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'edit_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'delete_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'wp_trash_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'clean_post_cache', 'tiny_cache_delete_the_content', 0 );
+    // Post ID as third argument
+    add_action( 'transition_post_status', 'tiny_cache_post_transition', 10, 3 );
+} );
+
+/**
+ * Delete cached content by ID.
+ */
+function tiny_cache_delete_the_content( $post_id ) {
+
+    wp_cache_delete( $post_id, 'the_content' );
+}
+
+/**
+ * Delete cached content on transition_post_status.
+ */
+function tiny_cache_post_transition( $new_status, $old_status, $post ) {
+
+    // Post unpublished or published
+    if ( ( 'publish' === $old_status && 'publish' !== $new_status )
+        || ( 'publish' !== $old_status && 'publish' === $new_status )
+    ) {
+        tiny_cache_delete_the_content( $post->ID );
+    }
+}
+
+/**
+ * Save the content to the object cache.
+ */
 function tiny_cache_save_the_content( $content ) {
 
     $post_id = get_the_ID();
