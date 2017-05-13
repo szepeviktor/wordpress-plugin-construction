@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: Contact Form 7 Robot Trap
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Description: Stops spammer robots, add <code>[robottrap email-verify class:email-verify tabindex:2]</code> and hide the field with CSS.
-Version: 0.4.2
+Version: 0.5.0
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/contact-form-7-robot-trap
-Options: WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE
+Contants: WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE
 */
 
 /**
@@ -48,8 +48,9 @@ function wpcf7_robottrap_shortcode_handler( $tag ) {
     $tag = new WPCF7_Shortcode( $tag );
 
     // default field name
-    if ( empty( $tag->name ) )
+    if ( empty( $tag->name ) ) {
         $tag->name = 'email-verify';
+    }
 
     // per field errors
     $validation_error = wpcf7_get_validation_error( $tag->name );
@@ -57,8 +58,9 @@ function wpcf7_robottrap_shortcode_handler( $tag ) {
     // add wpcf7 specific classes
     $class = wpcf7_form_controls_class( 'text' );
 
-    if ( $validation_error )
+    if ( $validation_error ) {
         $class .= ' wpcf7-not-valid';
+    }
 
     $atts = array();
 
@@ -155,14 +157,14 @@ function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
     $name = $tag->name;
 
     $value = isset( $_POST[ $name ] )
-        ? trim( wp_unslash( sanitize_text_field( (string)$_POST[ $name ] ) ) )
+        ? trim( wp_unslash( sanitize_text_field( (string) $_POST[ $name ] ) ) )
         : '';
 
     if ( ! $result->is_valid( $name ) || '' === $value ) {
         return $result;
     }
 
-    $domain = sanitize_text_field( substr( strrchr( $value, '@' ), 1 ));
+    $domain = sanitize_text_field( substr( strrchr( $value, '@' ), 1 ) );
 
     if ( empty( $domain ) || ! checkdnsrr( $domain, 'MX' ) ) {
         /**

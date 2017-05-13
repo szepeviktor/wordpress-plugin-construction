@@ -25,3 +25,8 @@ function encode_full_url( $url ) {
     // path
     //rawurlencode()
 }
+
+function urlpath_encode( $raw ) {
+
+    return join( '/', array_map( 'rawurlencode', explode( '/', $raw ) ) );
+}
