@@ -11,10 +11,11 @@
 $new_prefix = 'NEWPREFIX_';
 
 $prefix_change_error = wpdb_change_prefix( $new_prefix );
+
 if ( false !== $prefix_change_error ) {
-    print 'Error: ' . $prefix_change_error . PHP_EOL;
+    error_log( sprintf( 'Error: %s%s', $prefix_change_error, "\n" ) );
 } else {
-    print 'Change $table_prefix in wp-config.php to ' . $new_prefix . PHP_EOL;
+    printf( 'Change $table_prefix in wp-config.php to %s%s', $new_prefix, "\n" );
     // $wp_config_regex = '/(\$table_prefix\s*=\s*)([\'"]).+?\\2(\s*;)/';
     // $config = preg_replace( $wp_config_regex, "\${1}'$new_prefix'\${3}", $config );
 }
@@ -42,7 +43,7 @@ function wpdb_change_prefix( $new_prefix = 'wp_' ) {
     }
 
     /**
-     * 2. Rename each blogs' options on multisite
+     * 2. Rename each blog's options on multisite
      */
     if ( is_multisite() ) {
 

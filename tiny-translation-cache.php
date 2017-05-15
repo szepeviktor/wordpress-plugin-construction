@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin name: Tiny translation cache
+Plugin name: Tiny translation cache (MU)
 Description: Cache .mo files in persistent object cache.
 Version: 0.1.0
 Plugin URI: https://developer.wordpress.org/reference/functions/load_textdomain/
@@ -29,15 +29,6 @@ class O1_Tiny_Translation_Cache {
     public function init() {
 
         add_filter( 'override_load_textdomain', array( $this, 'load_textdomain' ), 30, 3 );
-        /*
-        wp_cache_flush() on
-        // Core, theme and plugin update
-        'upgrader_process_complete'
-        'switch_theme'
-        'activate_plugin'
-        'deactivate_plugin'
-        error_log( 'WordPress object cache flushed.' );
-        */
     }
 
     public function load_textdomain( $override, $domain, $mofile ) {
@@ -84,6 +75,7 @@ class O1_Tiny_Translation_Cache {
     private function get_key( $domain, $mofile ) {
 
         // Hash of text domain and .mo file path
+        // @FIXME Why do we need text domain? Isn't the full path exact enough?
         return md5( $domain . $mofile );
     }
 
@@ -91,13 +83,14 @@ class O1_Tiny_Translation_Cache {
 
         $doc_root = array_key_exists( 'DOCUMENT_ROOT', $_SERVER ) ? $_SERVER['DOCUMENT_ROOT'] : ABSPATH;
 
-        $iframe_msg = sprintf( '<p style="font:14px \'Open Sans\',sans-serif">
-            <strong style="color:#DD3D36">ERROR:</strong> This is <em>not</em> a normal plugin,
-            and it should not be activated as one.<br />
-            Instead, <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code>
-            must be copied to <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code></p>',
-            str_replace( $doc_root, '', __FILE__ ),
-            str_replace( $doc_root, '', trailingslashit( WPMU_PLUGIN_DIR ) ) . basename( __FILE__ )
+        $iframe_msg = sprintf( '
+<p style="font:14px \'Open Sans\',sans-serif">
+<strong style="color:#DD3D36">ERROR:</strong> This is <em>not</em> a normal plugin,
+and it should not be activated as one.<br />
+Instead, <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code>
+must be copied to <code style="font-family:Consolas,Monaco,monospace;background:rgba(0,0,0,0.07)">%s</code></p>',
+            esc_html( str_replace( $doc_root, '', __FILE__ ) ),
+            esc_html( str_replace( $doc_root, '', trailingslashit( WPMU_PLUGIN_DIR ) ) . basename( __FILE__ ) )
         );
 
         exit( $iframe_msg );

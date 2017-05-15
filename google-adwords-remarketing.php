@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Google Adwords Remarketing
+Plugin Name: Google Adwords Remarketing (MU)
 Description: Tag your site for remarketing.
-Version: 0.1.0
+Version: 0.1.1
 Plugin URI: https://support.google.com/adwords/answer/3103357
 */
 
@@ -26,7 +26,7 @@ var google_remarketing_only = %s;
     $variables = sprintf( $variables_template, $_google_conversion_id, $_google_custom_params, $_google_remarketing_only );
 
     // Enqueue in the footer
-    wp_enqueue_script( 'googole_remarketing', '//www.googleadservices.com/pagead/conversion.js', array(), null, true );
+    wp_enqueue_script( 'googole_remarketing', 'https://www.googleadservices.com/pagead/conversion.js', array(), null, true );
     wp_add_inline_script( 'googole_remarketing', $variables, 'before' );
 }, 51 );
 
