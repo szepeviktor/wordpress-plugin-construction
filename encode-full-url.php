@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Encode all parts of any URL
+ * Encode all parts of any URL - full version of esc_url()
  *
  * a) relative or absolute
  * b) parse it
@@ -15,6 +15,7 @@
  */
 function encode_full_url( $url ) {
 
+    // TESTS:
     // scheme http://tools.ietf.org/html/rfc3986#section-3.1
     //to lower
     //relative protocol (scheme) support

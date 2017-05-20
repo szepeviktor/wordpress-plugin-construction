@@ -103,9 +103,6 @@
 [submodule "shared-hosting-aid/tripwire-original"]
 	path = shared-hosting-aid/tripwire-original
 	url = https://github.com/lucanos/Tripwire.git
-[submodule "w3tc-fix"]
-	path = w3tc-fix
-	url = git@github.com:szepeviktor/fix-w3tc.git
 [submodule "minit/Minit-Pro"]
 	path = minit/Minit-Pro
 	url = https://github.com/markoheijnen/Minit-Pro.git
