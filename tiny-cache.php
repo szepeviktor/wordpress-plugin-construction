@@ -2,7 +2,7 @@
 /*
 Plugin name: Tiny cache (MU)
 Description: Cache HTML in persistent object cache during the_content() calls.
-Version: 0.3.0
+Version: 0.3.1
 Plugin URI: https://developer.wordpress.org/reference/functions/the_content/
 */
 
@@ -28,11 +28,13 @@ Replace the_content(); instances
 function the_content_cached( $more_link_text = null, $strip_teaser = false ) {
 
     $post_id = get_the_ID();
-    // Not possible to tie content to post ID
-    // or user logged in or object cache is not available
-    // @TODO if ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) {
-    // if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || $_SERVER['REQUEST_METHOD'] != 'GET' ) {
-    if ( ! $post_id || is_user_logged_in() || ! wp_using_ext_object_cache() ) {
+    // Learned from W3TC Page Cache rules and WP Super Cache rules
+    if ( ! wp_using_ext_object_cache() // Object cache is unavailable
+        || is_user_logged_in() // User is logged in
+        || ! ( isset( $_SERVER['REQUEST_METHOD'] ) && 'GET' === $_SERVER['REQUEST_METHOD'] ) // Not a GET request
+        || ! $post_id // Not possible to tie content to post ID
+        || ! ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) // DO-NOT-CACHE tag present
+    ) {
         the_content( $more_link_text, $strip_teaser );
 
         return;
