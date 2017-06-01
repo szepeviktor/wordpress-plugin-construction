@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Fluch cache button (MU)
+Plugin Name: Flush cache button (MU)
 Version: 0.1.1
 Description: Add an admin bar button to flush the object cache.
 Author: Viktor Szépe
