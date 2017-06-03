@@ -2,7 +2,7 @@
 /*
 Plugin name: Tiny translation cache (MU)
 Description: Cache .mo files in persistent object cache.
-Version: 0.1.0
+Version: 0.1.1
 Plugin URI: https://developer.wordpress.org/reference/functions/load_textdomain/
 */
 
@@ -40,7 +40,7 @@ class O1_Tiny_Translation_Cache {
         $mo = new \MO();
         $key = $this->get_key( $domain, $mofile );
         $found = null;
-        // FIXME unserilalize() and gzinflate( $ )
+        // @TODO unserilalize() and gzinflate( $ )
         $cache = wp_cache_get( $key, self::GROUP, false, $found );
 
         if ( $found && isset( $cache['entries'], $cache['headers'] ) ) {
@@ -56,9 +56,9 @@ class O1_Tiny_Translation_Cache {
                 'entries' => $mo->entries,
                 'headers' => $mo->headers,
             );
-            // Save translation for a week
-            // FIXME serilalize() and gzdeflate( $, 6 )
-            wp_cache_set( $key, $translation, self::GROUP, WEEK_IN_SECONDS );
+            // @TODO serilalize() and gzdeflate( $, 6 )
+            // Save translation for a day
+            wp_cache_set( $key, $translation, self::GROUP, DAY_IN_SECONDS );
         }
 
         // Setup localization global
@@ -74,8 +74,8 @@ class O1_Tiny_Translation_Cache {
 
     private function get_key( $domain, $mofile ) {
 
-        // Hash of text domain and .mo file path
         // @FIXME Why do we need text domain? Isn't the full path exact enough?
+        // Hash of text domain and .mo file path
         return md5( $domain . $mofile );
     }
 
