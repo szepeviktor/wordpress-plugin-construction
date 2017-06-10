@@ -2,11 +2,11 @@
 /*
 Plugin name: Tiny translation cache (MU)
 Description: Cache .mo files in persistent object cache.
-Version: 0.1.1
+Version: 0.1.2
 Plugin URI: https://developer.wordpress.org/reference/functions/load_textdomain/
 */
 
-class O1_Tiny_Translation_Cache {
+class Tiny_Translation_Cache {
 
     const GROUP = 'mofile';
 
@@ -97,4 +97,4 @@ must be copied to <code style="font-family:Consolas,Monaco,monospace;background:
     }
 }
 
-new O1_Tiny_Translation_Cache();
+new Tiny_Translation_Cache();
