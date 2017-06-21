@@ -118,3 +118,6 @@
 [submodule "tiny-cdn"]
 	path = tiny-cdn
 	url = git@github.com:szepeviktor/tiny-cdn.git
+[submodule "bootstrap-navwalker"]
+	path = bootstrap-navwalker
+	url = https://github.com/wp-bootstrap/wp-bootstrap-navwalker

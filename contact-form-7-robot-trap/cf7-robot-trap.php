@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contact Form 7 Robot Trap
 Description: Stops spammer robots, add <code>[robottrap email-verify class:email-verify tabindex:2]</code> and hide the field with CSS.
-Version: 0.5.0
+Version: 0.5.1
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
@@ -14,7 +14,7 @@ Contants: WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE
  * Hidden input field for stopping robots
  *
  *  - Add <code>[robottrap email-verify class:email-verify tabindex:2]</code> before email address field
- *  - Hide it with CSS <code>div.wpcf7 .wpcf7-robottrap { display:none; }</code>
+ *  - Hide it with CSS <code>div.wpcf7 .email-verify { display:none; }</code>
  *
  * Fires robottrap_hiddenfield and robottrap_mx hooks to do something with the spammer.
  *
