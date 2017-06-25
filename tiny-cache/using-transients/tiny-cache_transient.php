@@ -1,43 +1,9 @@
 <?php
 /*
 Plugin name: Tiny cache (MU)
-Description: Cache HTML content in persistent object cache during the_content() calls.
-Version: 0.5.0
+Description: Cache HTML content in transients during the_content() calls.
+Version: 0.1.0
 Plugin URI: https://developer.wordpress.org/reference/functions/the_content/
-*/
-
-/*
-README.md
-
-Replace the_content(); instances
---------------------------------
-
-    `find -type f -name "*.php" | xargs -r -L 1 sed -i -e 's|\bthe_content();|the_content_cached();|g'`
-    Replace only **argument-less** calls! Providing `$more_link_text` or `$strip_teaser` is not supported.
-
-No-cache situations
--------------------
-
-    - wp_suspend_cache_addition( true );
-    - define( 'DONOTCACHEPAGE', true );
-
-
-Protecion against missing plugin in functions.php
--------------------------------------------------
-
-    if ( ! function_exists( 'the_content_cached' ) ) {
-        function the_content_cached( $more_link_text = null, $strip_teaser = false ) {
-            the_content( $more_link_text, $strip_teaser );
-        }
-    }
-    if ( ! function_exists( 'get_the_content_cached' ) ) {
-        function get_the_content_cached( $more_link_text = null, $strip_teaser = false ) {
-            return get_the_content( $more_link_text, $strip_teaser );
-        }
-    }
-
-@TODO Support groups: wp_cache_add_global_groups( 'the_content' ) and WP_REDIS_USE_CACHE_GROUPS
-@TODO Add $more_link_text and $strip_teaser hash to cache key.
 */
 
 /**
@@ -47,8 +13,7 @@ function the_content_cached( $more_link_text = null, $strip_teaser = false ) {
 
     $post_id = get_the_ID();
     // Learned from W3TC Page Cache rules and WP Super Cache rules
-    if ( ! wp_using_ext_object_cache() // Object cache is unavailable
-        || is_user_logged_in() // User is logged in
+    if ( is_user_logged_in() // User is logged in
         || ! ( isset( $_SERVER['REQUEST_METHOD'] ) && 'GET' === $_SERVER['REQUEST_METHOD'] ) // Not a GET request
         || ! $post_id // Not possible to tie content to post ID
         || ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) // DO-NOT-CACHE tag present
@@ -97,8 +62,7 @@ function get_the_content_cached( $more_link_text = null, $strip_teaser = false )
 
     $post_id = get_the_ID();
     // Learned from W3TC Page Cache rules and WP Super Cache rules
-    if ( ! wp_using_ext_object_cache() // Object cache is unavailable
-        || is_user_logged_in() // User is logged in
+    if ( is_user_logged_in() // User is logged in
         || ! ( isset( $_SERVER['REQUEST_METHOD'] ) && 'GET' === $_SERVER['REQUEST_METHOD'] ) // Not a GET request
         || ! $post_id // Not possible to tie content to post ID
         || ! ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) // DO-NOT-CACHE tag present

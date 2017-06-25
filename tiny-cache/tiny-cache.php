@@ -1,43 +1,9 @@
 <?php
 /*
 Plugin name: Tiny cache (MU)
-Description: Cache HTML content in persistent object cache during the_content() calls.
-Version: 0.5.0
+Description: Cache post content in persistent object cache.
+Version: 0.5.1
 Plugin URI: https://developer.wordpress.org/reference/functions/the_content/
-*/
-
-/*
-README.md
-
-Replace the_content(); instances
---------------------------------
-
-    `find -type f -name "*.php" | xargs -r -L 1 sed -i -e 's|\bthe_content();|the_content_cached();|g'`
-    Replace only **argument-less** calls! Providing `$more_link_text` or `$strip_teaser` is not supported.
-
-No-cache situations
--------------------
-
-    - wp_suspend_cache_addition( true );
-    - define( 'DONOTCACHEPAGE', true );
-
-
-Protecion against missing plugin in functions.php
--------------------------------------------------
-
-    if ( ! function_exists( 'the_content_cached' ) ) {
-        function the_content_cached( $more_link_text = null, $strip_teaser = false ) {
-            the_content( $more_link_text, $strip_teaser );
-        }
-    }
-    if ( ! function_exists( 'get_the_content_cached' ) ) {
-        function get_the_content_cached( $more_link_text = null, $strip_teaser = false ) {
-            return get_the_content( $more_link_text, $strip_teaser );
-        }
-    }
-
-@TODO Support groups: wp_cache_add_global_groups( 'the_content' ) and WP_REDIS_USE_CACHE_GROUPS
-@TODO Add $more_link_text and $strip_teaser hash to cache key.
 */
 
 /**
@@ -154,22 +120,6 @@ function tiny_cache_save_the_content( $content ) {
 }
 
 /**
- * Hook cache delete actions.
- */
-add_action( 'init', function () {
-
-    // Post ID is received
-    add_action( 'publish_post', 'tiny_cache_delete_the_content', 0 );
-    add_action( 'publish_phone', 'tiny_cache_delete_the_content', 0 );
-    add_action( 'edit_post', 'tiny_cache_delete_the_content', 0 );
-    add_action( 'delete_post', 'tiny_cache_delete_the_content', 0 );
-    add_action( 'wp_trash_post', 'tiny_cache_delete_the_content', 0 );
-    add_action( 'clean_post_cache', 'tiny_cache_delete_the_content', 0 );
-    // Post as third argument
-    add_action( 'transition_post_status', 'tiny_cache_post_transition', 10, 3 );
-} );
-
-/**
  * Delete cached content by ID.
  */
 function tiny_cache_delete_the_content( $post_id ) {
@@ -189,3 +139,21 @@ function tiny_cache_post_transition( $new_status, $old_status, $post ) {
         tiny_cache_delete_the_content( $post->ID );
     }
 }
+
+/**
+ * Hook cache delete actions.
+ */
+function tiny_cache_actions() {
+
+    // Post ID is received
+    add_action( 'publish_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'publish_phone', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'edit_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'delete_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'wp_trash_post', 'tiny_cache_delete_the_content', 0 );
+    add_action( 'clean_post_cache', 'tiny_cache_delete_the_content', 0 );
+    // Post as third argument
+    add_action( 'transition_post_status', 'tiny_cache_post_transition', 10, 3 );
+};
+
+add_action( 'init', 'tiny_cache_actions' );

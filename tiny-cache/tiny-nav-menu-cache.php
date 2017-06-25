@@ -2,7 +2,7 @@
 /*
 Plugin Name: Tiny navigation menu cache (MU)
 Description: Cache nav menu's HTML content in persistent object cache.
-Version: 0.1.1
+Version: 0.1.2
 Constants: TINY_CACHE_NAV_MENU_EXCLUDES
 */
 
@@ -17,6 +17,11 @@ class Tiny_Nav_Menu_Cache {
 
     public function init() {
 
+        // Detect object cache
+        if ( ! wp_using_ext_object_cache() ) {
+            return;
+        }
+
         add_action( 'save_post', array( $this, 'flush_all' ) );
         add_action( 'wp_create_nav_menu', array( $this, 'flush_all' ) );
         add_action( 'wp_update_nav_menu', array( $this, 'flush_all' ) );
@@ -24,8 +29,7 @@ class Tiny_Nav_Menu_Cache {
         add_action( 'split_shared_term', array( $this, 'flush_all' ) );
 
         // Learned from W3TC Page Cache rules and WP Super Cache rules
-        if ( ! wp_using_ext_object_cache() // Object cache is unavailable
-            || is_user_logged_in() // User is logged in
+        if ( is_user_logged_in() // User is logged in
             || ! ( isset( $_SERVER['REQUEST_METHOD'] ) && 'GET' === $_SERVER['REQUEST_METHOD'] ) // Not a GET request
             || ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) // DO-NOT-CACHE tag present
         ) {
