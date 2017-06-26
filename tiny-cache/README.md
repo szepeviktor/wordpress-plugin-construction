@@ -8,9 +8,9 @@ How to achieve high performance in WordPress?
 
 | Item                          | Tool                               | Speedup                       |
 | ----------------------------- | ---------------------------------- | ----------------------------- |
-| Infrastructure                | CPU, disk, DNS, web server, PHP    | Overall performance           |
+| Infrastructure                | CPU, disk, web server, PHP and DNS | Overall performance           |
 | In-memory object cache        | Redis, Memcached, APCu             | options, post, post meta etc. |
-| Server-side functionality plugins (backup, db cleanup) | Use WP-CLI | **Degrades** performance     |
+| Server-side functionality plugins<br> (backup, db cleanup) | Use WP-CLI instead | **Degrades** performance |
 | Theme and plugins             | Cache-aware ones using object cache or transients |                |
 | Translations                  | `tiny-translation-cache`           | .mo file parsing              |
 | Navigation menus              | `tiny-nav-menu-cache`              | `wp_nav_menu()`               |
@@ -60,5 +60,6 @@ Copy these to your theme's functions.php.
 
 @TODO
 
+1. Document mu-cache-flush-button mu-cache-flush-on-maintenance mu-cache-flush-post-button
 1. Support groups: `wp_cache_add_global_groups( 'the_content' );` and `WP_REDIS_USE_CACHE_GROUPS`
 1. Add `$more_link_text` and `$strip_teaser hash` to cache key
