@@ -121,3 +121,6 @@
 [submodule "bootstrap-navwalker"]
 	path = bootstrap-navwalker
 	url = https://github.com/wp-bootstrap/wp-bootstrap-navwalker
+[submodule "tiny-cache"]
+	path = tiny-cache
+	url = git@github.com:szepeviktor/tiny-cache.git
