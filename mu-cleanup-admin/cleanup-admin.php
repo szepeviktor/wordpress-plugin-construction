@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: Clean up WP admin (MU)
-Version: 0.4.0
-Description: Remove things visually from the WordPress admin.
+Plugin Name: Clean up WordPress admin (MU)
+Version: 0.4.2
+Description: Remove things visually from WordPress admin.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-cleanup-admin
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 class O1_Cleanup_Admin {
 
-    private $footer_html = '<span id="footer-thankyou">Szépe Viktor - web technologies / webes technológiák</span>';
+    private $footer_html = '<span id="footer-thankyou">Szépe Viktor - üzemeltetés/maintenance</span>';
 
     public function __construct() {
 
@@ -19,25 +19,38 @@ class O1_Cleanup_Admin {
         add_action( 'in_admin_footer', array( $this, 'remove_update_footer' ) );
         add_filter( 'admin_footer_text', array( $this, 'footer_content' ) );
 
-// @TODO Hide for everyone WordPress News
+// @TODO Hide for everyone: WordPress News
 
-        //add_action( 'admin_enqueue_scripts', array( $this, 'acf_plugin_css' ), 20 );
+        add_action( 'admin_menu', array( $this, 'yoast_seo_help_center' ), 99 );
+
+        add_action( 'admin_enqueue_scripts', array( $this, 'acf_css' ), 20 );
 
         //add_action( 'admin_enqueue_scripts', array( $this, 'hide_with_css' ), 20 );
         //add_action( 'admin_menu', 'remove_menu', 9999 );
     }
 
     /**
-     * Clean ACF plugin
+     * Yoast SEO plugin - Hide Help Center
      */
-    public function acf_plugin_css( $hook ) {
+    public function yoast_seo_help_center() {
 
-        if ( 'PAGE-NAME' !== $hook ) {
+        add_filter( 'wpseo_help_center_items', '__return_empty_array', 99 );
+    }
+
+    /**
+     * ACF plugin - Hide right sidebar
+     */
+    public function acf_css( $hook ) {
+
+        if ( 'edit.php' !== $hook ) {
+            return;
+        }
+        $screen = get_current_screen();
+        if( 'acf-field-group' !== $screen->post_type ) {
             return;
         }
 
-        $style = '#sidebar-container { display: none !important; }';
-        $style .= '.acf-columns-2 .acf-column-2 { display: none !important; }';
+        $style = '.acf-columns-2 .acf-column-2 { display: none !important; }';
         wp_add_inline_style( 'wp-admin', $style );
     }
 
@@ -50,17 +63,19 @@ class O1_Cleanup_Admin {
             return;
         }
 
-        $style = '.page-body-class #selector {display:none !important;}';
+        $style = '.page-body-class #selector { display:none !important; }';
         wp_add_inline_style( 'wp-admin', $style );
     }
-    public function hide_waf_postbox() {
 
+    public function hide_waf_postbox() {
     }
+
     /**
      * Example for hiding elements with JavaScript
      */
     public function hide_with_js() {
     }
+
     /**
      * Example for removing menu items
      */
@@ -90,7 +105,6 @@ class O1_Cleanup_Admin {
         // Feedback link
         $wp_admin_bar->remove_menu( 'feedback' );
     }
-
 
     /**
      * Remove WP version from the admin footer
