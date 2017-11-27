@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Google Analytics Global Site Tag for WordPress (MU)
-Version: 1.0.0
+Version: 1.0.2
 Description: Insert Google Analytics Global Site Tag's code.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: GPLv2 or later
@@ -11,19 +11,31 @@ GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 
 final class GST {
 
-    // Google Analytics Global Site Tag
-    // https://developers.google.com/analytics/devguides/collection/gtagjs/
-    private $snippet_template = "<!-- Global Site Tag - Google Analytics -->
+    /**
+     * Google Analytics Global Site Tag
+     * @link https://developers.google.com/analytics/devguides/collection/gtagjs/
+     */
+    private $snippet_template = <<<'EOT'
+<!-- Global Site Tag - Google Analytics -->
 <script async src='https://www.googletagmanager.com/gtag/js?id=%s'></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments)};
   gtag('js', new Date());
   gtag('config', %s);
+  %s
 </script>
-";
+EOT;
 
+    /**
+     * The JavaScript snippet
+     */
     private $snippet = '';
+
+    /**
+     * Remarketing Conversion ID
+     */
+    private $cid = '';
 
     /**
      * The single instance of the class
@@ -80,13 +92,21 @@ final class GST {
             return;
         }
 
+        $cid = get_option( 'gst_conversion_id' );
+
+        if ( false !== $cid && preg_match( '/^[0-9]{8,}$/', $cid ) ) {
+            $this->conversion_id = $cid;
+            add_filter( 'gst_extra_javascript', array( $this, 'remarketing_tag' ) );
+        }
+
         // Render template
         $this->snippet = sprintf( $this->snippet_template,
             antispambot( $tid ),
-            $this->get_js_contact( $tid )
+            $this->get_js_concat( $tid ),
+            apply_filters( 'gst_extra_javascript', '' )
         );
 
-        if ( defined( 'FBP_DISABLE' ) && FBP_DISABLE ) {
+        if ( defined( 'GST_DISABLE' ) && GST_DISABLE ) {
             return;
         }
 
@@ -99,6 +119,11 @@ final class GST {
         }
     }
 
+    public function remarketing_tag( $extra_javascript ) {
+
+        return sprintf( "gtag('config', 'AW-%s');\n", $this->conversion_id ) . $extra_javascript;
+    }
+
     public function print_script() {
 
         print $this->snippet;
@@ -109,7 +134,7 @@ final class GST {
         return $this->snippet;
     }
 
-    private function get_js_contact( $tid ) {
+    private function get_js_concat( $tid ) {
 
         // 'UA-00' + '123' + '456-1'
         $js = sprintf( "'%s' + '%s' + '%s'",
@@ -127,6 +152,7 @@ final class GST {
     public function settings_init() {
 
         register_setting( 'general', 'gst_tracking_id' );
+        register_setting( 'general', 'gst_conversion_id' );
         add_settings_section(
             'gst-ua-section',
             'Google Analytics Global Site Tag',
@@ -136,7 +162,14 @@ final class GST {
         add_settings_field(
             'gst_tracking_id',
             '<label for="gst_tracking_id">Tracking ID</label>',
-            array( $this, 'admin_field' ),
+            array( $this, 'admin_field_tracking' ),
+            'general',
+            'gst-ua-section'
+        );
+        add_settings_field(
+            'gst_conversion_id',
+            '<label for="gst_conversion_id">Conversion ID</label>',
+            array( $this, 'admin_field_conversion' ),
             'general',
             'gst-ua-section'
         );
@@ -147,14 +180,13 @@ final class GST {
      */
     public function admin_section() {
 
-        // @FIXME How to help admins?
-        print '<p></p>';
+        print '<p>Analytics tracking code and Adwords remarketing tag.</p>';
     }
 
     /**
      * Print the input field for Settings API
      */
-    public function admin_field() {
+    public function admin_field_tracking() {
 
         $tid = esc_attr( get_option( 'gst_tracking_id' ) );
 
@@ -163,6 +195,20 @@ final class GST {
             $tid
         );
         print '<p class="description">Leave empty to disable tracking.</p>';
+    }
+
+    /**
+     * Print the input field for Settings API
+     */
+    public function admin_field_conversion() {
+
+        $cid = esc_attr( get_option( 'gst_conversion_id' ) );
+
+        printf( '<input name="gst_conversion_id" id="gst_conversion_id" placeholder="0000000000"
+            type="text" class="regular-text code" value="%s" />',
+            $cid
+        );
+        print '<p class="description">Leave empty to disable tagging.</p>';
     }
 }
 

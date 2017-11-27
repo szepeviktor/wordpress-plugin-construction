@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Facebook Pixel for WordPress (MU)
-Version: 1.0.0
+Version: 1.0.1
 Description: Insert Facebook Pixel's code.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: GPLv2 or later
@@ -13,7 +13,8 @@ final class FBP {
 
     // Facebook Pixel JavaScript snippet
     // https://developers.facebook.com/docs/facebook-pixel/api-reference
-    private $snippet_template = "<!-- Facebook Pixel Code -->
+    private $snippet_template = <<<'EOT'
+<!-- Facebook Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -27,7 +28,7 @@ fbq('init', '%s');
 src='https://www.facebook.com/tr?id=%s&amp;ev=PageView&amp;noscript=1'
 /></noscript>
 <!-- End Facebook Pixel Code -->
-";
+EOT;
 
     private $snippet = '';
 
@@ -87,8 +88,8 @@ src='https://www.facebook.com/tr?id=%s&amp;ev=PageView&amp;noscript=1'
         }
 
         // Render template
-        // https://www.facebook.com/translations/FacebookLocales.xml
-        $lang = get_locale();
+        // $lang = get_locale();
+        $lang = 'en_US';
         $this->snippet = sprintf( $this->snippet_template,
             $lang,
             $pid,

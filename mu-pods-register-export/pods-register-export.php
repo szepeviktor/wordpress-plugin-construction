@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Pods export register code (MU)
-Version: 0.1.0
+Version: 0.1.1
 Description: Export register_post_type() and register_taxonomy() calls to theme directory.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -46,12 +46,17 @@ function pod_register_export( $output ) {
     $arrays = array_filter( explode( '<e>', $output ) );
 
     foreach ( $arrays as $array_text ) {
+        $array = null;
         $code = sprintf( '$array = %s;', $array_text );
         if ( true !== pods_php_code_check( $code ) ) {
 
             return false;
         }
         $evaluate = eval( $code );
+        if ( ! is_array( $array ) ) {
+
+            return false;
+        }
 
         switch ( count( $array ) ) {
             case 2:

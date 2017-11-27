@@ -21,34 +21,36 @@ class WP_CLI_Extra_Config extends WP_CLI_Command {
 	 * @param array $assoc_args
 	 */
 	private function print_value( $value, $assoc_args = array() ) {
-		if ( ! isset( $assoc_args['format'] ) )
+
+		if ( ! isset( $assoc_args['format'] ) ) {
 			$assoc_args['format'] = 'var_export';
+		}
 
 		switch ( $assoc_args['format'] ) {
-		case 'json':
-			$output = json_encode( $value );
-			break;
+			case 'json':
+				$output = json_encode( $value );
+				break;
 
-		case 'shell':
-			if ( is_array( $value ) ) {
-				$output = '';
+			case 'shell':
+				if ( is_array( $value ) ) {
+					$output = '';
 
-				foreach ( $value as $key => $val )
-					if ( ! is_scalar( $val ) ) {
-						$val = json_encode( $val );
-
-					$value[$key] = str_replace( '"', '\"', $val );
+					foreach ( $value as $key => $val ) {
+						if ( ! is_scalar( $val ) ) {
+							$val = json_encode( $val );
+						}
+						$value[ $key ] = str_replace( '"', '\"', $val );
+					}
+					$output = sprintf( '( "%s" )', implode( '" "', $value ) );
+				} else {
+					$output = sprintf( '"%s"', str_replace( '"', '\"', $value ) );
 				}
-				$output = '( "' . implode( '" "', $value ) . '" )';
-			} else {
-				$output = '"' . str_replace( '"', '\"', $value ) . '"';
-			}
-			break;
+				break;
 
-		case 'var_export':
-		default:
-			$output = var_export( $value );
-			break;
+			case 'var_export':
+			default:
+				$output = var_export( $value );
+				break;
 		}
 
 		print $output . PHP_EOL;
@@ -62,13 +64,14 @@ class WP_CLI_Extra_Config extends WP_CLI_Command {
 	 * @when before_wp_load
 	 */
 	public function get( $args, $assoc_args ) {
+
 		list( $key ) = $args;
 
 		$extra_config = WP_CLI::get_runner()->extra_config;
-		if ( isset( $extra_config[$key] ) )
-			$this->print_value( $extra_config[$key], $assoc_args );
+		if ( isset( $extra_config[ $key ] ) ) {
+			$this->print_value( $extra_config[ $key ], $assoc_args );
+		}
 	}
-
 }
 
 WP_CLI::add_command( 'econfig', 'WP_CLI_Extra_Config' );
