@@ -12,7 +12,7 @@ require './wp-load.php';
 
 // For wp_guess_url()
 define( 'WP_SITEURL', get_option( 'siteurl' ) );
-require_once 'wp-admin/includes/upgrade.php';
+require_once './wp-admin/includes/upgrade.php';
 
 wp_upgrade();
 delete_site_transient( 'update_core' );

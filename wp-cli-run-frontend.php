@@ -1,6 +1,9 @@
 <?php
-
-// Usage: wp --url="http://example.com/" eval-file wp-cli-run-frontend.php
+/**
+ * Run WordPress front-end.
+ *
+ * wp --url="http://example.com/" eval-file wp-cli-run-frontend.php
+ */
 
 WP_CLI::get_runner()->load_wordpress();
 

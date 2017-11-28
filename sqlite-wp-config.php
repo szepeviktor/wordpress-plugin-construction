@@ -1,12 +1,13 @@
 <?php
 /*
-    wp-config file for SQLite Integration
+    wp-config.php file for SQLite Integration.
 
     Convert MySQL - mysql2sqlite.sh: https://gist.github.com/esperlu/943776
 
     Administer: https://bitbucket.org/phpliteadmin/public
 
     Installation steps
+    ------------------
 
     wget -nv -O- https://wordpress.org/latest.tar.gz | tar -xz
     cd wordpress/wp-content/plugins/
@@ -48,8 +49,9 @@ define( 'DB_COLLATE', '' );
 /* That's all, stop editing! Happy blogging. */
 
 /** Absolute path to the WordPress directory. */
-if ( !defined('ABSPATH') )
-    define('ABSPATH', dirname(__FILE__) . '/wordpress/');
+if ( ! defined( 'ABSPATH' ) ) {
+    define( 'ABSPATH', dirname( __FILE__ ) . '/wordpress/' );
+}
 
 /** Sets up WordPress vars and included files. */
-require_once(ABSPATH . 'wp-settings.php');
+require_once ABSPATH . 'wp-settings.php';
