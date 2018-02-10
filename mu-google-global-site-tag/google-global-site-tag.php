@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Google Analytics Global Site Tag for WordPress (MU)
-Version: 1.0.2
+Version: 1.0.3
 Description: Insert Google Analytics Global Site Tag's code.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: GPLv2 or later
@@ -72,7 +72,7 @@ EOT;
             return;
         }
 
-        add_action( 'init', array( $this, 'init' ) );
+        add_action( 'template_redirect', array( $this, 'init' ) );
     }
 
     public function init() {
@@ -107,6 +107,7 @@ EOT;
         );
 
         if ( defined( 'GST_DISABLE' ) && GST_DISABLE ) {
+
             return;
         }
 

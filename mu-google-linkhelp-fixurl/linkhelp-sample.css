@@ -1,0 +1,18 @@
+/* Enhance 404 pages widget styling help */
+
+/* Whole widget */
+#goog-fixurl { }
+
+/* Text part */
+#goog-wm { }
+/* "Other things to try" */
+#goog-wm h3.other-things { }
+/* "Closest match" */
+#goog-wm h3.closest-match { }
+#goog-wm h3.closest-match a { }
+/* "Search ..." label */
+#goog-wm li.search-goog { display: block; }
+/* Search field */
+#goog-wm-qt { }
+/* Submit button */
+#goog-wm-sb { }

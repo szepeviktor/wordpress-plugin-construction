@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Nofollow Robot Trap (MU)
-Version: 0.5.1
+Version: 0.5.2
 Description: Catch malicious robots not obeying nofollow meta tag/attribute
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -162,7 +162,9 @@ class O1_Nofollow_Robot_Trap {
 
     public function protocol_relative( $redirect_url, $requested_url ) {
 
-        if ( $this->str_endswith( $requested_url, $this->protocol_relative_url ) ) {
+        if ( $this->str_endswith( $requested_url, $this->protocol_relative_url )
+            || $this->str_endswith( $requested_url, 'about:blank' )
+         ) {
             $this->trigger( 'protocol_relative' );
             exit;
         }
@@ -222,6 +224,7 @@ class O1_Nofollow_Robot_Trap {
 </head>
 <body>
     <a href="%s">%s</a>
+    <iframe src="about:blank"></iframe>
 </body>
 </html>',
             home_url( '/' ),

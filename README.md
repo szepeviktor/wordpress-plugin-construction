@@ -1,6 +1,6 @@
-# Wordpress plugin construction
+# WordPress plugin construction
 
-A playground where WordPress plugin development goes on.
+Tools for developing and running a WordPress website.
 Please select a folder in the list above to see the plugin's development.
 
 ### Two programmers
@@ -119,38 +119,11 @@ final class WP_Internal_Pointers {
 1. WP.org plugins are gitignore-d.
 1. Non-WP.org plugins as submodules with URL `file:///home/user/website/plugin.git`
 
-### WordPress .gitignore
-
-```
-*.log
-wp-config.php
-wp-content/uploads/
-wp-content/cache/
-wp-content/upgrade/
-# From _get_dropins()
-wp-content/advanced-cache.php
-wp-content/db.php
-wp-content/db-error.php
-wp-content/install.php
-wp-content/maintenance.php
-wp-content/object-cache.php
-
-# Plugin data directories
-wp-content/w3tc-config/
-wp-content/updraft/
-wp-content/sucuri/
-
-# What other directories to look for?
-#wp-content/some-other-cache/
-#wp-content/uploads/some-cache/
-#wp-content/themes/THEME/some-cache/
-#wp-content/plugins/PLUGIN/some-cache/
-#large-files-in-docroot/
-
-#!dont/exclude.this
-```
-
-## Manage plugins with composer
+## Manage WordPress plugins with composer
 
 http://wpackagist.org/
+
+## WordPress .gitignore
+
+See https://github.com/szepeviktor/debian-server-tools/blob/master/webserver/wordpress.gitignore
 
