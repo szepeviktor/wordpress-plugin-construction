@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Clean up WordPress admin (MU)
-Version: 0.4.2
+Version: 0.4.3
 Description: Remove things visually from WordPress admin.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
@@ -19,9 +19,9 @@ class O1_Cleanup_Admin {
         add_action( 'in_admin_footer', array( $this, 'remove_update_footer' ) );
         add_filter( 'admin_footer_text', array( $this, 'footer_content' ) );
 
-// @TODO Hide for everyone: WordPress News
+        // @TODO Hide for everyone: WordPress News widget
 
-        add_action( 'admin_menu', array( $this, 'yoast_seo_help_center' ), 99 );
+        add_action( 'admin_enqueue_scripts', array( $this, 'yoast_seo_help_center' ), 99 );
 
         add_action( 'admin_enqueue_scripts', array( $this, 'acf_css' ), 20 );
 
@@ -34,7 +34,10 @@ class O1_Cleanup_Admin {
      */
     public function yoast_seo_help_center() {
 
-        add_filter( 'wpseo_help_center_items', '__return_empty_array', 99 );
+        // Remove Help Center container
+        wp_add_inline_script( 'yoast-seo-admin-script', 'document.getElementById("yoast-help-center-container").remove();' );
+        // Dequeue Help Center JavaScript
+        wp_dequeue_script( 'yoast-seo-help-center' );
     }
 
     /**

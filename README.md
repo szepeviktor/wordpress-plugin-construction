@@ -27,7 +27,6 @@ http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
  * Administration API: WP_Internal_Pointers class
  *
  * @package WordPress
- * @subpackage Administration
  * @since 4.4.0
  */
 

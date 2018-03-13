@@ -1,6 +1,6 @@
-# Image upload control
+# Image upload control for WordPress
 
-Help users to keep image file names clean and descriptive.
+Help WordPress users to keep image file names clean and descriptive.
 
 ### Recommended file names
 
