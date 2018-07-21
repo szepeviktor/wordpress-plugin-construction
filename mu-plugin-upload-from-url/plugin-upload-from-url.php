@@ -3,7 +3,7 @@
 Plugin Name: Plugin Upload from URL (MU)
 Version: 0.1.0
 Description: Enables plugin installation from a URL.
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/mu-plugin-upload-from-url
+Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Author: Viktor Szépe
 License: GNU General Public License (GPL) version 2
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction

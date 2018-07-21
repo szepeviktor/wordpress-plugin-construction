@@ -6,7 +6,7 @@ Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Version: 0.2.1
 License: The MIT License (MIT)
 Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/content-extras
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 add_filter( 'nav_menu_meta_box_object', 'o1_nav_menu_meta_box_length' );

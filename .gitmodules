@@ -124,3 +124,6 @@
 [submodule "tiny-cache"]
 	path = tiny-cache
 	url = git@github.com:szepeviktor/tiny-cache.git
+[submodule "root-files"]
+	path = root-files
+	url = git@github.com:szepeviktor/RootFiles.git

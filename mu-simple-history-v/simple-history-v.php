@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Simple History v (MU)
-Version: 0.0.2
+Version: 0.1.0
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
@@ -21,7 +21,7 @@ function o1_show_history_dashboard_or_page( $show ) {
     );
 
     $user = wp_get_current_user();
-    if ( ! in_array( $user->user_email, $allowed_emails ) ) {
+    if ( ! in_array( $user->user_email, $allowed_user_emails ) ) {
         $show = false;
     }
 

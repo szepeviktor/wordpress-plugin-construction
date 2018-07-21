@@ -6,7 +6,7 @@ Version: 0.5.1
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction/tree/master/contact-form-7-robot-trap
+GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 Contants: WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE
 */
 

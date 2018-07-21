@@ -2,7 +2,7 @@
 /*
 Plugin Name: Banned E-mail addresses (MU)
 Version: 0.1.0
-Description: Deny registration with common email addresses.
+Description: Deny registration with role-based email addresses.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
