@@ -2,7 +2,7 @@
 /*
 Plugin Name: Disable Updates and Update HTTP Requests (MU)
 Version: 0.5.4
-Description: Disable core, theme and plugin updates plus the browser nag
+Description: Disable core, theme and plugin updates plus the browser update nag.
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
@@ -12,6 +12,8 @@ Options: ENABLE_FORCE_CHECK_UPDATE
 
 // @FIXME https://core.trac.wordpress.org/ticket/30855#ticket
 //        wp_get_update_data() calls are not pluggable (wp-admin/menu.php ×2)
+
+// INSPECT https://github.com/wp-cloud/disable-updates/blob/develop/extensions/core.php
 
 /**
  * Disable Updates and Update HTTP Requests

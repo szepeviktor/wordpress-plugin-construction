@@ -1,14 +1,16 @@
 <?php
-/*
-Plugin Name: Contact Form 7 Robot Trap
-Description: Stops spammer robots, add <code>[robottrap email-verify class:email-verify tabindex:2]</code> and hide the field with CSS.
-Version: 0.5.1
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-License: The MIT License (MIT)
-Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Contants: WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE
-*/
+/**
+ * Plugin Name: Contact Form 7 Robot Trap
+ * Description: Stops spammer robots, add <code>[robottrap email-verify class:email-verify tabindex:2]</code> and hide the field with CSS.
+ * Version: 0.5.2
+ * Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+ * License: The MIT License (MIT)
+ * Author: Viktor Szépe
+ * GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+ * Constants: WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE
+ *
+ * @package cf7-robot-trap
+ */
 
 /**
  * Hidden input field for stopping robots
@@ -34,6 +36,9 @@ if ( ! ( defined( 'WPCF7_ROBOT_TRAP_TOLERATE_DNS_FAILURE' ) && WPCF7_ROBOT_TRAP_
     add_filter( 'wpcf7_validate_email*', 'wpcf7_robottrap_domain_validation_filter', 20, 2 );
 }
 
+/**
+ * Create the [robottrap] shortcode
+ */
 function wpcf7_add_shortcode_robottrap() {
 
     wpcf7_add_form_tag(
@@ -43,11 +48,17 @@ function wpcf7_add_shortcode_robottrap() {
     );
 }
 
+/**
+ * Do the shortcode
+ *
+ * @param string $tag Tag name
+ * @return string
+ */
 function wpcf7_robottrap_shortcode_handler( $tag ) {
 
     $tag = new WPCF7_Shortcode( $tag );
 
-    // default field name
+    // Default field name
     if ( empty( $tag->name ) ) {
         $tag->name = 'email-verify';
     }
@@ -64,24 +75,22 @@ function wpcf7_robottrap_shortcode_handler( $tag ) {
 
     $atts = array();
 
-    $atts['size'] = $tag->get_size_option( '40' );
-    $atts['maxlength'] = $tag->get_maxlength_option();
-    $atts['class'] = $tag->get_class_option( $class );
-    $atts['id'] = $tag->get_id_option();
-    $atts['tabindex'] = $tag->get_option( 'tabindex', 'int', true );
-
     /**
      * Robots may look for the word "hidden".
      *
-     * @ignore Commented out.
+     * $atts['aria-hidden'] = 'true';
      */
-    //$atts['aria-hidden'] = 'true';
+    $atts['size']      = $tag->get_size_option( '40' );
+    $atts['maxlength'] = $tag->get_maxlength_option();
+    $atts['class']     = $tag->get_class_option( $class );
+    $atts['id']        = $tag->get_id_option();
+    $atts['tabindex']  = $tag->get_option( 'tabindex', 'int', true );
 
     $value = (string) reset( $tag->values );
 
     if ( $tag->has_option( 'placeholder' ) || $tag->has_option( 'watermark' ) ) {
         $atts['placeholder'] = $value;
-        $value = '';
+        $value               = '';
     } elseif ( '' === $value ) {
         $value = $tag->get_default_option();
     }
@@ -89,12 +98,13 @@ function wpcf7_robottrap_shortcode_handler( $tag ) {
     $value = wpcf7_get_hangover( $tag->name, $value );
 
     $atts['value'] = $value;
-    $atts['type'] = 'text';
-    $atts['name'] = $tag->name;
+    $atts['type']  = 'text';
+    $atts['name']  = $tag->name;
 
     $atts = wpcf7_format_atts( $atts );
 
-    $html = sprintf( '<span class="wpcf7-form-control-wrap %s"><input %s />%s</span>',
+    $html = sprintf(
+        '<span class="wpcf7-form-control-wrap %s"><input %s />%s</span>',
         sanitize_html_class( $tag->name ),
         $atts,
         $validation_error
@@ -123,7 +133,7 @@ function wpcf7_robottrap_validation_filter( $result, $tag ) {
      * Should be submitted empty, no $name sanitization.
      */
     if ( ! empty( $_POST[ $name ] ) ) {
-        $value = sanitize_text_field( $_POST[ $name ] );
+        $value = sanitize_text_field( wp_unslash( $_POST[ $name ] ) );
 
         /**
          * Counteraction for filled-out hidden field
@@ -157,7 +167,7 @@ function wpcf7_robottrap_domain_validation_filter( $result, $tag ) {
     $name = $tag->name;
 
     $value = isset( $_POST[ $name ] )
-        ? trim( wp_unslash( sanitize_text_field( (string) $_POST[ $name ] ) ) )
+        ? trim( sanitize_text_field( wp_unslash( $_POST[ $name ] ) ) )
         : '';
 
     if ( ! $result->is_valid( $name ) || '' === $value ) {

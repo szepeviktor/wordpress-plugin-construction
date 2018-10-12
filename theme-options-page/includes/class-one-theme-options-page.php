@@ -356,6 +356,7 @@ class One_Theme_Options_Page {
                 print '</select>';
                 break;
                 // TODO New types
+                //   https://github.com/valendesigns/option-tree
                 // Google Analytics, YouTube, Vimeo, Wistia, LatLong/maps, Google|font|names
                 // date, time, date-time, timestamp, css color/hex,rbg,rgba,name, css size/px,em...
                 // tax, user, Media(id,title,alt,desc+preview)

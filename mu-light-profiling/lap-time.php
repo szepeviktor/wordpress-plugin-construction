@@ -13,12 +13,12 @@ add_action( 'shutdown', 'leho_lap_time' );
 
 function leho_lap_time() {
 
-    $duration = timer_stop();
-
     // Don't run on WP-CLI
     if ( defined( 'WP_CLI' ) && WP_CLI ) {
         return;
     }
+
+    $duration = timer_stop();
 
     // Error log
     if ( isset( $_SERVER['REQUEST_URI'] ) ) {

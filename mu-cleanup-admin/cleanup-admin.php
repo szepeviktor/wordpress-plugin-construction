@@ -22,6 +22,7 @@ class O1_Cleanup_Admin {
         // @TODO Hide for everyone: WordPress News widget
 
         add_action( 'admin_enqueue_scripts', array( $this, 'yoast_seo_help_center' ), 99 );
+        add_filter( 'wpseo_submenu_pages', array( $this, 'yoast_seo_submenu_pages' ), 99 );
 
         add_action( 'admin_enqueue_scripts', array( $this, 'acf_css' ), 20 );
 
@@ -38,6 +39,21 @@ class O1_Cleanup_Admin {
         wp_add_inline_script( 'yoast-seo-admin-script', 'document.getElementById("yoast-help-center-container").remove();' );
         // Dequeue Help Center JavaScript
         wp_dequeue_script( 'yoast-seo-help-center' );
+    }
+
+    /**
+     * Yoast SEO plugin - Remove Premium submenu
+     */
+    public function yoast_seo_submenu_pages( $submenu_pages ) {
+
+        foreach ( $submenu_pages as $key => $submenu_page ) {
+            // Remove Premium page
+            if ( 'wpseo_licenses' === $submenu_page[4] ) {
+                unset($submenu_pages[ $key ]);
+            }
+        }
+
+        return $submenu_pages;
     }
 
     /**

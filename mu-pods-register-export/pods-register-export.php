@@ -9,6 +9,11 @@ Author: Viktor Szépe
 GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
+/* rewrite: apply_filters( 'pods_register_post_type', $options, $post_type );
+            apply_filters( 'pods_register_taxonomy', $options, $taxonomy, $ct_post_types );
+in coming Pods 2.7
+*/
+
 /**
  * Change in pods_debug() "var_dump( $debug );" to "var_export( $debug );"
  * wp-content/plugins/pods/includes/general.php:258
