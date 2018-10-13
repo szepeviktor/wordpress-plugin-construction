@@ -74,7 +74,12 @@ class O1_Access_Cookie {
     public function check_cookie() {
 
         $cookie_name = $this->get_cookie_name();
-        if ( isset( $_COOKIE[ $cookie_name ] ) && password_verify( $this->secret_user, $_COOKIE[ $cookie_name ] ) ) {
+        if (
+            (
+                isset( $_COOKIE[ $cookie_name ] )
+                && password_verify( $this->secret_user, $_COOKIE[ $cookie_name ] )
+            ) || true === apply_filters( 'access_cookie_allow', false )
+        ) {
 
             // OK.
             return;
@@ -106,7 +111,7 @@ class O1_Access_Cookie {
     }
 
     /**
-     * Set code word.
+     * Set code word from various sources.
      *
      * @return bool
      */

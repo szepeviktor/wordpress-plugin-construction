@@ -22,5 +22,5 @@ Even logged in users will need to get this cookie every 24 hours.
 All visitors without this cookie will be redirected to `/website-under-construction.html`
 
 Providing the code word is also a username,
-a lost pasword email will be sent to the user's email address.
-That user does not need any roles on the site.
+a lost password email will be sent to the user's email address.
+This user does not need any roles on the site.

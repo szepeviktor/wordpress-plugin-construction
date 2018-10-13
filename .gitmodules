@@ -127,3 +127,6 @@
 [submodule "root-files"]
 	path = root-files
 	url = git@github.com:szepeviktor/RootFiles.git
+[submodule "WPHW"]
+	path = WPHW
+	url = git@github.com:szepeviktor/WPHW.git
