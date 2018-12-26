@@ -1,20 +1,23 @@
 <?php
 /**
- * Plugin Name: Access Cookie
+ * Restrict access by a cookie.
+ *
+ * @wordpress-plugin
+ * Plugin Name: Access Cookie (MU)
  * Description: Restrict access to generated frontend pages.
- * Version: 0.1.0
+ * Version: 0.1.2
  * Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
  * License: The MIT License (MIT)
  * Author: Viktor Szépe
  * GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
- * Constants: O1_ACCESS_COOKIE_USER
  * Style: phpcs --standard=WordPress --exclude=WordPress.Files.FileName,Generic.WhiteSpace.DisallowSpaceIndent,WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput access-cookie.php
+ * Constants: O1_ACCESS_COOKIE_USER
  *
  * @package access-cookie
  */
 
 /**
- * Access Cookie main class.
+ * Access Cookie all-in-one class.
  */
 class O1_Access_Cookie {
 
@@ -86,7 +89,8 @@ class O1_Access_Cookie {
         }
 
         // Restrict access.
-        header( 'Location: ' . $this->maintenance_page );
+        status_header( 302 );
+        wp_safe_redirect( $this->maintenance_page, 302 );
         exit();
     }
 

@@ -11,11 +11,10 @@ add_action( 'admin_enqueue_scripts', 'o1_disallow_weak_passwords', 20 );
 
 function o1_disallow_weak_passwords( $hook ) {
 
-        if ( 'profile.php' !== $hook ) {
+    if ( 'profile.php' !== $hook ) {
+        return;
+    }
 
-            return;
-        }
-
-        $style = '.pw-weak { display: none !important; }';
-        wp_add_inline_style( 'wp-admin', $style );
+    $style = '.pw-weak { display: none !important; }';
+    wp_add_inline_style( 'wp-admin', $style );
 }
