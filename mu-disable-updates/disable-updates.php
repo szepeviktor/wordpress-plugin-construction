@@ -1,35 +1,33 @@
-<?php
-/*
-Plugin Name: Disable Updates and Update HTTP Requests (MU)
-Version: 0.5.4
-Description: Disable core, theme and plugin updates plus the browser update nag.
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-License: The MIT License (MIT)
-Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-Options: ENABLE_FORCE_CHECK_UPDATE
-*/
+<?php // phpcs:disable WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Disable Updates and Update HTTP Requests.
+ *
+ * Enable force-check updates by copying this to wp-config.php:
+ *     define( 'ENABLE_FORCE_CHECK_UPDATE', true );
+ *
+ * @package          Disableupdates
+ * @author           Viktor Szépe <viktor@szepe.net>
+ * @link             https://github.com/szepeviktor/wordpress-plugin-construction
+ * @wordpress-plugin
+ * Plugin Name: Disable Updates and Update HTTP Requests (MU)
+ * Version: 0.6.0
+ * Description: Disable core, theme and plugin updates plus the browser update nag.
+ * Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+ * License: The MIT License (MIT)
+ * Author: Viktor Szépe
+ * GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+ * Options: ENABLE_FORCE_CHECK_UPDATE
+ */
 
-// @FIXME https://core.trac.wordpress.org/ticket/30855#ticket
-//        wp_get_update_data() calls are not pluggable (wp-admin/menu.php ×2)
+// @TODO https://core.trac.wordpress.org/ticket/30855#ticket
+//       wp_get_update_data() calls are not pluggable (wp-admin/menu.php ×2)
 
 // INSPECT https://github.com/wp-cloud/disable-updates/blob/develop/extensions/core.php
 
-/**
- * Disable Updates and Update HTTP Requests
- *
- * This is a one-class mu-plugin.
- * Enable force-check updates by copying this to wp-config.php:
- *
- *     define( 'ENABLE_FORCE_CHECK_UPDATE', true );
- *
- * @package disable-updates
- * @author Viktor Szépe <viktor@szepe.net>
- * @link https://github.com/szepeviktor/wordpress-plugin-construction
- */
-
 if ( ! function_exists( 'add_filter' ) ) {
-    error_log( 'Break-in attempt detected: disable_updates_direct_access '
+    // phpcs:set WordPress.PHP.DevelopmentFunctions exclude[] error_log
+    error_log(
+        'Break-in attempt detected: disable_updates_direct_access '
         . addslashes( isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' )
     );
     ob_get_level() && ob_end_clean();
@@ -42,7 +40,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
 
 /**
- * Disable core, theme and plugin updates plus the browser nag
+ * Disable core, theme and plugin updates plus the browser nag and php check.
  *
  * @link https://github.com/Websiteguy/disable-updates-manager/
  * @link http://wordpress.org/plugins/no-browser-nag/
@@ -51,11 +49,13 @@ class O1_Disable_Version_Check {
 
     /**
      * Prevent core updates
+     *
      * @var bool|true
      */
     private $disable_update_core_action = true;
     /**
      * Prevent plugin and theme updates
+     *
      * @var bool|true
      */
     private $disable_update_action = true;
@@ -68,16 +68,19 @@ class O1_Disable_Version_Check {
         // Don't block updates when "Check again" is pressed
         if ( defined( 'ENABLE_FORCE_CHECK_UPDATE' ) && ENABLE_FORCE_CHECK_UPDATE ) {
 
-            $called_script = isset( $_SERVER['SCRIPT_FILENAME'] ) ? basename( $_SERVER['SCRIPT_FILENAME'] ) : '';
+            $called_script  = isset( $_SERVER['SCRIPT_FILENAME'] ) ? basename( $_SERVER['SCRIPT_FILENAME'] ) : '';
             $is_update_core = ( 'update-core.php' === $called_script );
-            $is_update = ( 'update.php' === $called_script );
+            $is_update      = ( 'update.php' === $called_script );
 
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             if ( $is_update_core && ! empty( $_GET['force-check'] ) ) {
                 return;
             }
 
             // Allow actual updates
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $this->disable_update_core_action = ( ! $is_update_core || empty( $_GET['action'] ) );
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $this->disable_update_action = ( ! $is_update || empty( $_GET['action'] ) );
         }
 
@@ -94,6 +97,7 @@ class O1_Disable_Version_Check {
         $this->disable_theme_updates();
         $this->disable_plugin_updates();
         $this->disable_browser_nag();
+        $this->disable_php_check();
     }
 
     /**
@@ -106,6 +110,7 @@ class O1_Disable_Version_Check {
         // wp-includes/update.php:156
         if ( $this->disable_update_core_action ) {
             // Prevent HTTP requests too
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             if ( isset( $_GET['force-check'] ) ) {
                 unset( $_GET['force-check'] );
             }
@@ -182,6 +187,8 @@ class O1_Disable_Version_Check {
 
     /**
      * Return the current time and core version
+     *
+     * @param string $transient Transient name.
      */
     public function last_checked_core( $transient ) {
 
@@ -194,10 +201,12 @@ class O1_Disable_Version_Check {
 
     /**
      * Return the current time and theme versions
+     *
+     * @param string $transient Transient name.
      */
     public function last_checked_themes( $transient ) {
 
-        $current = array();
+        $current          = array();
         $installed_themes = wp_get_themes();
         foreach ( $installed_themes as $theme ) {
             $current[ $theme->get_stylesheet() ] = $theme->get( 'Version' );
@@ -211,7 +220,9 @@ class O1_Disable_Version_Check {
     }
 
     /**
-     * Return the current time and plugin versions
+     * Return the current time and plugin versions.
+     *
+     * @param string $transient Transient name.
      */
     public function last_checked_plugins( $transient ) {
 
@@ -236,6 +247,16 @@ class O1_Disable_Version_Check {
         // wp-admin/includes/dashboard.php:1260
         $key = md5( $_SERVER['HTTP_USER_AGENT'] );
         add_filter( 'site_transient_browser_' . $key, '__return_true' );
+    }
+
+    /**
+     * Hook the transient of Site Health
+     */
+    public function disable_php_check() {
+
+        // wp-admin/includes/misc.php:2026
+        $key = 'php_check_' . md5( phpversion() );
+        add_filter( 'pre_site_transient_' . $key, '__return_null' );
     }
 }
 
