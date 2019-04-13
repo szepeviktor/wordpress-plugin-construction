@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName.InvalidClassFileName
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Disable Updates and Update HTTP Requests.
  *
@@ -97,6 +97,7 @@ class O1_Disable_Version_Check {
         $this->disable_core_updates();
         $this->disable_theme_updates();
         $this->disable_plugin_updates();
+        $this->disable_translation_updates();
         $this->disable_browser_nag();
         $this->disable_php_check();
     }
@@ -158,6 +159,19 @@ class O1_Disable_Version_Check {
         remove_action( 'load-update-core.php', 'wp_update_plugins' );
         remove_action( 'admin_init', '_maybe_update_plugins' );
         remove_action( 'wp_update_plugins', 'wp_update_plugins' );
+    }
+
+    /**
+     * Prevent translation updates
+     *
+     * @see last_checked_translations() for the returned value
+     */
+    private function disable_translation_updates() {
+
+        // wp-admin/includes/translation-install.php:118
+        if ( $this->disable_update_core_action && $this->disable_update_action ) {
+            add_filter( 'pre_site_transient_available_translations', array( $this, 'last_checked_translations' ) );
+        }
     }
 
     /**
@@ -238,6 +252,18 @@ class O1_Disable_Version_Check {
             'updates'      => array(),
             'checked'      => $current,
         );
+    }
+
+    /**
+     * Return an empty list of translations.
+     *
+     * @param string $transient Transient name.
+     */
+    public function last_checked_translations( $transient ) {
+
+        $current = array();
+
+        return $current;
     }
 
     /**
