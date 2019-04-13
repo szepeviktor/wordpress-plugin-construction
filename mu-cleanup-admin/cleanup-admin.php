@@ -1,13 +1,13 @@
-<?php
-/*
-Plugin Name: Clean up WordPress admin (MU)
-Version: 0.4.3
-Description: Remove things visually from WordPress admin.
-Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-License: The MIT License (MIT)
-Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
-*/
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Plugin Name: Clean up WordPress admin (MU)
+ * Version:     0.4.4
+ * Description: Remove things visually from WordPress admin.
+ * Plugin URI:  https://github.com/szepeviktor/wordpress-plugin-construction
+ * License:     The MIT License (MIT)
+ * Author:      Viktor Szépe
+ * GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
+ */
 
 class O1_Cleanup_Admin {
 
@@ -16,10 +16,12 @@ class O1_Cleanup_Admin {
     public function __construct() {
 
         add_action( 'wp_before_admin_bar_render', array( $this, 'remove_admin_bar_links' ) );
-        add_action( 'in_admin_footer', array( $this, 'remove_update_footer' ) );
+        add_action( 'in_admin_footer', array( $this, 'update_footer' ) );
         add_filter( 'admin_footer_text', array( $this, 'footer_content' ) );
 
-        // @TODO Hide for everyone: WordPress News widget
+        add_action( 'wp_network_dashboard_setup', array( $this, 'wp_dashboard_events_news' ), 99 );
+        add_action( 'wp_user_dashboard_setup', array( $this, 'wp_dashboard_events_news' ), 99 );
+        add_action( 'wp_dashboard_setup', array( $this, 'wp_dashboard_events_news' ), 99 );
 
         add_action( 'admin_enqueue_scripts', array( $this, 'yoast_seo_help_center' ), 99 );
         add_filter( 'wpseo_submenu_pages', array( $this, 'yoast_seo_submenu_pages' ), 99 );
@@ -31,7 +33,16 @@ class O1_Cleanup_Admin {
     }
 
     /**
-     * Yoast SEO plugin - Hide Help Center
+     * Remove News and Events dashboard widget.
+     */
+    public function wp_dashboard_events_news() {
+
+        remove_meta_box( 'dashboard_primary', get_current_screen(), 'side' );
+    }
+
+
+    /**
+     * Hide Yoast SEO Help Center.
      */
     public function yoast_seo_help_center() {
 
@@ -42,14 +53,14 @@ class O1_Cleanup_Admin {
     }
 
     /**
-     * Yoast SEO plugin - Remove Premium submenu
+     * Remove Yoast SEO Premium submenu.
      */
     public function yoast_seo_submenu_pages( $submenu_pages ) {
 
         foreach ( $submenu_pages as $key => $submenu_page ) {
             // Remove Premium page
             if ( 'wpseo_licenses' === $submenu_page[4] ) {
-                unset($submenu_pages[ $key ]);
+                unset( $submenu_pages[ $key ] );
             }
         }
 
@@ -57,7 +68,7 @@ class O1_Cleanup_Admin {
     }
 
     /**
-     * ACF plugin - Hide right sidebar
+     * Hide ACF right sidebar.
      */
     public function acf_css( $hook ) {
 
@@ -65,7 +76,7 @@ class O1_Cleanup_Admin {
             return;
         }
         $screen = get_current_screen();
-        if( 'acf-field-group' !== $screen->post_type ) {
+        if ( 'acf-field-group' !== $screen->post_type ) {
             return;
         }
 
@@ -74,7 +85,7 @@ class O1_Cleanup_Admin {
     }
 
     /**
-     * Example for hiding elements with CSS
+     * Example for hiding elements with CSS.
      */
     public function hide_with_css( $hook ) {
 
@@ -90,13 +101,13 @@ class O1_Cleanup_Admin {
     }
 
     /**
-     * Example for hiding elements with JavaScript
+     * Example for hiding elements with JavaScript.
      */
     public function hide_with_js() {
     }
 
     /**
-     * Example for removing menu items
+     * Example for removing menu items.
      */
     public function remove_menu() {
 
@@ -105,36 +116,36 @@ class O1_Cleanup_Admin {
     }
 
     /**
-     * Remove links from the admin bar
+     * Remove links from the admin bar.
      */
     public function remove_admin_bar_links() {
 
         global $wp_admin_bar;
 
-        // WordPress logo
+        // WordPress logo.
         $wp_admin_bar->remove_menu( 'wp-logo' );
-        // About WordPress link
+        // About WordPress link.
         $wp_admin_bar->remove_menu( 'about' );
-        // WordPress.org link
+        // WordPress.org link.
         $wp_admin_bar->remove_menu( 'wporg' );
-        // WordPress documentation link
+        // WordPress documentation link.
         $wp_admin_bar->remove_menu( 'documentation' );
-        // Support forums link
+        // Support forums link.
         $wp_admin_bar->remove_menu( 'support-forums' );
-        // Feedback link
+        // Feedback link.
         $wp_admin_bar->remove_menu( 'feedback' );
     }
 
     /**
-     * Remove WP version from the admin footer
+     * Remove WordPress version from the admin footer.
      */
-    public function remove_update_footer() {
+    public function update_footer() {
 
         remove_filter( 'update_footer', 'core_update_footer' );
     }
 
     /**
-     * Change 'Thank you WP' in admin footer
+     * Change 'Thank you WordPress' in admin footer.
      */
     public function footer_content( $footer ) {
 

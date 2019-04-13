@@ -8,15 +8,16 @@
  * @package          Disableupdates
  * @author           Viktor Szépe <viktor@szepe.net>
  * @link             https://github.com/szepeviktor/wordpress-plugin-construction
+ *
  * @wordpress-plugin
  * Plugin Name: Disable Updates and Update HTTP Requests (MU)
- * Version: 0.6.0
- * Description: Disable core, theme and plugin updates plus the browser update nag.
- * Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
- * License: The MIT License (MIT)
- * Author: Viktor Szépe
+ * Version:     0.6.0
+ * Description: Disable core, theme and plugin updates plus the browser and PHP update nag.
+ * Plugin URI:  https://github.com/szepeviktor/wordpress-plugin-construction
+ * License:     The MIT License (MIT)
+ * Author:      Viktor Szépe
  * GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
- * Options: ENABLE_FORCE_CHECK_UPDATE
+ * Constants:   ENABLE_FORCE_CHECK_UPDATE
  */
 
 // @TODO https://core.trac.wordpress.org/ticket/30855#ticket
@@ -40,7 +41,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
 
 /**
- * Disable core, theme and plugin updates plus the browser nag and php check.
+ * Disable core, theme and plugin updates plus the browser nag and PHP check.
  *
  * @link https://github.com/Websiteguy/disable-updates-manager/
  * @link http://wordpress.org/plugins/no-browser-nag/
