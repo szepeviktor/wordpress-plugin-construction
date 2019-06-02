@@ -20,6 +20,29 @@ if ( ! function_exists( 'add_filter' ) ) {
 	exit();
 }
 
+/* Example for reactivating a critical plugin in the database
+function o1_activate_missing_plugin( $inactive_plugin ) {
+	$plugins = get_option( 'active_plugins' );
+	if ( ! is_array( $plugins ) || in_array( $inactive_plugin, $plugins ) ) {
+		return;
+	}
+	array_unshift( $plugins, $inactive_plugin );
+	update_option( 'active_plugins', $plugins );
+	error_log( 'Activated missing plugin: ' . $inactive_plugin );
+}
+o1_activate_missing_plugin( 'woocommerce/woocommerce.php' );
+*/
+
+/* Example for temporarily reactivating a critical plugin by a hook
+add_filter( 'option_active_plugins', function ( $plugins ) {
+	$inactive_plugin = 'woocommerce/woocommerce.php';
+	if ( is_array( $plugins ) && ! in_array( $inactive_plugin, $plugins ) ) {
+		array_unshift( $plugins, $inactive_plugin );
+	}
+	return $plugins;
+} );
+*/
+
 class O1_Protect_Plugins {
 
 	/**

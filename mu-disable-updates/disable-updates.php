@@ -89,8 +89,7 @@ class O1_Disable_Version_Check {
         add_action( 'add_admin_bar_menus', array( $this, 'disable_admin_bar_updates_menu' ) );
 
         // Don't block updates on the frontend, block updates during WP-Cron
-        $doing_cron = ( defined( 'DOING_CRON' ) && DOING_CRON );
-        if ( ! ( is_admin() || $doing_cron ) ) {
+        if ( ! ( is_admin() || wp_doing_cron() ) ) {
             return;
         }
 
