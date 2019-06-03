@@ -4,7 +4,7 @@
  *
  * @wordpress-plugin
  * Plugin Name: Light Profiling (MU)
- * Version:     0.2.0
+ * Version:     0.2.1
  * Description: Log execution times.
  * Plugin URI:  https://github.com/szepeviktor/wordpress-plugin-construction
  * License:     The MIT License (MIT)
@@ -18,7 +18,6 @@ class Light_Profiling {
     private $time_postplugin;
     private $time_postthemesetup;
     private $time_wploaded;
-    private $time_prethemeload;
 
     private $file_count;
 
@@ -31,7 +30,6 @@ class Light_Profiling {
         $this->time_postplugin = $timestart;
         $this->time_postthemesetup = $timestart;
         $this->time_wploaded = $timestart;
-        $this->time_prethemeload = $timestart;
 
         // On CLI error_log() writes to the terminal.
         if ( 'cli' === php_sapi_name() ) {
@@ -59,9 +57,6 @@ class Light_Profiling {
         // Execute core and 'init' action
         add_action( 'wp_loaded', array( $this, 'wploaded' ), PHP_INT_MAX );
 
-        // Parse headers, parse query and 'wp' action
-        add_action( 'wp', array( $this, 'prethemeload' ), PHP_INT_MAX );
-
         // Load current template: /wp-content/ACTIVE-THEME/CURRENT-TEMPLATE.php
         // In order of specificity
         switch ( true ) {
@@ -75,8 +70,9 @@ class Light_Profiling {
                 break;
             case ( wp_doing_ajax() && isset( $_REQUEST['action'] ) ):
                 // AJAX
-                add_action( 'wp_ajax_' . $_REQUEST['action'], array( $this, 'wpend' ), PHP_INT_MAX );
-                add_action( 'wp_ajax_nopriv_' . $_REQUEST['action'], array( $this, 'wpend' ), PHP_INT_MAX );
+                // prio:0 Before AJAX action runs :(
+                add_action( 'wp_ajax_' . $_REQUEST['action'], array( $this, 'wpend' ), 0 );
+                add_action( 'wp_ajax_nopriv_' . $_REQUEST['action'], array( $this, 'wpend' ), 0 );
                 break;
             case ( defined( 'REST_REQUEST' ) && REST_REQUEST ):
                 // REST API
@@ -114,11 +110,13 @@ class Light_Profiling {
 
     public function preplugin() {
 
+        // Time of 'muplugins_loaded' action
         $this->time_preplugin = microtime( true );
     }
 
     public function postplugin() {
 
+        // Time of 'plugins_loaded' action
         $this->time_postplugin = microtime( true );
     }
 
@@ -131,25 +129,19 @@ class Light_Profiling {
         // And move this to the *previous* method
         //$this->file_count = count( get_included_files() );
 
+        // Time of 'after_setup_theme' action
         $this->time_postthemesetup = microtime( true );
     }
 
     public function wploaded() {
 
+        // Time of 'wp_loaded' action
         $this->time_wploaded = microtime( true );
-    }
 
-    /**
-     * Record running time and add HTTP header at the last common point.
-     */
-    public function prethemeload() {
-
-        $this->time_prethemeload = microtime( true );
-
-        $times = $this->get_results();
-        $header = implode( ', ', $times );
-        // TODO Last value will be zero.
-        header( 'X-Page-Speed: ' . $header, false );
+        // TODO Last time value will be zero.
+        if ( ! headers_sent() ) {
+            $this->send_header();
+        }
     }
 
     /**
@@ -178,9 +170,18 @@ class Light_Profiling {
             $this->msec( $this->time_postplugin - $this->time_preplugin ),
             $this->msec( $this->time_postthemesetup - $this->time_postplugin ),
             $this->msec( $this->time_wploaded - $this->time_postthemesetup ),
-            $this->msec( $this->time_prethemeload - $this->time_wploaded ),
-            $this->msec( $timeend - $this->time_prethemeload ),
+            $this->msec( $timeend - $this->time_wploaded ),
         ];
+    }
+
+    /**
+     * Add HTTP header.
+     */
+    private function send_header() {
+
+        $times = $this->get_results();
+        $header = implode( ', ', $times );
+        header( 'X-Page-Speed: ' . $header, false );
     }
 
     /**
@@ -190,7 +191,9 @@ class Light_Profiling {
      * @return array
      */
     public function wpend_filter( $data ) {
+
         $this->wpend();
+
         return $data;
     }
 
