@@ -155,7 +155,7 @@ class Light_Profiling {
     }
 
     /**
-     * Calculate results at the end of profiling, near WordPress shutdown.
+     * Calculate results of profiling.
      *
      * @return array
      */
