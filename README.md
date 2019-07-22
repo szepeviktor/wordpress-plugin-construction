@@ -11,6 +11,49 @@ https://en.wikipedia.org/wiki/Pair_programming
 
 http://engineering.quora.com/Moving-Fast-With-High-Code-Quality
 
+### Plugin headers
+
+`readme.txt` https://developer.wordpress.org/plugins/wordpress-org/how-your-readme-txt-works/
+
+```
+=== Plugin Name ===
+Contributors: (comma, separated, list of wordpress.org userid's)
+Donate link: https://example.com/
+Tags: comments, spam
+Requires at least: 4.9
+Tested up to: 5.2.2
+Requires PHP: 7.0
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+Here is a short description of the plugin. This should be no more than 150 characters. No markup here.
+```
+
+https://developer.wordpress.org/plugins/plugin-basics/header-requirements/ `@wordpress-plugin`
+
+```php
+/**
+ * Plugin Name
+ *
+ * @package     PluginPackage
+ * @author      Your Name
+ * @copyright   2019 Your Name or Company Name
+ * @license     GPL-2.0-or-later
+ *
+ * @wordpress-plugin
+ * Plugin Name: Plugin Name
+ * Plugin URI:  https://example.com/plugin-name
+ * Description: Description of the plugin.
+ * Version:     1.0.0
+ * Author:      Your Name
+ * Author URI:  https://example.com
+ * Text Domain: plugin-slug
+ * License:     GPL v2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+ */
+```
+
 ### How to add images to a WordPress plugin?
 
 - assets/banner-772x250.png
