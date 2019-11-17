@@ -69,7 +69,7 @@
 	url = git@github.com:szepeviktor/svn-updater.git
 [submodule "wordpress-fail2ban"]
 	path = waf4wordpress
-	url = git@github.com:szepeviktor/wordpress-fail2ban.git
+	url = git@github.com:szepeviktor/waf4wordpress.git
 [submodule "resource-versioning"]
 	path = resource-versioning
 	url = git@github.com:szepeviktor/resource-versioning.git
