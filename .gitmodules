@@ -1,18 +1,9 @@
-[submodule "shared-hosting-aid/update-control"]
-	path = shared-hosting-aid/update-control
-	url = https://github.com/chipbennett/update-control
-[submodule "shared-hosting-aid/ftptail"]
-	path = shared-hosting-aid/ftptail
-	url = https://github.com/johntdyer/ftptail.git
 [submodule "wp-cli-commands/wp-cli-check-update"]
 	path = wp-cli-commands/wp-cli-check-update
 	url = https://github.com/szepeviktor/wp-cli-check-update.git
 [submodule "whats-running"]
 	path = whats-running
 	url = git@github.com:szepeviktor/whats-running.git
-[submodule "shared-hosting-aid/search-replace-db"]
-	path = shared-hosting-aid/search-replace-db
-	url = https://github.com/interconnectit/Search-Replace-DB.git
 [submodule "wp-cli-commands/wp-cli-database-prefix-command"]
 	path = wp-cli-commands/wp-cli-database-prefix-command
 	url = git@github.com:szepeviktor/wp-cli-database-prefix-command.git
@@ -22,15 +13,6 @@
 [submodule "mu-disable-comments"]
 	path = mu-disable-comments
 	url = https://github.com/solarissmoke/disable-comments-mu.git
-[submodule "shared-hosting-aid/yoast-debug"]
-	path = shared-hosting-aid/yoast-debug
-	url = https://github.com/Yoast/yoast-debug
-[submodule "shared-hosting-aid/gauntlet-security"]
-	path = shared-hosting-aid/gauntlet-security
-	url = https://github.com/wp-plugins/gauntlet-security.git
-[submodule "shared-hosting-aid/tripwire"]
-	path = shared-hosting-aid/tripwire
-	url = git@github.com:szepeviktor/Tripwire.git
 [submodule "prevent-concurrent-logins"]
 	path = prevent-concurrent-logins
 	url = https://github.com/fjarrett/prevent-concurrent-logins.git
@@ -55,12 +37,6 @@
 [submodule "wp-solarized"]
 	path = wp-solarized
 	url = git@github.com:szepeviktor/wp-solarized.git
-[submodule "shared-hosting-aid/unified-post-types"]
-	path = shared-hosting-aid/unified-post-types
-	url = https://github.com/fusioneng/Unified-Post-Types.git
-[submodule "shared-hosting-aid/stream-archive/archivestream-php"]
-	path = shared-hosting-aid/stream-archive/archivestream-php
-	url = https://github.com/barracudanetworks/ArchiveStream-php.git
 [submodule "emojis"]
 	path = emojis
 	url = https://github.com/wp-plugins/classic-smilies.git
@@ -91,18 +67,12 @@
 [submodule "manual-cron"]
 	path = manual-cron
 	url = git@github.com:szepeviktor/manual-cron.git
-[submodule "shared-hosting-aid/wp-serverinfo"]
-	path = shared-hosting-aid/wp-serverinfo
-	url = https://github.com/lesterchan/wp-serverinfo.git
 [submodule "custom-sucuri"]
 	path = custom-sucuri
 	url = git@github.com:szepeviktor/custom-sucuri.git
 [submodule "password-bcrypt"]
 	path = password-bcrypt
 	url = git@github.com:szepeviktor/password-bcrypt.git
-[submodule "shared-hosting-aid/tripwire-original"]
-	path = shared-hosting-aid/tripwire-original
-	url = https://github.com/lucanos/Tripwire.git
 [submodule "minit/Minit-Pro"]
 	path = minit/Minit-Pro
 	url = https://github.com/markoheijnen/Minit-Pro.git
