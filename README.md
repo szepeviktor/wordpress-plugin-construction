@@ -1,6 +1,6 @@
 # WordPress plugin construction
 
-Tools for developing and running a WordPress website.
+Tools for developing and running a awesome WordPress website.
 Please select a folder in the list above to see the plugin's development.
 
 ### Two programmers
