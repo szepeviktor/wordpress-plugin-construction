@@ -102,7 +102,7 @@ final class WP_Internal_Pointers {
 - Widget display conditions `widget-context`
 - Search custom contents
 
-### Content plugin categories
+### Various content plugin categories
 
 1. Content Forcing
     + `force-featured-image`
