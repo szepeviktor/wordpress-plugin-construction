@@ -1,12 +1,11 @@
 <?php
 /*
 Plugin Name: Comment form robot trap
-Version: 0.2.0
+Version: 0.3.0
 Description: Stops spammer robots, hide the field with CSS <code>.comment-form .email-verify { display:none; }</code>
 Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 License: The MIT License (MIT)
 Author: Viktor Szépe
-GitHub Plugin URI: https://github.com/szepeviktor/wordpress-plugin-construction
 */
 
 add_filter( 'comment_form_fields', 'cfrt_print_hidden_field', 99 );
@@ -39,6 +38,13 @@ function cfrt_wc_print_hidden_field( $comment_form ) {
 function cfrt_check_hidden_field( $commentdata ) {
 
     $name = 'comment-email-verify';
+
+    // Check referer HTTP header.
+    if ( empty( $_SERVER['HTTP_REFERER'] ) ) {
+        // Trigger firewall
+        do_action( 'robottrap_hiddenfield', 'Comment referer missing.' );
+    }
+
     if ( ! empty( $_POST[ $name ] ) ) {
         // Trigger firewall
         $value = sanitize_text_field( $_POST[ $name ] );

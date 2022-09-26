@@ -87,7 +87,7 @@ EOT;
         $tid = get_option( 'gst_tracking_id' );
 
         // Verify ID
-        if ( false === $tid || ! preg_match( '/^UA-[0-9]{3,9}-[0-9]{1,4}$/', $tid ) ) {
+        if ( false === $tid || ! preg_match( '/^[A-Z]+-[0-9A-Z]{9,}$/', $tid ) ) {
 
             return;
         }
@@ -137,11 +137,11 @@ EOT;
 
     private function get_js_concat( $tid ) {
 
-        // 'UA-00' + '123' + '456-1'
+        // 'G-00' + '123' + '456A'
         $js = sprintf( "'%s' + '%s' + '%s'",
-            substr( $tid, 0, 5 ),
-            substr( $tid, 5, 3 ),
-            substr( $tid, 8 )
+            substr( $tid, 0, 4 ),
+            substr( $tid, 4, 3 ),
+            substr( $tid, 7 )
         );
 
         return $js;
@@ -191,7 +191,7 @@ EOT;
 
         $tid = esc_attr( get_option( 'gst_tracking_id' ) );
 
-        printf( '<input name="gst_tracking_id" id="gst_tracking_id" placeholder="UA-XXXXX-Y"
+        printf( '<input name="gst_tracking_id" id="gst_tracking_id" placeholder="G-A0A0ABACA"
             type="text" class="regular-text code" value="%s" />',
             $tid
         );
