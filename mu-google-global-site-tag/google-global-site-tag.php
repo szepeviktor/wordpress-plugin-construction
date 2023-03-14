@@ -87,7 +87,7 @@ EOT;
         $tid = get_option( 'gst_tracking_id' );
 
         // Verify ID
-        if ( false === $tid || ! preg_match( '/^[A-Z]+-[0-9A-Z]{9,}$/', $tid ) ) {
+        if ( false === $tid || ! preg_match( '/^[A-Z]+-[0-9A-Z]{9,}(-[0-9]+)?$/', $tid ) ) {
 
             return;
         }
